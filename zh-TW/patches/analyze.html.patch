@@ -165,7 +165,7 @@ title="Tartarus Overlay（Windows 版）：做成應用程式的自動截圖模�
                 <option value="doors">牢門之後</option>
                 <option value="king">困獸稱王</option>
                 <option value="walk">巡獄之路</option>
-                <option value="consume">適者生存</option>
+                <option value="consume">弱肉強食</option>
                 <option value="incident">暗流湧動</option>
               </select>
             </h3>

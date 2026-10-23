@@ -1,0 +1,49 @@
+# Pulls the boards the analyzer shared from the live collector (worker/) into
+# beta/data/, measures the live odds (beta/data/rates.json) and commits them.
+# Runs every 6 hours, or on demand: gh workflow run live-data.yml
+# Needs the repo secret LIVE_DATA_TOKEN, the collector's EXPORT_TOKEN.
+name: Live data
+
+on:
+  schedule:
+    - cron: '17 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: live-data
+  cancel-in-progress: false
+
+jobs:
+  pull:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      - name: Pull new boards and measure the rates
+        env:
+          LIVE_DATA_URL: https://tartarus-live.blahdot3h.workers.dev
+          LIVE_DATA_TOKEN: ${{ secrets.LIVE_DATA_TOKEN }}
+        run: node tools/live-data.js pull
+
+      # Whatever was pulled is kept, even when the pull stopped partway.
+      - name: Commit
+        if: always()
+        run: |
+          git add beta/data
+          if git diff --cached --quiet; then
+            echo "No new boards."
+            exit 0
+          fi
+          boards=$(node -p "require('./beta/data/rates.json').boards")
+          steps=$(node -p "require('./beta/data/rates.json').steps")
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Live data: ${boards} boards, ${steps} confirmed steps"
+          git push

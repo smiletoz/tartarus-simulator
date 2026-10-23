@@ -108,7 +108,7 @@
 | King of the Caged | 困獸稱王 | 官方 |
 | Prison Walk | 巡獄之路 | 官方 |
 | Undercurrents | 暗流湧動 | 官方 |
-| Survival of the Fittest | 適者生存 | 暫譯 |
+| Survival of the Fittest | 弱肉強食 | 暫譯 |
 | Behind Cell Doors | 牢門之後 | 暫譯 |
 
 ## 開局卡（塔羅斯異聞）

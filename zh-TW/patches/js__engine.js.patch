@@ -471,7 +471,7 @@ js/engine.js 繁中修補檔（由逐行對照產生）。
 <<<< once
     consume: { name: 'Survival of the Fittest', text: 'Consume 4 times', need: 4, unit: 'Consumes', drawn: false },
 ====
-    consume: { name: '適者生存', en: 'Survival of the Fittest', text: '吞噬 4 次', need: 4, unit: '吞噬次數', drawn: false },
+    consume: { name: '弱肉強食', en: 'Survival of the Fittest', text: '吞噬 4 次', need: 4, unit: '吞噬次數', drawn: false },
 >>>>
 
 <<<< once

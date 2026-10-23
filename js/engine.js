@@ -324,7 +324,7 @@
     // Seen live 2026-10-16, each paying a tool when met (and a Warden's Cache
     // at the riot, not simulated). Not drawn in simulated runs yet: the
     // analyzer uses them when the player sets them.
-    consume: { name: '適者生存', en: 'Survival of the Fittest', text: '吞噬 4 次', need: 4, unit: '吞噬次數', drawn: false },
+    consume: { name: '弱肉強食', en: 'Survival of the Fittest', text: '吞噬 4 次', need: 4, unit: '吞噬次數', drawn: false },
     incident: { name: '暗流湧動', en: 'Undercurrents', text: '觸發獄中事變 2 次', need: 2, unit: '獄中事變次數', drawn: false },
     // Reports 30 and 51: "Objective: Behind Cell Doors. Open 10 cells".
     // Every cell that opens counts, however it opens.

@@ -718,7 +718,7 @@
         // Survival of the Fittest: a consume today counts toward its tool.
         if (ctx.consumesLeft && P.wConsumeWalk && T.devourOptions(st, n).length) {
           score += P.wConsumeWalk / ctx.consumesLeft;
-          why += '，而且牠的吞噬能計入適者生存';
+          why += '，而且牠的吞噬能計入弱肉強食';
         }
         // An event waiting in an open cell goes off when the warden walks in.
         if (c.event) {

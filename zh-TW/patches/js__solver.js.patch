@@ -77,7 +77,7 @@ EVENT_WHY 譯文：處決與連鎖反應以「門後」開頭，第 732 行把�
 <<<< once
           why += ', and its consume counts for Survival of the Fittest';
 ====
-          why += '，而且牠的吞噬能計入適者生存';
+          why += '，而且牠的吞噬能計入弱肉強食';
 >>>>
 <<<< once
             why = `a special event waits in the cell with its ${T.describe(c.inmate)}`;
