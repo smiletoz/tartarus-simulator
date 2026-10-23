@@ -1,0 +1,768 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tartarus Strategy Guide</title>
+<meta name="description" content="A rough Tartarus prison strategy to learn before you play, from millions of simulated runs.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 18'%3E%3Crect width='16' height='18' rx='3' fill='%230f1216'/%3E%3Cpath d='M6 1h4v2H6z' fill='%23eadfc5'/%3E%3Cpath d='M4 4h8l-1 10H5z' fill='%23eadfc5'/%3E%3Cpath d='M5 15h6v2H5z' fill='%23eadfc5'/%3E%3Cpath d='M8 6.5c1.4 1.6 1.6 3 0 4.6-1.6-1.6-1.4-3 0-4.6Z' fill='%23f28c36'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;500;600;700&family=Big+Shoulders+Stencil+Display:wght@600;800&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="css/style.css?v=20261022a">
+<style>
+  /* The strategy guide: a long read in the simulator's own look. */
+  .guide {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 28px 16px 64px;
+  }
+
+  .guide-back {
+    display: inline-block;
+    margin-bottom: 22px;
+    color: var(--ash);
+    font: 500 12px/1.2 var(--font-mono);
+    letter-spacing: 0.06em;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+
+  .guide-back:hover {
+    color: var(--bone);
+  }
+
+  .guide h1 {
+    margin: 6px 0 10px;
+    font: 800 clamp(40px, 9vw, 76px) / 0.95 var(--font-display);
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+    text-wrap: balance;
+    color: var(--bone);
+  }
+
+  .guide h2 {
+    margin: 0 0 12px;
+    font: 800 clamp(24px, 4vw, 32px) / 1.05 var(--font-display);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    text-wrap: balance;
+    color: var(--chalk);
+  }
+
+  .guide h3 {
+    margin: 22px 0 8px;
+    font: 700 17px/1.2 var(--font-body);
+    color: var(--bone);
+  }
+
+  .guide p,
+  .guide li {
+    max-width: 68ch;
+  }
+
+  .guide p {
+    margin: 0 0 12px;
+  }
+
+  .guide a:not(.btn) {
+    color: var(--bone);
+  }
+
+  .lede {
+    font-size: 18px;
+    line-height: 1.5;
+    color: var(--chalk);
+  }
+
+  .guide-section {
+    padding: 34px 0;
+    border-top: 1px solid var(--iron);
+  }
+
+  .note {
+    font-size: 13.5px;
+    color: var(--ash);
+  }
+
+  /* Headline numbers. */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 10px;
+    margin: 22px 0 6px;
+  }
+
+  .stat {
+    display: grid;
+    gap: 4px;
+    padding: 14px;
+    border: 1px solid var(--iron);
+    border-radius: var(--radius);
+    background: var(--slab);
+  }
+
+  .stat b {
+    font: 800 36px/1 var(--font-display);
+    color: var(--bone);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .stat > span {
+    font-size: 13.5px;
+    line-height: 1.35;
+    color: var(--ash);
+  }
+
+  /* The short version: numbered rules with the data behind each. */
+  .rules {
+    display: grid;
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: rule;
+  }
+
+  .rules li {
+    display: grid;
+    grid-template-columns: 40px minmax(0, 1fr);
+    gap: 4px 12px;
+    max-width: none;
+    padding: 14px 16px;
+    border: 1px solid var(--iron);
+    border-radius: var(--radius);
+    background: var(--slab);
+    counter-increment: rule;
+  }
+
+  .rules li::before {
+    content: counter(rule);
+    grid-row: span 2;
+    font: 800 34px/1 var(--font-display);
+    color: var(--teal);
+  }
+
+  .rules strong {
+    font-size: 16.5px;
+    color: var(--chalk);
+  }
+
+  .rules li > span {
+    font-size: 14px;
+    color: var(--ash);
+  }
+
+  /* An exception to a rule, set apart under its data. */
+  .rules .rule-note {
+    display: block;
+    margin-top: 10px;
+    padding: 8px 12px;
+    border-left: 3px solid var(--t3);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    background: color-mix(in srgb, var(--t3) 7%, transparent);
+    color: var(--chalk);
+    line-height: 1.5;
+  }
+
+  .rules .rule-note b {
+    color: var(--t3);
+  }
+
+  /* A day on the block. */
+  .steps-day {
+    display: grid;
+    gap: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .steps-day li {
+    display: grid;
+    grid-template-columns: 120px minmax(0, 1fr);
+    gap: 4px 16px;
+    max-width: none;
+    padding: 14px 0;
+    border-bottom: 1px dashed var(--iron);
+  }
+
+  .steps-day li:last-child {
+    border-bottom: 0;
+  }
+
+  .steps-day b {
+    font: 800 18px/1.2 var(--font-display);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--bone);
+  }
+
+  .steps-day div > p:last-child {
+    margin-bottom: 0;
+  }
+
+  /* Bar charts, drawn to scale from zero. */
+  .bars {
+    display: grid;
+    gap: 7px;
+    margin: 16px 0 8px;
+  }
+
+  .bar {
+    display: grid;
+    grid-template-columns: minmax(150px, 34%) minmax(0, 1fr) 64px;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+  }
+
+  .bar-label {
+    color: var(--chalk);
+  }
+
+  .bar-track {
+    height: 14px;
+    border-radius: 3px;
+    background: color-mix(in srgb, var(--iron) 45%, transparent);
+    overflow: hidden;
+  }
+
+  .bar-fill {
+    display: block;
+    height: 100%;
+    border-radius: 3px;
+    background: var(--iron-hi);
+  }
+
+  .bar.is-key .bar-fill {
+    background: var(--teal);
+  }
+
+  .bar.is-bad .bar-fill {
+    background: var(--blood);
+  }
+
+  .bar-value {
+    font: 500 13px/1 var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+    color: var(--chalk);
+  }
+
+  .bar-value small {
+    display: block;
+    margin-top: 3px;
+    font-size: 11px;
+    color: var(--ash);
+  }
+
+  /* Beast sets and their chain odds. */
+  .sets {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 10px;
+    margin: 16px 0;
+  }
+
+  .set {
+    display: grid;
+    gap: 8px;
+    padding: 12px;
+    border: 1px solid var(--iron);
+    border-radius: var(--radius);
+    background: var(--slab);
+  }
+
+  .set.is-full {
+    border-color: var(--teal);
+    background: color-mix(in srgb, var(--teal) 8%, var(--slab));
+  }
+
+  .set-icons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+
+  .set-odds {
+    font: 800 28px/1 var(--font-display);
+    color: var(--bone);
+  }
+
+  .set-name {
+    font-size: 13px;
+    color: var(--ash);
+  }
+
+  .tok {
+    display: inline-grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border: 1.5px solid var(--tc, var(--iron-hi));
+    border-radius: 7px;
+    background: var(--floor);
+  }
+
+  .tok .portrait {
+    width: 27px;
+    filter: none;
+  }
+
+  /* Tables scroll inside themselves on narrow screens. */
+  .table-wrap {
+    overflow-x: auto;
+    margin: 14px 0;
+  }
+
+  .guide table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .guide th,
+  .guide td {
+    padding: 9px 10px;
+    border-bottom: 1px solid var(--iron);
+    text-align: left;
+    vertical-align: top;
+  }
+
+  .guide th {
+    font: 500 11px/1.3 var(--font-mono);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ash);
+  }
+
+  .guide th.num {
+    text-align: right;
+  }
+
+  .guide td.num {
+    font-family: var(--font-mono);
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  .guide tr.is-key td {
+    color: var(--bone);
+  }
+
+  /* Instrument pairs: each cell names the instrument, then its numbers.
+     On a phone the table scrolls inside its frame rather than squeezing. */
+  .guide td small {
+    display: block;
+    margin-top: 3px;
+    font: 500 11px/1.3 var(--font-mono);
+    color: var(--ash);
+    white-space: nowrap;
+  }
+
+  #pairs-section table {
+    min-width: 600px;
+  }
+
+  .cta {
+    display: grid;
+    gap: 12px;
+    padding: 22px;
+    border: 1px solid var(--teal);
+    border-radius: var(--radius);
+    background: color-mix(in srgb, var(--teal) 8%, var(--slab));
+  }
+
+  .cta p {
+    margin: 0;
+  }
+
+  .cta .btn {
+    justify-self: start;
+    text-decoration: none;
+  }
+
+  .cta-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .basis {
+    max-width: 78ch;
+  }
+
+  .method {
+    padding-top: 30px;
+    border-top: 1px solid var(--iron);
+    font-size: 13.5px;
+    color: var(--ash);
+  }
+
+  .method p {
+    max-width: 78ch;
+  }
+
+  @media (max-width: 600px) {
+    .bar {
+      grid-template-columns: minmax(0, 1fr) 58px;
+    }
+
+    .bar-label {
+      grid-column: 1 / -1;
+    }
+
+    .steps-day li {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>
+</head>
+<body>
+<main class="guide">
+  <a class="guide-back" href="./">← Back to the simulator</a>
+  <a class="guide-back" id="lang-switch" href="../strategy.html" lang="zh-Hant" hreflang="zh-Hant" style="margin-left: 18px">繁體中文</a>
+<script>(function(){var a=document.getElementById("lang-switch");if(!a)return;var b=a.getAttribute("href");function u(){a.setAttribute("href",b+location.search+location.hash);}u();a.addEventListener("pointerdown",u);a.addEventListener("focus",u);a.addEventListener("click",u);})();</script>
+  <p class="eyebrow">Tartarus Simulator · Strategy guide</p>
+  <h1>How to vault Rainbows</h1>
+  <p class="lede">A rough strategy to learn before your first run. It comes from <span data-g="totalRuns"></span> simulated 20-day drills, played by a rules-based strategy tuned for the season's rules.</p>
+
+  <div class="stats">
+    <div class="stat"><b data-g="rainbows"></b><span>Rainbows per run with this strategy, <span data-g="ratio"></span>× a simple player's <span data-g="simpleRewards"></span></span></div>
+    <div class="stat"><b data-g="withRainbow"></b><span>of runs vault at least one Rainbow</span></div>
+    <div class="stat"><b data-g="chainShare"></b><span>of Rainbows come from consume chains</span></div>
+    <div class="stat"><b>Day <span data-g="firstDay"></span></b><span>when the first Rainbow usually lands</span></div>
+  </div>
+  <p class="note basis">Data basis: the default drill, with a pick of 3 random instruments to start (those named for a beast about an eighth as likely as the rest, as in the live game's offers), another pick for meeting the run's objective (King of the Caged or Prison Walk), and a Warden's Treasure gift per Rainbow. The headline numbers come from <span data-g="headlineRuns"></span> runs, with margins under ±<span data-g="ci"></span>. Generated <span data-g="generated"></span>.</p>
+
+  <section class="guide-section">
+    <h2>The short version</h2>
+    <ol class="rules">
+      <li><strong>Consume every day you can.</strong><span>Waiting to build a bigger chain cost Rainbows: <span data-g="wait2"></span> per run with a small threshold and <span data-g="wait5"></span> with a large one, against <span data-g="full"></span> when you always consume (no tools).<span class="rule-note"><b>The one exception: don't break a prey mark.</b> When a Lion marks a prey of its own rarity, both rise a tier every morning for free until the mark runs out. Eating the marked prey ends the mark, and so does letting the marked Lion consume, since it usually turns into another beast. Either way you trade several free tiers for one. A consume almost never loses value otherwise: two inmates of one rarity become one a tier higher, which is worth more than the pair.</span></span></li>
+      <li><strong>Replace the warden's low-tier inmate when there's no better consume.</strong><span><span data-g="swapTiers"></span>. A fresh roll is worth more on average. <span data-g="swapNote"></span></span></li>
+      <li><strong>Chain reactions are a close call.</strong><span>Opening every door on the next walk floods the block with new inmates, but it also opens doors you might rather have kept. <span data-g="chainNote"></span> The Trainer's live check compares both each time.</span></li>
+      <li><strong>Accept an Execution only when it gains more than it removes.</strong><span>Count what it would wipe out. Always accepting gave <span data-g="alwaysExec"></span> and never accepting <span data-g="neverExec"></span>, against <span data-g="full"></span> when you check first.</span></li>
+      <li><strong>Accept the events that only give.</strong><span>Behind Closed Doors makes the inmate behind the door a Supreme of the scarcest beast on the block, one step from Rainbow; skip it only when that inmate already is a Supreme. Ravenous Appetite, High-Risk Convict, Crow Whispers and the "Treasure" Hunt never cost anything.</span></li>
+      <li><strong>Stop at the office when it pays.</strong><span>The warden's office can be a destination. Bestow raises 1 random inmate a tier; Instigate puts a special event on a random cell, behind a locked door or beside an inmate (2 when the board has none). Pick by what the block needs, as the Trainer does: <span data-g="full"></span> per run, against <span data-g="alwaysBestow"></span> always taking Bestow and <span data-g="alwaysInstigate"></span> always taking Instigate.</span></li>
+      <li><strong>Keep opening doors, and walk far.</strong><span>New inmates are the raw material for every chain, and a locked door usually beats walking to an inmate with nothing to eat. Walking farther pays: <span data-g="full"></span> per run against <span data-g="shortWalks"></span> for short walks, with six cells in reach, Prison Walk counting tiles and the office on the way around.</span></li>
+      <li><strong>Know what keeps a chain going.</strong><span>Mammoths and Lions eat two kinds, Wolves and Rats one, so a Wolf or a Rat waiting at the next tier feeds two of the four beasts the eater can re-roll into, and a Lion or a Mammoth one. A tier holding a Mammoth, a Rat and a Lion or a Wolf guarantees the next bite. The Trainer's chain odds do this math for you when you pick the first meal.</span></li>
+      <li><strong>Take <span data-g="tool1"></span> or <span data-g="tool2"></span> when offered.</strong><span><span data-g="toolNote"></span></span></li>
+      <li><strong>At the Warden's Treasure, take what fits the board.</strong><span><span data-g="giftNote"></span></span></li>
+    </ol>
+  </section>
+
+  <section class="guide-section">
+    <h2>A day on the block</h2>
+    <p>Every day runs in the same order. Here is what the strategy does at each step.</p>
+    <ol class="steps-day">
+      <li><b>Patrol</b><div><p>Pick one of the three destinations. A locked door usually wins: it adds a new inmate, who may consume today from the warden's cell. Go to a known inmate instead when it has a strong consume waiting. A door with an event badge is a bonus. Prefer the farther destination when they're close: it counts toward Prison Walk, and with the Long-Chained Shackles a walk of 4 or more cells can raise an inmate a tier. Don't open a rat nest before it hatches.</p></div></li>
+      <li><b>Event</b><div><p>Accept Ravenous Appetite, High-Risk Convict, Crow Whispers, Taste of Freedom, Extra Portion and the Usurpations, and Behind Closed Doors unless its inmate is already a Supreme. The "Treasure" Hunt has only Confirm: afterwards, the locked doors it leaves dark hold Rare or better. Chain reactions are the close call above. For an Execution, count the inmates it would remove against the tiers the executioner gains, and accept only if you come out ahead.</p></div></li>
+      <li><b>Consume</b><div><p>If the warden's inmate has a target, consume. Pick the first meal whose chain is worth the most: the Trainer shows each option's chain odds. After that bite, your game asks for each next meal, and its Cancel stops the chain. Going on is almost always right, so stop only when the Trainer says so. When the eater has more than one meal, pick the one whose next tier still has food for the beast it may re-roll into.</p></div></li>
+      <li><b>Replace</b><div><p>If the warden's inmate is low-tier and has nothing worth eating, replace it. A day has a Replace or a consume, not both, so a good consume comes first.</p></div></li>
+      <li><b>End the day</b><div><p>Once nothing in the warden's cell can gain, end the day. The next morning, prey marks grow, nests hatch, and new destinations are drawn.</p></div></li>
+    </ol>
+  </section>
+
+  <section class="guide-section">
+    <h2>Chains: how many beasts you need</h2>
+    <p>After every bite the eater rises a tier and re-rolls into a random beast. The chain continues if that new beast has something to eat at its new tier. A Mammoth eats Lions and Wolves, a Lion Wolves and Rats, a Wolf Rats, and a Rat Mammoths. So a Wolf or a Rat waiting at a tier feeds two of the four possible re-rolls, a Lion or a Mammoth one, and a Mammoth, a Rat and a Lion or a Wolf together feed all four.</p>
+    <h3>Chance the chain finds its next meal at a tier</h3>
+    <div class="sets" id="sets"></div>
+
+    <h3>Chance one chain reaches Rainbow</h3>
+    <p>From the simulated runs, by the eater's tier and how many different beasts wait at each tier above it:</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Eater</th><th>Beasts waiting at the tiers above</th><th class="num">Runs</th><th class="num">Reaches Rainbow</th></tr></thead>
+        <tbody id="stairs"></tbody>
+      </table>
+    </div>
+    <p>Most Rainbows come from high eaters chaining up a well-stocked staircase, and chains from the bottom rarely make it in one go. Extra copies of a beast don't help a single chain, since each chain eats one inmate per tier, but they keep the staircase ready for the next one.</p>
+    <h3>How long chains run</h3>
+    <div class="bars" id="chain-lengths"></div>
+  </section>
+
+  <section class="guide-section">
+    <h2>What each habit is worth</h2>
+    <p>Rainbows per run with no tools. Each variant changes one habit of the full strategy and keeps everything else the same.</p>
+    <div class="bars" id="habits"></div>
+    <p class="note"><span data-g="habitRuns"></span> runs each for the variants (margins about ±<span data-g="habitCi"></span>), and <span data-g="compareRuns"></span> for the simple player and random moves.</p>
+  </section>
+
+  <section class="guide-section">
+    <h2>Tools</h2>
+    <p>Rainbows per run when one tool is held from day 1, with no other rewards. With no tool the strategy makes <span data-g="toolBase"></span>. <span data-g="sideRuns"></span> runs each.</p>
+    <div class="bars" id="tools"></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Tool</th><th>What it does</th></tr></thead>
+        <tbody>
+          <tr><td>Iron Crown of the Prison King: Berserk Lion</td><td>Lions can eat any inmate of their own rarity, and each bite a Lion takes gains 2 extra tiers, 3 in all.</td></tr>
+          <tr><td>Blood-Stained Trap: Berserk Lion</td><td>With the warden on a Lion, Hunt joins the day’s choices beside Consume and Replace: the Lion puts a Prey mark on one inmate it can consume, and each morning both rise a tier, for 3 mornings.</td></tr>
+          <tr><td>Filthy Claws: Alpha Wolf</td><td>At the start of each day, Scratch Marks go on 1 random unopened cell. A scratched door shows the rarity inside, and a Wolf of that rarity can consume the inmate through it, whatever its beast, for 3 tiers.</td></tr>
+          <tr><td>Elephant-Foot Maul: Mammoth</td><td>Mammoths can eat the Lions they counter at a higher rarity too, and a Mammoth that eats rises to 2 tiers above its meal: a Normal Mammoth eating a Legendary Lion reaches Rainbow at once.</td></tr>
+          <tr><td>Severed Iron Maiden</td><td>A Replace brings the new inmate in 3 tiers up when the inmate it replaces has as many inmates above its rarity as below it (counted before the Scapegoat's Guillotine removes any), which an inmate alone on the block always does.</td></tr>
+          <tr><td>Kin's Coin of Fate</td><td>Each morning, when two or more inmates share a beast and rarity, a 60% chance that one of them is removed and another gains 2 tiers.</td></tr>
+          <tr><td>Scapegoat's Guillotine</td><td>A Replace with 2 or more others on the block removes 2 random inmates, and the new inmate comes in above the rarity it replaced.</td></tr>
+          <tr><td>Hangman's Noose</td><td>The new inmate is never Normal or Magic, so every Replace is an upgrade.</td></tr>
+          <tr><td>Long-Chained Shackles</td><td>A walk of 4 or more cells has a 40% chance to raise a random inmate a tier. With six cells in reach, most mornings offer a walk that long.</td></tr>
+          <tr><td>Executioner's Blacklist</td><td>Once 5 or fewer cells are still locked, each door a patrol opens raises 2 random inmates a tier.</td></tr>
+          <tr><td>Raging Beast's Agonizing Muzzle</td><td>A consume gains 2 extra tiers when 4 or fewer inmates are on the block before it, its meal included.</td></tr>
+          <tr><td>Avenger's Casket</td><td>A consume can open a fresh meal at the eater's new rarity, which stretches chains.</td></tr>
+          <tr><td>Ferocious Beast's Ravenous Chains</td><td>Each morning the highest-rarity inmate removes both its neighbours on the ring, with a 40% chance of an extra tier for each.</td></tr>
+          <tr><td>Skewered Rat Heads</td><td>Rats can eat Rats, and a Rat's consume gains an extra tier.</td></tr>
+          <tr><td>Sorting Hook</td><td>Doors never hold a Normal, so every new inmate starts at Magic or better.</td></tr>
+          <tr><td>Maddened Beast's Barbed Collar</td><td>Each bite of a chain after the first has an 80% chance of an extra tier, so long chains climb faster.</td></tr>
+          <tr><td>Rusty Saw</td><td>A 25% chance of an extra tier on each bite.</td></tr>
+          <tr><td>Burning Stake</td><td>Each morning offers one destination fewer, and replacing an inmate below Legendary has a 40% chance to bring in a Legendary.</td></tr>
+          <tr><td>Fanged Guillotine</td><td>Wolves can also eat Rats below their own rarity, so a Wolf finds a meal far more often.</td></tr>
+          <tr><td>Barbed Whip</td><td>Each morning offers one destination fewer, and each bite has a 35% chance of an extra tier.</td></tr>
+          <tr><td>Felon's Dog Tag</td><td>The inmate behind each door a patrol opens has a 25% chance to rise a tier.</td></tr>
+          <tr><td>Iron Tongs of Lust</td><td>A Mammoth gets a Tusk mark each morning: replacing it raises other inmates a tier.</td></tr>
+          <tr><td>Crowded Beastcage</td><td>After an inmate is consumed, a 40% chance its cell opens again at once with someone new.</td></tr>
+          <tr><td>Lost Ring of Keys</td><td>Patrols often open the neighboring doors too: more inmates.</td></tr>
+          <tr><td>Warden's Scales</td><td>After a Replace, usually shows the best inmate behind the locked doors. Knowing it changes little.</td></tr>
+          <tr><td>Short-Chained Shackles</td><td>A walk of 3 cells or fewer has a 50% chance to open a random locked cell. That door triggers nothing else, so an event behind it is used up.</td></tr>
+          <tr><td>Iron Pestle</td><td>A Replace keeps the beast and re-rolls only the rarity, which leaves the block less varied.</td></tr>
+          <tr><td>Searing Branding Iron</td><td>A patrol that opens a door has a 35% chance to copy its inmate into another unopened cell, which opens holding the copy.</td></tr>
+          <tr><td>Gaoler's Execution Axe</td><td>When a Replace brings in a higher rarity, 2 random sealed cells open: more inmates, but only on the lucky Replaces.</td></tr>
+          <tr><td>Forged Key</td><td>Each morning offers one destination fewer. A patrol that opens a door has a 50% chance to open one more random sealed cell. The lost choice costs more than the extra doors give.</td></tr>
+          <tr><td>Squirming Iron Box</td><td>Turns a sealed cell into a rat nest every morning, which ties up doors for a Rare Rat at best.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="guide-section" id="pairs-section" hidden>
+    <h2>Instrument pairs</h2>
+    <p>A run starts with a pick of three instruments, and meeting the objective offers three more. What the second is worth depends on the first, so take the one that adds the most to what you hold. For each starting instrument, its three best partners: what the partner adds, then Rainbows per run holding both from day 1, with no other rewards.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>You hold</th><th>Best second</th><th>Next</th><th>Then</th></tr></thead>
+        <tbody id="pairs"></tbody>
+      </table>
+    </div>
+    <p id="pairs-note"></p>
+    <p class="note" id="pairs-runs"></p>
+  </section>
+
+  <section class="guide-section">
+    <h2>The Warden's Treasure</h2>
+    <p>Each Rainbow offers one of four gifts. Rainbows per run with tools on, <span data-g="sideRuns"></span> runs each:</p>
+    <div class="bars" id="gifts"></div>
+    <p>Judge the gift by the board. Crimson Vintage shines with many inmates below Legendary. The Three-Headed Thumb Ring helps when there are plenty of sealed doors. The Brass Horn of Strife pays when lots of inmates already have targets. Brand of Original Sin helps when many inmates have nothing to eat.</p>
+  </section>
+
+  <section class="guide-section">
+    <h2>What to expect</h2>
+    <p>Rainbows vaulted per 20-day run with this strategy, in the default drill:</p>
+    <div class="bars" id="spread"></div>
+    <p>A typical run opens about <span data-g="doors"></span> doors, replaces <span data-g="swaps"></span> times and consumes <span data-g="devours"></span> times.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Strategy</th><th class="num">No tools</th><th class="num">Tools and Treasure on</th></tr></thead>
+        <tbody id="compare"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="guide-section">
+    <div class="cta">
+      <h2>Practice it</h2>
+      <p>Start a Rules drill and press <strong>Trainer</strong> in the top bar. It recommends a move for every decision and marks it on the board. It checks the move with hundreds of live playouts from your exact position, and grades each move you make, so you can see where your play differs from these numbers.</p>
+      <p>Playing live? The board analyzer takes your board as it is in your game, with your tools, and gives the same advice for that exact position.</p>
+      <div class="cta-actions">
+        <a class="btn btn-primary" href="./">Open the simulator</a>
+        <a class="btn" href="analyze.html">Analyze my board</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="method">
+    <p>This English version and guide are made by <strong>CoffeeBns</strong>: <a href="https://twitch.tv/coffeebns" target="_blank" rel="noopener">twitch.tv/coffeebns</a> and <a href="https://youtube.com/@CoffeeBns" target="_blank" rel="noopener">youtube.com/@CoffeeBns</a>.</p>
+    <p><strong>How these numbers were made.</strong> Every run used the simulator's own rules engine. A rules-based strategy played them, making each choice from what a player can see. There's no AI involved: it's a set of scoring rules whose weights were tuned for these rules by trying each value and keeping whichever vaulted more Rainbows. This data set took <span data-g="totalRuns"></span> runs and <span data-g="minutes"></span> minutes. The rules follow the season's video reveal and what players have since seen live. The rarity odds come from players' shared boards: an inmate behind a door is 40% Normal, 38% Magic, 12% Rare, 8% Legendary and 2% Supreme, and a Replace brings in 52%, 32%, 9%, 6% and 1.5%. Other odds and limits are practice values and may differ from the live game: 5% of sealed cells hide an event, every kind equally likely, which shows only once the warden walks past, and each day has one consume or one Replace, not both, over a 20-day drill. The full tables are in the <a href="https://github.com/blahdot3h/tartarus-simulator/tree/main/tools" target="_blank" rel="noopener">strategy lab's notes</a>.</p>
+  </footer>
+</main>
+
+<script src="js/guide-data.js?v=20261022a"></script>
+<script src="js/tool-combos.js?v=20261022a"></script>
+<script src="js/board.js?v=20261022a"></script>
+<script src="js/update.js?v=20261022a"></script>
+<script>
+  // Fills the guide from js/guide-data.js, generated by
+  // node tools/strategy-sim.js guide.
+  (() => {
+    'use strict';
+    const G = window.TARTARUS_GUIDE;
+    if (!G) {
+      document.querySelector('.lede').textContent = 'The guide data is missing. Run node tools/strategy-sim.js guide to generate js/guide-data.js.';
+      return;
+    }
+    // The simulator's own beast portraits, from js/board.js.
+    const PORTRAITS = window.TartarusBoard.PORTRAITS;
+    const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+    const two = (v) => v.toFixed(2);
+    const pct = (v) => `${(100 * v).toFixed(v < 0.01 ? 1 : 0)}%`;
+    const habit = (id) => G.habits.find((h) => h.id === id);
+    const H = G.headline;
+    const sources = H.rainbowSources.chain + H.rainbowSources.singleDevour + H.rainbowSources.other;
+    const tiers = ['Normal', 'Magic', 'Rare', 'Legendary', 'Supreme'];
+    const tierList = (max) => (max < 0 ? 'none' : tiers.slice(0, max + 1).join(', ').replace(/, ([^,]*)$/, ' and $1'));
+    const tools = G.tools;
+    // Tools that did worse than none, from the worst: a loss inside the
+    // measurement's margin says so, and a small one (under 0.02 Rainbows)
+    // reads as "slightly".
+    const margin = (habit('full') && habit('full').ci) || 0;
+    const worse = tools.filter((t) => t.delta < 0).reverse();
+    const named = worse.map((t) => `the ${t.name}${-t.delta < margin ? ' (within the margin)' : -t.delta < 0.02 ? ' (slightly)' : ''}`);
+    const worseNote = !worse.length ? ''
+      : worse.length === 1 ? ` The ${worse[0].name} was the only tool that made things worse.`
+        : ` Some tools made things worse: ${named.slice(0, -1).join(', ')} and ${named[named.length - 1]}.`;
+    const times = (t) => (t.value / G.toolBase).toFixed(1);
+    const bestFixed = G.gifts.slice(1)[0];
+
+    // Every number in the text.
+    const V = {
+      totalRuns: G.totalRuns.toLocaleString(),
+      minutes: G.minutes,
+      headlineRuns: G.headlineRuns.toLocaleString(),
+      generated: G.generated,
+      rainbows: two(H.rainbowsPerRun),
+      ci: H.ci95.toFixed(3),
+      withRainbow: pct(H.runsWithRainbow),
+      chainShare: pct(H.rainbowSources.chain / sources),
+      firstDay: Math.round(H.firstRainbowDay),
+      simpleRewards: two(G.compare.rewards.simple.rainbowsPerRun),
+      ratio: (H.rainbowsPerRun / G.compare.rewards.simple.rainbowsPerRun).toFixed(1),
+      full: two(habit('full').value),
+      fullCompare: two(G.compare.notools.tuned.rainbowsPerRun),
+      wait2: two(habit('wait2').value),
+      wait5: two(habit('wait5').value),
+      neverSwap: two(habit('neverSwap').value),
+      swapNote: (() => {
+        const full = habit('full').value;
+        const never = habit('neverSwap').value;
+        return full - never < 0.01
+          ? `Without tools, never replacing came out about even: ${two(never)} per run, against ${two(full)}. But Replaces are what the Severed Iron Maiden, the Scapegoat's Guillotine and the Burning Stake work on.`
+          : `Never replacing drops results to ${two(never)} per run, against ${two(full)}.`;
+      })(),
+      chainNote: (() => {
+        const tooled = G.params.rewards.acceptChain ? 'accepts' : 'skips';
+        const skip = habit('skipChain');
+        const accept = habit('acceptChain');
+        if (skip) return `With no instruments, accepting them made ${two(habit('full').value)} per run against ${two(skip.value)} skipping. With instruments, the Trainer ${tooled} them.`;
+        if (accept) return `With no instruments, skipping them made ${two(habit('full').value)} per run against ${two(accept.value)} accepting. With instruments, the Trainer ${tooled} them.`;
+        return '';
+      })(),
+      alwaysExec: two(habit('alwaysExec').value),
+      neverExec: two(habit('neverExec').value),
+      shortWalks: two(habit('shortWalks').value),
+      alwaysBestow: habit('alwaysBestow') ? two(habit('alwaysBestow').value) : '?',
+      alwaysInstigate: habit('alwaysInstigate') ? two(habit('alwaysInstigate').value) : '?',
+      swapTiers: `Replace ${tierList(G.params.notools.swapMaxTier)} inmates with no tools, and ${tierList(G.params.rewards.swapMaxTier)} once you hold tools`,
+      tool1: tools[0].name,
+      tool2: tools[1].name,
+      toolNote: `Held from day 1, ${tools[0].name} made ${times(tools[0])}× the Rainbows of no tool and ${tools[1].name} ${times(tools[1])}×.${worseNote}`,
+      giftNote: G.gifts[0].value >= bestFixed.value ? `Judging each gift on the spot beat always taking the same one (${two(G.gifts[0].value)} against ${two(bestFixed.value)} for always ${bestFixed.name}). If you want a default, ${bestFixed.name}.` : `Always taking ${bestFixed.name} did best here (${two(bestFixed.value)} against ${two(G.gifts[0].value)} for judging on the spot).`,
+      habitRuns: G.habitRuns.toLocaleString(),
+      habitCi: (habit('full').ci || 0).toFixed(3),
+      compareRuns: G.compareRuns.toLocaleString(),
+      sideRuns: G.sideRuns.toLocaleString(),
+      toolBase: two(G.toolBase),
+      doors: Math.round(H.doorsPerRun),
+      swaps: Math.round(H.swapsPerRun),
+      devours: Math.round(H.devoursPerRun),
+    };
+    for (const el of document.querySelectorAll('[data-g]')) el.textContent = V[el.dataset.g] !== undefined ? V[el.dataset.g] : '?';
+
+    // Beast sets and the share of re-rolls that find food: the eater
+    // re-rolls into one of the four beasts, each with its meals.
+    const names = { Mammoth: 'mammoth', Lion: 'lion', Wolf: 'wolf', Rat: 'rat' };
+    const MEALS = { Mammoth: ['Lion', 'Wolf'], Lion: ['Wolf', 'Rat'], Wolf: ['Rat'], Rat: ['Mammoth'] };
+    const fed = (set) => Object.keys(MEALS).filter((b) => MEALS[b].some((m) => set.includes(m))).length / 4;
+    const card = (beasts, label) => {
+      const odds = fed(beasts);
+      return `<div class="set${odds === 1 ? ' is-full' : ''}"><div class="set-icons">${beasts.map((b) => `<span class="tok t2" title="${b}">${PORTRAITS[names[b]]}</span>`).join('')}</div><div class="set-odds">${Math.round(100 * odds)}%</div><div class="set-name">${esc(label)}</div></div>`;
+    };
+    const sets = [
+      [['Mammoth', 'Wolf', 'Rat'], 'A Mammoth, a Rat and a Wolf (or a Lion)'],
+      [['Wolf', 'Rat'], 'A Wolf and a Rat'],
+      [['Wolf'], 'A Wolf or a Rat alone'],
+      [['Lion'], 'A Lion or a Mammoth alone'],
+    ];
+    document.getElementById('sets').innerHTML = sets.map(([beasts, label]) => card(beasts, label)).join('');
+
+    // Chain to Rainbow odds by eater tier, from the runs' devours.
+    const stairRows = [];
+    for (let t = 4; t >= 0; t--) {
+      const rows = G.stairs.filter((s) => s.key.startsWith(`${t}:`)).sort((a, b) => b.rainbow - a.rainbow);
+      // Below Legendary, the cases with at least 1 consume per 20 runs.
+      const keep = t === 4 ? rows.slice(0, 1) : t === 3 ? rows : rows.filter((r) => r.n >= G.headlineRuns / 20).slice(0, t === 2 ? 4 : 2);
+      for (const r of keep) {
+        const fed = r.key.split(':')[1];
+        const above = fed ? fed.split('').map((d, i) => `${d} at ${tiers[t + 1 + i]}`).join(', ') : 'Any meal makes Rainbow';
+        stairRows.push(`<tr${r.rainbow >= 0.5 ? ' class="is-key"' : ''}><td>${tiers[t]}</td><td>${esc(above)}</td><td class="num">${r.n.toLocaleString()}</td><td class="num">${pct(r.rainbow)}</td></tr>`);
+      }
+    }
+    document.getElementById('stairs').innerHTML = stairRows.join('');
+
+    // Horizontal bars from zero; `max` sets the scale for the whole chart.
+    function bars(id, rows, max, format) {
+      document.getElementById(id).innerHTML = rows
+        .map((r) => `<div class="bar${r.key ? ' is-key' : ''}${r.bad ? ' is-bad' : ''}"><span class="bar-label">${esc(r.label)}</span><span class="bar-track"><span class="bar-fill" style="width:${Math.max(0.5, (100 * r.value) / max).toFixed(1)}%"></span></span><span class="bar-value">${format(r.value)}${r.sub ? `<small>${esc(r.sub)}</small>` : ''}</span></div>`)
+        .join('');
+    }
+    const full = habit('full').value;
+    const habits = G.habits.slice().sort((a, b) => b.value - a.value);
+    bars('habits', habits.map((h) => ({ label: h.label, value: h.value, key: h.id === 'full', bad: h.value < full * 0.7 })), Math.max(...habits.map((h) => h.value)) * 1.05, two);
+    const toolRows = [...tools.map((t) => ({ label: t.name, value: t.value, sub: `${t.delta >= 0 ? '+' : '−'}${two(Math.abs(t.delta))}`, key: t === tools[0] || t === tools[1], bad: t.delta < 0 })), { label: 'No tool', value: G.toolBase }].sort((a, b) => b.value - a.value);
+    bars('tools', toolRows, Math.max(...toolRows.map((r) => r.value)) * 1.05, two);
+    // Instrument pairs, from node tools/strategy-sim.js combos
+    // (js/tool-combos.js).
+    const combos = window.TARTARUS_COMBOS && window.TARTARUS_COMBOS.single;
+    if (combos && combos.sizes && combos.sizes[2]) {
+      const nameOf = Object.fromEntries(tools.map((t) => [t.id, t.name]));
+      const key = (ids) => ids.map((id) => String.fromCharCode(97 + combos.ids.indexOf(id))).sort().join('');
+      const value = (ids) => (ids.length ? combos.v[key(ids)] : combos.base);
+      const signed = (v) => `${v >= 0 ? '+' : '−'}${two(Math.abs(v))}`;
+      const held = combos.ids.filter((id) => nameOf[id] && value([id]) !== undefined).sort((a, b) => value([b]) - value([a]));
+      document.getElementById('pairs').innerHTML = held.map((h) => {
+        const partners = held.filter((id) => id !== h && value([h, id]) !== undefined).sort((a, b) => value([h, b]) - value([h, a]));
+        return `<tr><td>${esc(nameOf[h])}<small>${two(value([h]))} alone</small></td>${partners.slice(0, 3).map((id) => `<td>${esc(nameOf[id])}<small>${signed(value([h, id]) - value([h]))} · ${two(value([h, id]))}</small></td>`).join('')}</tr>`;
+      }).join('');
+      // Pairs worth more, or less, than their parts: both together against
+      // each one's gain over no instrument, added up.
+      const pairs = [];
+      held.forEach((a, i) => held.slice(i + 1).forEach((b) => {
+        if (value([a, b]) !== undefined) pairs.push({ a, b, both: value([a, b]), extra: value([a, b]) - value([a]) - value([b]) + combos.base });
+      }));
+      pairs.sort((x, y) => y.extra - x.extra);
+      const pairName = (p) => `${nameOf[p.a]} with ${nameOf[p.b]} (${two(p.both)}, ${signed(p.extra)})`;
+      const listed = (ps) => ps.map(pairName).join('; ');
+      const clash = pairs.slice(-2).reverse().filter((p) => p.extra < -0.05);
+      document.getElementById('pairs-note').textContent = `The pairs worth the most beyond their parts: ${listed(pairs.slice(0, 3))}. The number after each pair's Rainbows is what the pair makes beyond the two instruments' separate gains.${clash.length ? ` The worst clashes: ${listed(clash)}.` : ''}`;
+      const s1 = combos.sizes[1];
+      const s2 = combos.sizes[2];
+      document.getElementById('pairs-runs').textContent = `${s2.sets} pairs and ${s1.sets} single instruments on the same prisons, ${(s1.runs + s2.runs).toLocaleString()} runs, each measured to within ±${Math.max(s1.margin, s2.margin).toFixed(3)} Rainbows per run. Generated ${combos.generated}.`;
+      document.getElementById('pairs-section').hidden = false;
+    }
+    const giftRows = G.gifts.map((g) => ({ label: g.id === 'scored' ? 'Judged on the spot' : `Always ${g.name}`, value: g.value, key: g.id === 'scored' })).sort((a, b) => b.value - a.value);
+    bars('gifts', giftRows, Math.max(...giftRows.map((r) => r.value)) * 1.05, two);
+    const counts = H.rainbowCounts;
+    bars('spread', ['No Rainbow', '1 Rainbow', '2 Rainbows', '3 Rainbows', '4 Rainbows', '5 or more'].map((label, i) => ({ label, value: counts[i], key: i > 0 })), Math.max(...counts) * 1.1, pct);
+    bars('chain-lengths', H.chainLengths.slice(0, 5).map((v, i) => ({ label: `${i + 1} bite${i ? 's' : ''}`, value: v })), Math.max(...H.chainLengths) * 1.1, pct);
+
+    // Strategy comparison.
+    const C = G.compare;
+    document.getElementById('compare').innerHTML = [
+      ['Random legal moves', C.notools.random, C.rewards.random],
+      ['Simple: consume when possible, else replace Normals, open doors', C.notools.simple, C.rewards.simple],
+      ["This guide's strategy", C.notools.tuned, C.rewards.tuned, true],
+    ].map(([label, a, b, key]) => `<tr${key ? ' class="is-key"' : ''}><td>${label}</td><td class="num">${two(a.rainbowsPerRun)}</td><td class="num">${two(b.rainbowsPerRun)}</td></tr>`).join('');
+
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,712 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Auto Screenshot Mode</title>
+<meta name="description" content="Auto Screenshot Mode for the board analyzer: connect your game log and share the game window, with what it reads and sees and the code that does each part.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%230f1216'/%3E%3Ccircle cx='8' cy='8' r='4.5' fill='none' stroke='%235fc4b8' stroke-width='1.6'/%3E%3Ccircle cx='8' cy='8' r='1.6' fill='%235fc4b8'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;500;600;700&family=Big+Shoulders+Stencil+Display:wght@600;800&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="css/style.css?v=20261022a">
+<style>
+  /* A long read in the simulator's look, like the strategy guide. */
+  .guide {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 28px 16px 64px;
+  }
+
+  .guide-back {
+    display: inline-block;
+    margin-bottom: 22px;
+    color: var(--ash);
+    font: 500 12px/1.2 var(--font-mono);
+    letter-spacing: 0.06em;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+
+  .guide-back:hover {
+    color: var(--bone);
+  }
+
+  .guide h1 {
+    margin: 6px 0 10px;
+    font: 800 clamp(40px, 9vw, 72px) / 0.95 var(--font-display);
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+    text-wrap: balance;
+    color: var(--bone);
+  }
+
+  .guide h2 {
+    margin: 0 0 12px;
+    font: 800 clamp(24px, 4vw, 32px) / 1.05 var(--font-display);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    text-wrap: balance;
+    color: var(--chalk);
+  }
+
+  .guide h3 {
+    margin: 26px 0 8px;
+    font: 700 18px/1.2 var(--font-body);
+    color: var(--bone);
+  }
+
+  .guide p,
+  .guide li {
+    max-width: 70ch;
+  }
+
+  .guide p {
+    margin: 0 0 12px;
+  }
+
+  .guide a:not(.btn) {
+    color: var(--bone);
+  }
+
+  .guide a.btn {
+    text-decoration: none;
+  }
+
+  .lede {
+    font-size: 18px;
+    line-height: 1.5;
+    color: var(--chalk);
+  }
+
+  .guide-section {
+    padding: 34px 0;
+    border-top: 1px solid var(--iron);
+  }
+
+  .note {
+    font-size: 13.5px;
+    color: var(--ash);
+  }
+
+  .facts {
+    display: grid;
+    /* One column: the site's .facts is a three-column grid of stat tiles. */
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .facts li {
+    padding: 12px 14px;
+    border: 1px solid var(--iron);
+    border-left: 3px solid var(--teal);
+    border-radius: var(--radius);
+    background: var(--slab);
+  }
+
+  .facts b {
+    color: var(--bone);
+  }
+
+  /* Code, loaded from the files the site runs. */
+  .code {
+    margin: 12px 0 20px;
+    border: 1px solid var(--iron);
+    border-radius: var(--radius);
+    background: var(--p-dark);
+    overflow: hidden;
+  }
+
+  .code-head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 4px 12px;
+    padding: 7px 12px;
+    border-bottom: 1px solid var(--iron);
+    color: var(--ash);
+    font: 500 12px/1.3 var(--font-mono);
+  }
+
+  .code-head a {
+    color: var(--teal) !important;
+  }
+
+  .code pre {
+    margin: 0;
+    padding: 10px 12px 10px 0;
+    max-height: 560px;
+    overflow: auto;
+    color: var(--chalk);
+    font: 12.5px/1.55 var(--font-mono);
+    tab-size: 2;
+  }
+
+  .code .ln {
+    display: inline-block;
+    width: 5ch;
+    padding-right: 1.5ch;
+    color: var(--iron-hi);
+    text-align: right;
+    user-select: none;
+  }
+
+  .code .cm {
+    color: var(--ash);
+  }
+
+  .code-error {
+    margin: 0;
+    padding: 12px;
+    color: var(--blood);
+  }
+
+  .files {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+
+  .files th,
+  .files td {
+    padding: 8px 10px 8px 0;
+    border-bottom: 1px solid var(--iron);
+    text-align: left;
+    vertical-align: top;
+  }
+
+  .files code {
+    overflow-wrap: anywhere;
+  }
+
+  .hash {
+    color: var(--ash);
+    font: 12px/1.4 var(--font-mono);
+    overflow-wrap: anywhere;
+  }
+
+  .agree {
+    padding: 18px;
+    border: 1px solid color-mix(in srgb, var(--teal) 55%, var(--iron));
+    border-radius: var(--radius);
+    background: color-mix(in srgb, var(--teal) 7%, var(--slab));
+  }
+
+  .agree .toggle {
+    margin-bottom: 14px;
+  }
+
+  .agree-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .agree-status {
+    margin: 12px 0 0;
+    color: var(--moss);
+  }
+
+  /* A log folder to paste into the file picker, with its Copy button. */
+  .log-path {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: flex-start;
+    margin: 4px 0 10px;
+  }
+
+  .log-path code {
+    align-self: stretch;
+    padding: 6px 8px;
+    border: 1px solid var(--iron);
+    border-radius: var(--radius);
+    background: var(--slab);
+    font: 12px/1.4 var(--font-mono);
+    overflow-wrap: anywhere;
+    user-select: all;
+  }
+
+  .log-path .btn {
+    padding: 4px 12px;
+  }
+
+  /* Step 1 takes a whole row: the drop box and the log folders need room. */
+  .az-auto-step-wide {
+    grid-column: 1 / -1;
+  }
+
+  .az-auto-step-wide > div {
+    flex: 1;
+    min-width: 0;
+  }
+
+  /* Where the log is dropped. It lights up while a file is dragged over
+     the page (js/follow.js). */
+  .log-drop {
+    display: grid;
+    gap: 4px;
+    place-items: center;
+    margin-bottom: 8px;
+    padding: 22px 14px;
+    border: 2px dashed var(--iron);
+    border-radius: var(--radius);
+    background: var(--slab);
+    text-align: center;
+    transition: border-color 0.15s, background-color 0.15s;
+  }
+
+  .log-drop strong {
+    color: var(--bone);
+    font-size: 18px;
+  }
+
+  .log-drop span {
+    color: var(--ash);
+    font-size: 13.5px;
+  }
+
+  .log-drop.is-over {
+    border-color: var(--teal);
+    background: color-mix(in srgb, var(--teal) 10%, var(--slab));
+  }
+
+  /* The game's own log switch (Settings, Account Related, Enable Log).
+     Without it the log has none of the lines the triggers match. */
+  .log-setup {
+    margin-top: 12px;
+    padding: 16px 18px;
+    border: 1px solid color-mix(in srgb, var(--check) 55%, var(--iron));
+    border-radius: var(--radius);
+    background: color-mix(in srgb, var(--check) 6%, var(--slab));
+  }
+
+  .log-setup h3 {
+    margin-top: 0;
+  }
+
+  .log-setup ol {
+    margin: 0 0 14px;
+    padding-left: 22px;
+  }
+
+  .log-setup figure {
+    margin: 0 0 10px;
+  }
+
+  .log-setup img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    border: 1px solid var(--iron);
+    border-radius: var(--radius);
+  }
+
+  .log-setup figcaption {
+    margin-top: 6px;
+    color: var(--ash);
+    font-size: 13.5px;
+  }
+
+  .log-setup .note {
+    margin-bottom: 0;
+  }
+
+  /* Following the log, but no game events yet (js/follow.js): yellow, and
+     its title says how to turn on the game's log. */
+  .field-note.is-quiet {
+    color: var(--check);
+    cursor: help;
+  }
+
+  .field-note.is-quiet::before {
+    content: "●";
+    margin-right: 6px;
+  }
+
+  @media (max-width: 600px) {
+    .files thead {
+      display: none;
+    }
+
+    .files tr {
+      display: grid;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--iron);
+    }
+
+    .files td {
+      padding: 2px 0;
+      border: 0;
+    }
+  }
+</style>
+</head>
+<body>
+<main class="guide">
+  <a class="guide-back" href="analyze.html">← Back to the board analyzer</a>
+  <a class="guide-back" id="lang-switch" href="../follow.html" lang="zh-Hant" hreflang="zh-Hant" style="margin-left: 18px">繁體中文</a>
+<script>(function(){var a=document.getElementById("lang-switch");if(!a)return;var b=a.getAttribute("href");function u(){a.setAttribute("href",b+location.search+location.hash);}u();a.addEventListener("pointerdown",u);a.addEventListener("focus",u);a.addEventListener("click",u);})();</script>
+  <p class="eyebrow">Tartarus Simulator · Board analyzer · Beta</p>
+  <h1>Auto Screenshot Mode</h1>
+  <p class="lede">Auto Screenshot Mode lets the board analyzer keep up with your game by itself. You connect the game's log and share the game window on this page. When the log shows a move, this page takes a picture of the game and hands it to the board analyzer open in another tab, which reads the board and updates the advice. Everything happens in your browser, on your PC. Below, this page says exactly what it reads and what it sees, with the code that does each part. The code is loaded from the same files your browser runs, so it can't differ from what's described here.</p>
+
+  <section class="guide-section" id="follow" aria-labelledby="follow-title">
+    <h2 id="follow-title">Your game <span class="az-auto-beta">Beta</span></h2>
+    <div class="log-setup" id="follow-enable-log">
+      <h3>First, turn on the game's log</h3>
+      <p>Auto Screenshot Mode takes a picture when the game's log shows a move, and the game writes those lines only once its log is turned on:</p>
+      <ol>
+        <li>In the game, press <b>Esc</b> and find <b>Account Related</b>.</li>
+        <li>Click <b>Enable Log</b>.</li>
+        <li>Log out and back in. The game starts writing its log only after you log in again.</li>
+      </ol>
+      <figure>
+        <img src="img/enable-log.webp?v=20261022a" width="803" height="395" alt="The game's Esc menu, under Account Related: Account Center, Redeem Code, Player Service, and the Enable Log button.">
+        <figcaption>Press Esc in the game: Enable Log is under Account Related.</figcaption>
+      </figure>
+      <p class="note">If pictures come only when you press Take a picture now, the game's log is still off: turn it on here, then log out and back in.</p>
+    </div>
+    <div class="az-auto-gate" id="az-auto-gate">
+      <p>Read this page first, then turn Auto Screenshot Mode on at the bottom. Until you do, nothing here can open your log or see any window.</p>
+      <a class="btn btn-report" href="#agree">Turn it on</a>
+    </div>
+    <div id="az-auto-body" hidden>
+      <p class="note">Chrome or Edge on a PC, with the game borderless or windowed. Keep this tab open while you play: it follows the log and takes the pictures, and the analyzer tab shows the board and the advice.</p>
+      <div class="az-auto-steps">
+        <div class="az-auto-step az-auto-step-wide">
+          <span class="az-auto-n">1</span>
+          <div>
+            <div class="log-drop" id="az-auto-drop">
+              <strong>Drag <code>UE_game.log</code> here</strong>
+              <span>from the game's log folder, in File Explorer</span>
+            </div>
+            <p class="field-note" id="az-auto-log-state"></p>
+            <button type="button" class="btn" id="az-auto-log">Or choose the file</button>
+            <p class="field-note">To open the log folder, press the Windows key and E together for File Explorer, paste the folder into the address bar at the top, and press Enter. Then drag <code>UE_game.log</code> onto the box above. With Steam's default install folder, the log folder is:</p>
+            <div class="log-path"><code id="log-path-steam">C:\Program Files (x86)\Steam\steamapps\common\Torchlight Infinite\UE_game\TorchLight\Saved\Logs</code><button type="button" class="btn" data-copy="log-path-steam">Copy</button></div>
+            <p class="field-note">With the game's own launcher, it's usually:</p>
+            <div class="log-path"><code id="log-path-launcher">C:\Program Files (x86)\Torchlight Infinite\Game\UE_game\Torchlight\Saved\Logs</code><button type="button" class="btn" data-copy="log-path-launcher">Copy</button></div>
+            <p class="field-note">If the game is in a Steam library on another drive, it's this, with that drive's letter instead of D:</p>
+            <div class="log-path"><code id="log-path-library">D:\SteamLibrary\steamapps\common\Torchlight Infinite\UE_game\TorchLight\Saved\Logs</code><button type="button" class="btn" data-copy="log-path-library">Copy</button></div>
+            <p class="field-note">Not there? In Steam, right-click Torchlight: Infinite, then Manage, then Browse local files. File Explorer opens the game's folder, and the log folder is <code>UE_game\TorchLight\Saved\Logs</code> inside it. With the launcher, it's <code>Game\UE_game\Torchlight\Saved\Logs</code> inside the game's folder.</p>
+            <p class="field-note">Dragging works wherever the game is installed. Choosing the file with the button doesn't if the game is under <code>C:\Program Files</code> or <code>C:\Program Files (x86)</code>: Chrome and Edge refuse files there from their file window, saying the folder “contains system files”. To use the button anyway, <a href="steam-library.html">move the game out of Program Files</a> first.</p>
+          </div>
+        </div>
+        <div class="az-auto-step">
+          <span class="az-auto-n">2</span>
+          <div>
+            <button type="button" class="btn" id="az-auto-win">Share the game window</button>
+            <p class="field-note" id="az-auto-win-state"></p>
+            <p class="field-note">Pick the Torchlight: Infinite window. Only that window is seen, and only when the log shows a move.</p>
+          </div>
+        </div>
+        <div class="az-auto-step">
+          <span class="az-auto-n">3</span>
+          <div>
+            <a class="btn" id="az-auto-analyzer" href="analyze.html" target="tartarus-analyzer">Open the board analyzer</a>
+            <p class="field-note" id="az-auto-analyzer-state"></p>
+            <p class="field-note">Each picture is read into a board there, in another tab of this browser.</p>
+          </div>
+        </div>
+        <div class="az-auto-step">
+          <span class="az-auto-n">4</span>
+          <div>
+            <button type="button" class="btn" id="az-auto-now">Take a picture now</button>
+            <p class="field-note">Play as usual. Pictures also come by themselves when the log shows a move. If they never do, <a href="#follow-enable-log">turn on the game's log</a>.</p>
+          </div>
+        </div>
+      </div>
+      <p class="az-auto-note" id="az-auto-note" aria-live="polite"></p>
+      <div class="az-auto-options">
+        <label class="toggle"><input type="checkbox" id="az-auto-read"><span><strong>Read each picture into the board</strong><small>The advice refreshes after every move. Cells it's unsure of are marked Check: fix anything wrong in the analyzer and press Recheck.</small></span></label>
+        <label class="toggle"><input type="checkbox" id="az-auto-speed"><span><strong>Speed-up is on in the game</strong><small>With the game’s Speed-up (top right of the prison) on, its animations are quicker, so pictures come sooner. Pressing Speed-up in the game flips this by itself.</small></span></label>
+      </div>
+      <ol class="az-auto-caps" id="az-auto-caps" aria-live="polite"></ol>
+      <details class="az-auto-dev">
+        <summary>Triggers and log lines (testing)</summary>
+        <label class="field"><span class="field-label">Take a picture when a log line matches</span><textarea id="az-auto-rules" rows="7" spellcheck="false"></textarea></label>
+        <p class="field-note"><span id="az-auto-rules-note"></span> <button type="button" class="link" id="az-auto-rules-reset">Reset to the defaults</button></p>
+        <label class="field"><span class="field-label">Show log lines matching</span><input type="text" id="az-auto-watch" spellcheck="false"></label>
+        <p class="field-note" id="az-auto-watch-note"></p>
+        <div class="az-res-actions"><button type="button" class="btn" id="az-auto-seen-save">Download these lines</button><button type="button" class="btn" id="az-auto-seen-clear">Clear</button></div>
+        <ol class="az-auto-seen" id="az-auto-seen"></ol>
+      </details>
+    </div>
+  </section>
+
+  <section class="guide-section">
+    <h2>In short</h2>
+    <ul class="facts">
+      <li><b>Nothing before you agree.</b> Until you agree at the bottom of this page, its controls stay hidden: nothing can open your log or see any window, and the board analyzer takes no pictures.</li>
+      <li><b>One file, read only.</b> It reads the game log you drag onto this page or choose (<code>UE_game.log</code>), and only the lines the game writes after you connect it. It can't open any other file, and it never changes the log.</li>
+      <li><b>One window, only with the log connected.</b> It takes pictures of the one window you share, never a whole screen or a browser tab, except in the desktop app when Windows won't share the game window and you allow it: then the screen the game is on, with each picture cut to the game window and taken only while the game is in front. It only does so while the game log is connected: when the log shows a move, or when you press Take a picture now, here or on the board analyzer (which asks this page to take it). Nothing is recorded in between.</li>
+      <li><b>Pictures stay in your browser.</b> This page hands each picture to the board analyzer open in another tab, which reads the board from it with the screenshot reader. The picture passes between the two tabs inside your browser. Pictures are kept as small previews in memory and are gone when you close the tabs. Auto Screenshot Mode never uploads a picture or your log.</li>
+      <li><b>Boards, only if you share boards.</b> The board the analyzer reads from each picture is treated like any board you ask about. If board sharing is on (the switch under the analyzer's ask button), the board is shared for the odds study: its cells, day and tools, with no picture and nothing about you. It's shared once the next picture comes in, so a board you fixed is shared as you fixed it. Turn that switch off and nothing is shared.</li>
+      <li><b>In the desktop app.</b> Tartarus Overlay finds the log and the game window itself, with no picker, and keeps your last 5 runs' pictures, boards and advice on your PC to review. See <a href="#desktop">In the desktop app</a>.</li>
+      <li><b>Off whenever you like.</b> Stop following and Stop sharing end it at once, as does your browser's own stop-sharing button. Turning it off at the bottom of this page stops it at once, and the analyzer stops taking pictures.</li>
+    </ul>
+  </section>
+
+  <section class="guide-section">
+    <h2>What your browser asks you</h2>
+    <p>Nothing happens until you've done both of these yourself:</p>
+    <ol>
+      <li><b>Give it the log.</b> You drag <code>UE_game.log</code> from the game's log folder in File Explorer onto this page, or choose it in the browser's file window (step 1 at the top lists the folders). Either way, the site gets read-only access to that one file and nothing else. The file window refuses files under Program Files, where Steam puts games by default; dragging works anywhere (or <a href="steam-library.html">move the game</a>). On your next visit, the browser asks again before the site can read it.</li>
+      <li><b>To share a window.</b> The browser lists your open windows, and you pick Torchlight: Infinite. Whole screens aren't offered. While the window is shared, the browser shows which one, with a button to stop.</li>
+    </ol>
+    <p class="note">Browsers never tell a website which program a window belongs to: not its name, its title or its process. So the code can't check that the window is the game. What it does check is that you shared one window, not your screen or a browser tab, and the browser's sharing bar shows you which window that is. Pick the game, and only the game is seen.</p>
+    <p class="note">Other browsers can't follow a file on your PC, so Auto Screenshot Mode needs Chrome or Edge on a PC. Run the game borderless or windowed: in exclusive fullscreen, a shared window looks black.</p>
+  </section>
+
+  <section class="guide-section">
+    <h2>How it works, with its code</h2>
+    <p>Each step shows the code that does it, word for word, with its line numbers in the file. It's read from the site just now.</p>
+
+    <h3>1. Nothing runs before you agree</h3>
+    <p>When this page opens, it checks for your agreement first. Without it, the controls stay hidden, and none of the code that connects the log, shares a window or passes pictures to the analyzer is set up.</p>
+    <div class="code" data-file="js/follow.js" data-region="agreement"></div>
+    <p>The part that takes pictures checks again on its own, every time, right before each picture. A picture is taken only if three things hold: you agreed to this version of this page, the game log is connected and being read, and what's shared is a single window. Connecting the log or sharing a window without your agreement is refused too.</p>
+    <div class="code" data-file="js/capture.js" data-region="guard"></div>
+
+    <h3>2. You give it the log</h3>
+    <p><code>dropLog</code> takes the file you drag onto the page: one <code>.log</code> file, and nothing else. <code>connectLog</code> opens the browser's file window instead, and the site gets only the file you choose. <code>resumeLog</code> is for later visits: the browser remembers your choice, but asks you again before the site may read it.</p>
+    <div class="code" data-file="js/capture.js" data-region="pick-log"></div>
+
+    <h3>3. It reads only the new lines</h3>
+    <p>Once a second, the follower checks whether the log has grown, and reads only the part added since its last look. It starts at the end of the log, so nothing written before you connected is ever read. Each new line is checked against the triggers below. A line that matches nothing is dropped; a line that matches the watch pattern is shown to you on the page. It runs in a background worker, so it keeps up when the tab is hidden. However the log changes, each look reads at most the newest megabyte and passes at most 200 lines to the page, so the page never has more than it can handle. If the log is deleted, the follower waits, and reads the next log the game writes from its start. The game also writes its language in the log every few minutes (a line with <code>sdkLang=…</code>). The follower notes only that language code, so the analyzer can tell you when names and labels may not be read. Nothing else from that line is kept, shown or sent.</p>
+    <div class="code" data-file="js/capture.js" data-region="read-log"></div>
+
+    <h3>4. It watches for moves</h3>
+    <p>The triggers are patterns for the lines the game writes when something happens. Each has a kind, the pattern, and a settle time. The built-in ones take a picture at: the run's objective popup; its pick of 3 instruments and each re-roll of it (also an extra pick an objective pays); the start of each day, once the new day's banner closes; after a move, when the cards come up; after an action in the cell, once it has played out; after each bite of a consume chain, and after a Cancel; after an event is confirmed (the Sewer Ratway's cell pick shows then); and the Warden's Treasure, and again once it closes. The Treasure covers the board, so the analyzer waits for it before advising a gift: press View Prison Status in the game, and the picture taken then is of the board behind the Treasure, which still waits; the gift advice uses that board. Two lines take no picture: the next day's banner cancels a picture still waiting, so an action that ends the day takes none of the banner; and the game's Speed-up button switches how soon pictures come. So it takes a picture of each screen where you decide something, and none in between. You can add triggers of your own at the top of this page, under Triggers and log lines; the built-in ones always apply as well.</p>
+    <div class="code" data-file="js/follow.js" data-region="default-triggers"></div>
+    <p>When matching lines come in a burst, it waits until the log has been quiet for the settle time, so the animations finish. Then it takes one picture for the whole burst.</p>
+    <div class="code" data-file="js/capture.js" data-region="triggers"></div>
+
+    <h3>5. It takes one picture of the window you shared</h3>
+    <p><code>connectWindow</code> asks the browser to share a window, which you pick. <code>useStream</code> turns away a whole screen or a browser tab and stops that share at once; only the desktop app can hand it a screen, through <code>useCrop</code>, and only after you've allowed it (see the desktop app below). <code>grab</code> takes a single still frame, and only when the check from step 1 allows it. On such a screen it first asks the app where the game window is: if the game isn't the window in front, it takes nothing, and otherwise it cuts the frame to the game window before the frame leaves <code>grab</code>, so nothing else on the screen is read, kept or sent. In Chrome and Edge, nothing plays the window as video in between.</p>
+    <div class="code" data-file="js/capture.js" data-region="share-window"></div>
+
+    <h3>6. The picture goes to your board analyzer</h3>
+    <p>This page lists each picture as a small preview, then hands it to the board analyzer you opened from here, in another tab. It travels between the tabs inside your browser, through the browser's BroadcastChannel, which reaches only this site's own pages. If no analyzer tab is open, the picture is only listed here.</p>
+    <div class="code" data-file="js/follow.js" data-region="each-picture"></div>
+
+    <h3>7. The analyzer reads it into your board</h3>
+    <p>The analyzer answers only after you've agreed, and reads only the pictures sent to it. The screenshot reader, running in your browser, turns the picture into a board, which becomes your board straight away, and the analyzer gives its advice. Cells the reader is unsure of are marked Check. If anything doesn't match your game, fix it on the board and press Recheck. A picture of the objective popup sets the run's objective, read from its title. A picture of the instrument pick is read as that instead: the analyzer starts a fresh run at the offer, with the three instruments it read and whether a re-roll is left, and says which to take, or to re-roll. The instruments are read by their printed names first, with an OCR engine (Tesseract) that the analyzer downloads once from jsDelivr, a public code host, and runs in your browser: the picture itself isn’t sent anywhere. Where a name isn’t clear, the card’s art is used. An instrument it's unsure of is named for you to check. Only how the reading went goes back to this page. Nothing is uploaded.</p>
+    <p>The analyzer also shows, at its top, whether Auto Screenshot Mode is running. This page tells it whether the log is followed and the window shared, whether the game is writing the lines Auto Screenshot Mode needs, how many moves the log has shown, when its last picture was taken and of what, and the game's language. It never sends the log's lines that way. While the log is followed but has shown no move yet, the bar is yellow, and pointing at it says how to turn on the game's log.</p>
+    <div class="code" data-file="js/auto.js" data-region="receive"></div>
+  </section>
+
+  <section class="guide-section" id="desktop">
+    <h2>In the desktop app</h2>
+    <p>Tartarus Overlay is a Windows app that runs Auto Screenshot Mode for you and shows the advice in a small card over the game, so one monitor is enough. It opens this site's own pages (this page and the board analyzer) inside the app, so everything above still holds there, with the differences below. Its code is in the site's repository, under <code>desktop/</code>, and each part is shown here the same way. <a href="https://github.com/blahdot3h/tartarus-simulator/releases/latest" target="_blank" rel="noopener">Download it</a> (Windows; it isn't code-signed yet, so Windows may ask you to confirm: More info, then Run anyway).</p>
+
+    <h3>It finds the log itself</h3>
+    <p>You don't drag the log in. The app looks where the game writes it. While the game runs, that's beside the game itself: Windows tells the app two things about the game: where its program file is, and whether the game (or the program that started it) runs as administrator. The second goes only into the app's debug log, because Windows cuts off a window share to an app that doesn't run as administrator too. The app learns nothing else about it. Otherwise it looks in each Steam library that has the game (from Steam's own list of its libraries) and in the game launcher's default folder, and takes the newest <code>UE_game.log</code> there. You can also choose a log from its tray menu, drag one onto this page, or use the button in step 1. In the app, the app itself reads that file, so it works wherever the game is installed and doesn't ask again. Only this page can read it, and only its size and the bytes it asks for. The follower above still reads only the new lines.</p>
+    <div class="code" data-file="desktop/main.js" data-region="find-log"></div>
+    <div class="code" data-file="desktop/main.js" data-region="read-log"></div>
+
+    <h3>It shares only the game window, found by its title</h3>
+    <p>A desktop app can see which window is which. Every two seconds the app looks for the window titled Torchlight: Infinite. When this page asks to share a window, the app answers with that window only, with no picker: never a browser tab or any other window. The checks above still run. A picture is taken only while you've agreed, the log is followed and the shared window is live.</p>
+    <p>Sometimes Windows won't share the game window: when the game runs as administrator, say, the share fails with "Could not start video source". Then the overlay asks whether the app may share the screen the game is on instead. Only if you say yes does it share that screen, and every picture is cut to the game window's visible area before anything reads or keeps it, and taken only while the game is the window in front. The overlay stays out of it, as it does from any capture. You can turn it off from the tray menu (Share the game's screen when Windows won't share its window), and turning Auto Screenshot Mode off here clears your answer.</p>
+    <div class="code" data-file="desktop/main.js" data-region="game-title"></div>
+    <div class="code" data-file="desktop/main.js" data-region="game-window"></div>
+    <div class="code" data-file="desktop/main.js" data-region="share-game"></div>
+    <p>On this page, the app does what you'd do by hand: once you've agreed, it connects the log it found and shares the game window, only while the game runs. Your Stop following and Stop sharing buttons still work.</p>
+    <div class="code" data-file="desktop/lib/follow-adapter.js" data-region="connect"></div>
+
+    <h3>One agreement for the app</h3>
+    <p>You agree once in the app. It remembers which version of this page you agreed to, so it doesn't ask again when it starts or updates. If this page's agreement version changes, it asks again. Turning Auto Screenshot Mode off here turns it off for the app.</p>
+    <div class="code" data-file="desktop/lib/follow-adapter.js" data-region="agreement"></div>
+    <div class="code" data-file="desktop/main.js" data-region="consent"></div>
+
+    <h3>A record of your last runs, on your PC</h3>
+    <p>Unlike the browser, the app keeps a record on your PC, so you can look back at a run from its tray menu (Review the record). It holds each picture the analyzer was handed, what the reader made of it, the board and the advice, and the changes you made on the board. It keeps your last 5 runs and deletes older ones. (A test build started with <code>--dev</code> keeps up to 1 GB instead.) The record stays in the app's folder on your PC and is never uploaded. Turn it off in the tray menu: Record every board and advice. The app also keeps a short log of what it did, such as the game starting and closing, pictures taken, readings and advice, for troubleshooting. That log never holds the game log's lines or a picture.</p>
+    <div class="code" data-file="desktop/lib/analyzer-adapter.js" data-region="record"></div>
+    <div class="code" data-file="desktop/main.js" data-region="record"></div>
+    <p class="note">The overlay only shows what the analyzer's results say, and presses the analyzer's buttons for you. Boards are shared and reports sent exactly as on the website, by the website's own code: the board-sharing switch under the analyzer's ask button still decides.</p>
+  </section>
+
+  <section class="guide-section">
+    <h2>Check the files</h2>
+    <p>These are the files shown above, as this site serves them now, with each file's SHA-256 fingerprint. A copy from GitHub with the same fingerprint is the same file, byte for byte.</p>
+    <table class="files">
+      <thead><tr><th>File</th><th>What it does</th><th>SHA-256</th></tr></thead>
+      <tbody id="file-rows"></tbody>
+    </table>
+  </section>
+
+  <section class="guide-section" id="agree">
+    <h2>Turn it on</h2>
+    <div class="agree">
+      <label class="toggle"><input type="checkbox" id="agree-box"><span><strong>I've read this page.</strong><small>I agree to let Auto Screenshot Mode read the game log and take pictures of the game window, as described above. In a browser, that's the log I give it and the window I share. In the desktop app, it's the log and the Torchlight: Infinite window it finds (or, only if I allow it when Windows won't share that window, the screen it's on, cut to that window), with its record of my last runs kept on this PC.</small></span></label>
+      <div class="agree-actions">
+        <button type="button" class="btn btn-primary" id="agree-on" disabled>Turn on Auto Screenshot Mode</button>
+        <button type="button" class="btn" id="agree-off" hidden>Turn it off and forget my log</button>
+      </div>
+      <p class="agree-status" id="agree-status" aria-live="polite"></p>
+    </div>
+    <p class="note">This is agreement version <span id="consent-version">5</span>. If what Auto Screenshot Mode does changes, this page asks you to read it again before it turns back on.</p>
+  </section>
+</main>
+
+<script src="js/capture.js?v=20261022a"></script>
+<script src="js/follow.js?v=20261022a"></script>
+<script>
+(function () {
+  'use strict';
+
+  const KEY = 'tartarus-sim:auto:v1';
+  const REPO = 'https://github.com/blahdot3h/tartarus-simulator/blob/main/';
+  const VERSION = (window.TartarusCapture && window.TartarusCapture.CONSENT_VERSION) || 1;
+  const FILES = [
+    ['js/capture.js', 'Follows the log, checks your agreement, and takes pictures of the shared window.'],
+    ['js/follow.js', 'This page’s controls: the agreement check, the triggers, and handing each picture to the analyzer tab.'],
+    ['js/auto.js', 'The analyzer’s side: the agreement check, and reading each picture it’s handed into the board.'],
+    ['desktop/main.js', 'The desktop app: finds the log, shares only the game window (or, if you allow it when Windows won’t, the screen it’s on, cut to the window), and keeps the agreement and the record.'],
+    ['desktop/preload.js', 'What this site’s pages get from the desktop app.'],
+    ['desktop/lib/follow-adapter.js', 'In the desktop app, on this page: connects the log and the game window, and keeps the agreement.'],
+    ['desktop/lib/analyzer-adapter.js', 'In the desktop app, on the analyzer: copies the advice to the overlay, and keeps the record.'],
+  ];
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+  // ---------- Settings, shared with the analyzer (js/auto.js) ----------
+
+  function load() {
+    try {
+      return JSON.parse(localStorage.getItem(KEY) || 'null') || {};
+    } catch (e) {
+      return {};
+    }
+  }
+  function save(p) {
+    try {
+      localStorage.setItem(KEY, JSON.stringify(p));
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+  const prefs = load();
+  $('consent-version').textContent = VERSION;
+
+  // What each agreement version added, for a player who agreed to an
+  // older one: Auto Screenshot Mode stays off until they agree again.
+  const CHANGES = {
+    5: 'it also notes the game’s language, which the game writes in its log every few minutes (a line with sdkLang=…). Only the two-letter language code is kept, so the analyzer can tell you when names and labels may not be read.',
+  };
+  function renderAgreement() {
+    const on = prefs.enabled && prefs.consent === VERSION;
+    $('agree-off').hidden = !on;
+    const older = prefs.enabled && prefs.consent > 0 && prefs.consent < VERSION;
+    const since = older ? Object.keys(CHANGES).filter((v) => v > prefs.consent && v <= VERSION).map((v) => CHANGES[v]) : [];
+    $('agree-status').textContent = on ? `Auto Screenshot Mode is on in this browser${prefs.consentAt ? `, since you agreed on ${new Date(prefs.consentAt).toLocaleDateString()}` : ''}.`
+      : older ? `You agreed to version ${prefs.consent} of this page. Since then, ${since.join(' And ') || 'this page changed'} Auto Screenshot Mode is off until you agree again below.` : '';
+  }
+  $('agree-box').addEventListener('change', (e) => ($('agree-on').disabled = !e.target.checked));
+  $('agree-on').addEventListener('click', () => {
+    Object.assign(prefs, { enabled: true, consent: VERSION, consentAt: new Date().toISOString() });
+    if (!save(prefs)) {
+      $('agree-status').textContent = 'This browser won’t save settings (a private window?), so it can’t be turned on here.';
+      return;
+    }
+    // The controls at the top set themselves up on load, now that you agreed.
+    location.hash = 'follow';
+    location.reload();
+  });
+  $('agree-off').addEventListener('click', () => {
+    Object.assign(prefs, { enabled: false, consent: 0, consentAt: null });
+    save(prefs);
+    // Other tabs stop by themselves (js/capture.js); this one stops here.
+    if (window.TartarusCapture) {
+      window.TartarusCapture.stopLog();
+      window.TartarusCapture.stopWindow();
+    }
+    try {
+      indexedDB.deleteDatabase('tartarus-sim-capture'); // the remembered log
+    } catch (e) {
+      // Nothing to forget.
+    }
+    $('az-auto-gate').hidden = false;
+    $('az-auto-body').hidden = true;
+    renderAgreement();
+    $('agree-status').textContent = 'Turned off, and the log you gave it is forgotten.';
+  });
+  renderAgreement();
+
+  // The log folder paths, ready to paste into the file picker.
+  document.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-copy]');
+    if (!b) return;
+    const text = $(b.dataset.copy).textContent;
+    const done = (ok) => {
+      b.textContent = ok ? 'Copied' : 'Select it and copy';
+      setTimeout(() => (b.textContent = 'Copy'), 2000);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(() => done(true), () => done(false));
+    else done(false);
+  });
+
+  // ---------- The code, from the files the site runs ----------
+
+  const fetched = {};
+  const get = (path) => (fetched[path] = fetched[path] || fetch(path, { cache: 'no-store' }).then((r) => {
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    return r.arrayBuffer();
+  }));
+
+  // The lines between "// #region name" and the next "// #endregion".
+  function region(text, name) {
+    const lines = text.split(/\r?\n/);
+    const start = lines.findIndex((l) => l.trim() === `// #region ${name}`);
+    if (start < 0) return null;
+    let end = lines.findIndex((l, i) => i > start && l.trim() === '// #endregion');
+    if (end < 0) end = lines.length;
+    const body = lines.slice(start + 1, end);
+    const indent = Math.min(...body.filter((l) => l.trim()).map((l) => l.match(/^ */)[0].length));
+    return { from: start + 2, to: end, lines: body.map((l) => l.slice(indent)) };
+  }
+
+  function codeHTML(r) {
+    let inBlock = false;
+    return r.lines.map((line, i) => {
+      const t = line.trim();
+      if (t.startsWith('/*')) inBlock = true;
+      const comment = inBlock || t.startsWith('//');
+      if (t.endsWith('*/')) inBlock = false;
+      return `<span class="ln">${r.from + i}</span>${comment ? `<span class="cm">${esc(line)}</span>` : esc(line)}`;
+    }).join('\n');
+  }
+
+  for (const box of document.querySelectorAll('.code')) {
+    const path = box.dataset.file;
+    get(path)
+      .then((buf) => {
+        const r = region(new TextDecoder().decode(buf), box.dataset.region);
+        if (!r) throw new Error('that part of the file wasn’t found');
+        box.innerHTML = `<div class="code-head"><span>${esc(path)}, lines ${r.from}–${r.to}</span><span><a href="${esc(path)}" target="_blank" rel="noopener">whole file</a> · <a href="${REPO}${esc(path)}#L${r.from}-L${r.to}" target="_blank" rel="noopener">on GitHub</a></span></div><pre><code>${codeHTML(r)}</code></pre>`;
+      })
+      .catch((e) => {
+        box.innerHTML = `<p class="code-error">${esc(path)} couldn’t be loaded (${esc(e.message)}). <a href="${REPO}${esc(path)}" target="_blank" rel="noopener">Read it on GitHub</a>.</p>`;
+      });
+  }
+
+  // Fingerprints of the files as served.
+  $('file-rows').innerHTML = FILES.map(([path, what]) => `<tr><td><code>${esc(path)}</code><br><a href="${esc(path)}" target="_blank" rel="noopener">as served</a> · <a href="${REPO}${esc(path)}" target="_blank" rel="noopener">on GitHub</a></td><td>${esc(what)}</td><td class="hash" data-hash="${esc(path)}">working it out…</td></tr>`).join('');
+  for (const [path] of FILES) {
+    const cell = document.querySelector(`[data-hash="${path}"]`);
+    get(path)
+      .then((buf) => crypto.subtle.digest('SHA-256', buf))
+      .then((d) => (cell.textContent = [...new Uint8Array(d)].map((b) => b.toString(16).padStart(2, '0')).join('')))
+      .catch((e) => (cell.textContent = `couldn’t be read (${e.message})`));
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,642 @@
+/* ---------- The Frozen Canvas page ---------- */
+
+.cv {
+  --lv1: #9aa1ab;
+  --lv2: #4fb365;
+  --lv3: #4a90e2;
+  --lv4: #a36bdb;
+  --lv5: #e0a030;
+  --lv6: #e0524f;
+  --lv7: #f4f0ff;
+  --frost: #c9d6e4;
+  --frost-ink: #233040;
+  --range: #f1cd48;
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 20px 16px 56px;
+}
+
+.cv-modes {
+  display: inline-flex;
+  gap: 4px;
+  margin-top: 14px;
+  padding: 4px;
+  border: 1px solid var(--iron);
+  border-radius: 6px;
+  background: var(--slab);
+}
+
+.cv-modes button {
+  min-height: 36px;
+  padding: 6px 16px;
+  border: 0;
+  border-radius: 4px;
+  background: none;
+  color: var(--ash);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.cv-modes button[aria-selected="true"] {
+  background: var(--bone);
+  color: var(--bone-ink);
+}
+
+/* The painting screen, laid out like the game's. */
+.cv-screen {
+  margin-top: 16px;
+  padding: 14px;
+  border: 1px solid var(--iron);
+  border-radius: 8px;
+  background:
+    radial-gradient(70% 60% at 30% 40%, color-mix(in srgb, #7fa6c9 14%, transparent), transparent 75%),
+    var(--slab);
+}
+
+.cv-game {
+  display: grid;
+  grid-template-columns: minmax(0, 560px) minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.cv-board {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 4px;
+  padding: 8px;
+  border: 2px solid color-mix(in srgb, var(--frost) 40%, var(--iron));
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--frost) 12%, var(--court));
+}
+
+.cv-cell {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  min-width: 0;
+  padding: 0;
+  border: 2px solid transparent;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--frost) 82%, var(--court));
+  color: var(--frost-ink);
+  cursor: pointer;
+}
+
+.cv-cell.is-blocked,
+.cv-cell.is-void,
+.cv-cell.is-broken {
+  cursor: default;
+}
+
+.cv-cell.is-broken {
+  background: linear-gradient(150deg, #4a4540, #2b2724 60%, #1d1a18);
+  color: #c9b9a3;
+}
+
+.cv-crack {
+  width: 78%;
+  height: 78%;
+  opacity: 0.8;
+}
+
+.cv-cell.is-void {
+  background: radial-gradient(circle at 50% 50%, #2a2f38 0 18%, #14171c 19% 32%, #2a2f38 33% 46%, #101216 47%);
+}
+
+.cv-cell.is-blocked {
+  background: linear-gradient(140deg, #9fe3ff, #3fa7e0 45%, #1f73b8);
+  box-shadow: inset 0 0 0 2px color-mix(in srgb, #ffffff 35%, transparent), inset -6px -6px 12px color-mix(in srgb, #0a3d66 55%, transparent);
+}
+
+.cv-cell.is-painted {
+  background: color-mix(in srgb, var(--frost) 55%, var(--court));
+}
+
+.cv-brush {
+  width: 42%;
+  height: 42%;
+  color: color-mix(in srgb, var(--frost-ink) 45%, transparent);
+}
+
+.cv-cell.in-range {
+  border-color: var(--range);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--range) 55%, transparent);
+}
+
+.cv-cell.counts {
+  border-color: color-mix(in srgb, var(--range) 70%, transparent);
+}
+
+.cv-cell.can-place {
+  border-color: var(--teal);
+  border-style: dashed;
+}
+
+.cv-cell.is-best {
+  border-color: var(--bone);
+  border-style: solid;
+  box-shadow: 0 0 0 2px var(--bone), 0 0 18px color-mix(in srgb, var(--bone) 45%, transparent);
+}
+
+.cv-cell.is-selected {
+  border-color: var(--bone);
+  border-style: solid;
+}
+
+.cv-bang {
+  position: absolute;
+  top: 2px;
+  left: 3px;
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #6b5a2a;
+  color: #f6dc7a;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.cv-bang.is-live {
+  background: #f1cd48;
+  color: #3b2f19;
+  box-shadow: 0 0 10px #f1cd48;
+}
+
+.cv-tag {
+  position: absolute;
+  right: 2px;
+  bottom: 2px;
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: var(--bone);
+  color: var(--bone-ink);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+/* Paint tokens: round monsters, diamond gameplay, framed by level. */
+.cv-token {
+  --lvc: var(--lv1);
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 78%;
+  aspect-ratio: 1;
+}
+
+.cv-token.lv2 { --lvc: var(--lv2); }
+.cv-token.lv3 { --lvc: var(--lv3); }
+.cv-token.lv4 { --lvc: var(--lv4); }
+.cv-token.lv5 { --lvc: var(--lv5); }
+.cv-token.lv6 { --lvc: var(--lv6); }
+.cv-token.lv7 { --lvc: #fff; }
+
+.cv-token-face {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  border: 3px solid var(--lvc);
+  background: radial-gradient(circle at 40% 35%, #3a4250, #1a1e25);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--lvc) 45%, transparent);
+}
+
+.cv-token.is-monster .cv-token-face {
+  border-radius: 50%;
+}
+
+.cv-token.is-gameplay .cv-token-face {
+  width: 74%;
+  height: 74%;
+  border-radius: 4px;
+  transform: rotate(45deg);
+}
+
+.cv-token.is-gameplay .cv-token-face > * {
+  transform: rotate(-45deg);
+}
+
+.cv-token.lv7 .cv-token-face {
+  border-color: transparent;
+  background:
+    radial-gradient(circle at 40% 35%, #3a4250, #1a1e25) padding-box,
+    conic-gradient(from 0deg, #ea4f57, #f28c36, #f1cd48, #79c27a, #5fc4b8, #6b96ff, #b07cf0, #ea4f57) border-box;
+}
+
+.cv-glyph {
+  color: var(--chalk);
+  font-size: clamp(10px, 1.6vw, 15px);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.cv-chest {
+  width: 70%;
+  height: 70%;
+}
+
+.cv-token.is-chest .cv-token-face {
+  background: radial-gradient(circle at 40% 35%, #4a3a20, #1e170c);
+}
+
+.cv-lv {
+  position: absolute;
+  right: -4px;
+  bottom: -6px;
+  padding: 0 4px;
+  border-radius: 3px;
+  background: color-mix(in srgb, #0f1216 80%, transparent);
+  color: var(--chalk);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.cv-hint {
+  min-height: 1.4em;
+  margin: 10px 2px 0;
+  color: var(--ash);
+  font-size: 14px;
+}
+
+/* The right side: objective or offer, then paints in hand, then actions. */
+.cv-right {
+  display: grid;
+  gap: 12px;
+}
+
+.cv-top {
+  display: flex;
+  justify-content: space-between;
+  color: var(--ash);
+  font-size: 13px;
+}
+
+.cv-count {
+  color: var(--chalk);
+  font-weight: 600;
+}
+
+.cv-objective,
+.cv-offer {
+  padding: 10px 12px;
+  border: 1px solid color-mix(in srgb, var(--range) 40%, var(--iron));
+  border-radius: 6px;
+  background: color-mix(in srgb, #2a4a6a 22%, var(--court));
+}
+
+.cv-obj-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--chalk);
+}
+
+.cv-obj-bang {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  flex: none;
+  border-radius: 50%;
+  background: #f1cd48;
+  color: #3b2f19;
+  font-weight: 800;
+}
+
+.cv-obj-effect,
+.cv-obj-stroke,
+.cv-obj-room {
+  margin: 4px 0 0 30px;
+  color: var(--ash);
+  font-size: 13.5px;
+}
+
+.cv-obj-room.is-failed {
+  color: var(--blood);
+}
+
+.cv-obj-stroke {
+  color: #f1cd48;
+}
+
+.cv-offer-card {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.cv-offer-card .cv-token {
+  width: 54px;
+  flex: none;
+}
+
+.cv-offer-card p {
+  margin: 0;
+  font-size: 13.5px;
+  color: var(--ash);
+}
+
+.cv-offer-card .cv-offer-name {
+  color: var(--chalk);
+  font-weight: 600;
+}
+
+.cv-offer-head {
+  margin: 12px 0 6px;
+  font-weight: 600;
+  color: var(--chalk);
+}
+
+.cv-stroke {
+  display: block;
+  width: 100%;
+  margin-top: 6px;
+  padding: 10px 12px;
+  border: 1px solid var(--iron);
+  border-radius: 4px;
+  background: linear-gradient(90deg, #22324a, #1a1e25);
+  color: var(--chalk);
+  text-align: left;
+  cursor: pointer;
+}
+
+.cv-stroke:hover {
+  border-color: var(--bone);
+}
+
+.cv-stroke b {
+  margin-right: 6px;
+  color: #f1cd48;
+}
+
+.cv-refresh {
+  margin-top: 8px;
+}
+
+.cv-inv-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.cv-inv-note {
+  color: var(--ash);
+  font-size: 13px;
+}
+
+.cv-inventory {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 6px;
+  max-height: 260px;
+  overflow-y: auto;
+  padding: 6px;
+  border: 1px solid var(--iron);
+  border-radius: 6px;
+  background: var(--court);
+}
+
+.cv-inv {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  padding: 4px;
+  border: 1px solid var(--iron);
+  border-radius: 4px;
+  background: var(--slab);
+  cursor: pointer;
+}
+
+.cv-inv:hover {
+  border-color: var(--iron-hi);
+}
+
+.cv-inv.is-picked {
+  border-color: var(--bone);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--bone) 45%, transparent);
+}
+
+.cv-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.cv-force:disabled,
+.cv-actions .btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Setting up your own canvas. */
+.cv-edit {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--iron);
+}
+
+.cv-edit-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.cv-edit-body {
+  margin-top: 10px;
+}
+
+.cv-edit-title {
+  margin: 0 0 8px;
+  font-weight: 600;
+  color: var(--chalk);
+}
+
+.cv-pick-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.cv-pick-row > span:first-child {
+  width: 128px;
+  flex: none;
+  color: var(--ash);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.cv-mini {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  padding: 4px;
+  border: 1px solid var(--iron);
+  border-radius: 4px;
+  background: var(--court);
+  cursor: pointer;
+}
+
+.cv-mini[aria-pressed="true"] {
+  border-color: var(--bone);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--bone) 45%, transparent);
+}
+
+.cv-mini .cv-lv {
+  font-size: 9.5px;
+}
+
+.cv-num {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--ash);
+  font-size: 13px;
+}
+
+.cv-num input {
+  width: 4.5em;
+}
+
+/* The trainer. */
+.cv-trainer {
+  margin-top: 16px;
+  border-color: var(--teal);
+}
+
+.cv-trainer-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.cv-adv-top {
+  margin: 10px 0 4px;
+  font-size: 16px;
+}
+
+.cv-adv-list {
+  display: grid;
+  gap: 4px;
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cv-adv-list li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px;
+  border: 1px solid var(--iron);
+  border-radius: 4px;
+}
+
+.cv-adv-list li.is-best {
+  border-color: var(--teal);
+  background: color-mix(in srgb, var(--teal) 8%, transparent);
+}
+
+.cv-adv-num {
+  color: var(--ash);
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.cv-adv-list .btn {
+  min-height: 30px;
+  padding: 4px 10px;
+}
+
+.cv-stats,
+.cv-lab,
+.cv-rules {
+  margin-top: 16px;
+}
+
+.cv-lab summary {
+  cursor: pointer;
+  list-style: none;
+}
+
+.cv-lab summary h2 {
+  display: inline;
+}
+
+.cv-lab-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 10px 16px;
+  margin: 12px 0;
+}
+
+.cv-rules-list {
+  display: grid;
+  gap: 8px;
+  margin: 8px 0 12px;
+  padding-left: 20px;
+  color: var(--ash);
+}
+
+.cv-rules-list b {
+  color: var(--chalk);
+}
+
+@media (max-width: 900px) {
+  .cv-game {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .cv-pick-row > span:first-child {
+    width: 100%;
+  }
+}
+
+@media (max-width: 520px) {
+  .cv-screen {
+    padding: 8px;
+  }
+
+  .cv-board {
+    gap: 3px;
+    padding: 4px;
+  }
+
+  .cv-lv {
+    font-size: 9px;
+  }
+
+  .cv-bang {
+    width: 14px;
+    height: 14px;
+    font-size: 10px;
+  }
+
+  .cv-adv-list li {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.cv-mini .cv-glyph {
+  font-size: 9px;
+}
+
+.cv-mini .cv-token-face {
+  border-width: 2px;
+}

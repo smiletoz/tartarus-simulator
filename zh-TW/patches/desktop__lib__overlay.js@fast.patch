@@ -1,0 +1,55 @@
+快速模式按鈕（advice.fast）與「辨識結果」面板（advice.seen；顯示／隱藏記在
+main.js 的 settings.seenOpen，由 shell.seenOpen 帶回來）。
+
+<<<< once
+  const state = { shell: {}, game: {}, follow: null, advice: null, menu: false };
+====
+  const state = { shell: {}, game: {}, follow: null, advice: null, menu: false, seenOpen: true };
+>>>>
+
+<<<< once
+    $('report-menu').hidden = !state.menu;
+    $('report-reading').hidden = !(a && a.canReportReading);
+  }
+====
+    $('report-menu').hidden = !state.menu;
+    $('report-reading').hidden = !(a && a.canReportReading);
+    // 快速模式：狀態由分析器回報。
+    const fast = $('fast');
+    if (fast) {
+      fast.hidden = !(a && typeof a.fast === 'boolean');
+      fast.setAttribute('aria-pressed', a && a.fast ? 'true' : 'false');
+      fast.textContent = a && a.fast ? '快速 ✓' : '快速';
+    }
+    // 辨識結果：這次截圖讀到的內容。
+    const seen = $('seen');
+    if (seen) {
+      const rows = a && Array.isArray(a.seen) ? a.seen : [];
+      seen.hidden = !rows.length;
+      $('seen-toggle').textContent = state.seenOpen ? '辨識 ▾' : '辨識 ▸';
+      $('seen-toggle').setAttribute('aria-expanded', state.seenOpen ? 'true' : 'false');
+      $('seen-list').hidden = !state.seenOpen;
+      $('seen-list').replaceChildren(...(state.seenOpen ? rows.flatMap((r) => [h('dt', null, String(r.k || '')), h('dd', null, String(r.v || ''))]) : []));
+    }
+  }
+>>>>
+
+<<<< once
+    if (b.id === 'fold') return O.command('collapse');
+====
+    if (b.id === 'fold') return O.command('collapse');
+    if (b.id === 'seen-toggle') {
+      state.seenOpen = !state.seenOpen;
+      render();
+      return O.command('seen-toggle');
+    }
+>>>>
+
+<<<< once
+    state.shell = s || {};
+    render();
+====
+    state.shell = s || {};
+    if (typeof state.shell.seenOpen === 'boolean') state.seenOpen = state.shell.seenOpen;
+    render();
+>>>>

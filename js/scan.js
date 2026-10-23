@@ -1370,6 +1370,9 @@
 
   // "N day(s) until Riot" over the board: the number is the tall glyphs at
   // the start of the line, and the rest of the line is smaller and dimmer.
+  // 繁中版：中文客戶端（opts.lang 為 zh）時，標籤與版面改用中文的形狀判斷。
+  let CJK = false;
+
   function dayNumber(img, loc) {
     const top = Math.min(at(loc, 0, 0)[1], at(loc, 5, 0)[1]) - 95 * loc.s;
     if (top < 8) return null;
@@ -1382,7 +1385,8 @@
     for (const line of lines) {
       const glyphs = line.glyphs.filter((g) => g.w >= 0.25 * g.h && g.h >= img.height * 0.016);
       // Two glyphs of the same height, side by side: one number.
-      const pair = (a, b) => !!a && !!b && Math.abs(b.h - a.h) < 0.2 * a.h && b.x0 - a.x1 < 0.7 * a.h && b.w < b.h * 1.1 && a.w < a.h * 1.1;
+      // 中文客戶端：數字前面緊接著中文字（「剩餘12天」），高度相近，容許差距要更小。
+      const pair = (a, b) => !!a && !!b && Math.abs(b.h - a.h) < (CJK ? 0.12 : 0.2) * a.h && b.x0 - a.x1 < 0.7 * a.h && b.w < b.h * 1.1 && a.w < a.h * 1.1;
       for (let i = 0; i < glyphs.length; i++) {
         // A run of one or two glyphs of the same height, taller than what
         // follows: the number, then "day(s) until Riot". The second digit of
@@ -1432,6 +1436,33 @@
     return best;
   }
 
+  // 中文客戶端的「刑具」標籤：兩個字，寬約 34 個棋盤單位。找到後換算成英文標籤
+  // 「Torture Instrument」在同一位置會有的大小（字高 = 中文標籤寬 / 3.35），
+  // 後面的刑具欄、開局卡徽章、目標文字位置就都沿用原本的計算。
+  function findLabelCJK(img, loc, left) {
+    const u = loc.s;
+    let best = null;
+    for (const r of textRadii(img)) {
+      for (const line of textLines(img, 0, 0, left, Math.round(img.height * 0.8), { minH: 6, maxH: Math.max(40, img.height * 0.06), r, s: 0.5 })) {
+        if (line.h < 10 * u || line.h > 21 * u) continue;
+        for (const p of line.pieces) {
+          const w = p.x1 - p.x0;
+          if (w < 27 * u || w > 41 * u) continue;
+          const glyphs = p.words.flatMap((x) => x.glyphs);
+          // 兩個方塊字：最寬的筆畫塊要接近字高
+          if (!glyphs.some((g) => g.w > 0.55 * line.h)) continue;
+          // 下方要有刑具欄（或空欄位的暗色區），先以最靠左、最接近 34 單位寬的為準
+          const off = Math.abs(w - 33.7 * u) / u + p.x0 / (40 * u);
+          if (!best || off < best.off) best = { off, p, h: line.h };
+        }
+      }
+    }
+    if (!best) return null;
+    const { p } = best;
+    const h = (p.x1 - p.x0) / 3.35;
+    return { off: best.off, x0: p.x0, x1: p.x0 + 12.2 * h, y0: p.y1 - h, y1: p.y1, h, words: [], cjk: true };
+  }
+
   // Torture instruments: the icons under the "Torture Instrument" label,
   // left of the board, each matched to the instrument it shows.
   function readTools(img, loc, ref) {
@@ -1462,7 +1493,7 @@
   function findToolIcons(img, loc) {
     const left = Math.min(at(loc, 0, 0)[0], at(loc, 0, 3)[0]) - 70 * loc.s;
     if (left < 30) return { icons: [], found: false };
-    const label = findLabel(img, [0, 0, left, img.height - 1], 17, 12.2);
+    const label = CJK ? findLabelCJK(img, loc, left) : findLabel(img, [0, 0, left, img.height - 1], 17, 12.2);
     if (!label) return { icons: [], found: false };
     // The label is 12.2 letter heights wide; its width is steadier than its
     // height when letters come apart.
@@ -1659,14 +1690,18 @@
     // In the top half: lower down, other text can pass for it (report 178).
     // Its shape loosely: with "Ch" missed it is 11.6 lines long (report
     // 352); its width in the board's scale is checked below.
-    const label = findLabel(img, [right, 0, img.width - 1, Math.round(img.height / 2)], 17, 14.4, 3.5);
+    // 中文客戶端：「綺彩囚犯」是彩色字，不容易當成文字讀出；改用畫面右緣定位，
+    // 再交給下面的格點搜尋微調。位置取自繁中客戶端截圖（1920x1080）。
+    const label = CJK
+      ? { x0: img.width - 144 * loc.s - 72 * loc.s, x1: img.width - 72 * loc.s, y0: 95 * loc.s, y1: 115 * loc.s, cjk: true }
+      : findLabel(img, [right, 0, img.width - 1, Math.round(img.height / 2)], 17, 14.4, 3.5);
     if (!label) return null;
     // Sizes in the board's scale (the label is 144 px wide at 1x). The
     // label's own width misleads: its first letter missed, or the "?"
     // beside it joined (0.86 and 1.34 of the board's scale on the user's
     // boards, 1.00 when read whole).
     const u = loc.s;
-    if (label.x1 - label.x0 < 0.75 * 144 * u || label.x1 - label.x0 > 1.5 * 144 * u) return null;
+    if (!label.cjk && (label.x1 - label.x0 < 0.75 * 144 * u || label.x1 - label.x0 > 1.5 * 144 * u)) return null;
     // Its right end, unless the "?" joined it.
     const cx = label.x1 - label.x0 > 150 * u ? label.x0 + 144 * u : label.x1;
     const cy = (label.y0 + label.y1) / 2;
@@ -2048,6 +2083,27 @@
       l.red = redBy(l);
       if (l.red < 0.01) replace = true;
     }
+    // 中文客戶端：標題「請進行決策」在棋盤正下方，卡片名稱「換」（一個字）、
+    // 「結束」（兩個字）在卡片下緣；「吃」在紅色卡片上，由紅色判斷。
+    if (CJK) {
+      const u = loc.s;
+      const mx = (Math.min(at(loc, 0, 0)[0], at(loc, 0, 3)[0]) + Math.max(at(loc, 5, 0)[0], at(loc, 5, 3)[0])) / 2;
+      for (const r of textRadii(img)) {
+        for (const line of textLines(img, x0, bottom, x1, Math.min(img.height - 1, bottom + 260 * u), { minH: 6, maxH: Math.max(48, img.height * 0.07), r })) {
+          if (line.h < 9 * u || line.h > 24 * u) continue;
+          for (const p of line.pieces) {
+            const w = p.x1 - p.x0;
+            const cx = (p.x0 + p.x1) / 2;
+            if (line.mid < bottom + 70 * u && w > 75 * u && w < 125 * u && Math.abs(cx - mx) < 60 * u) title = true;
+            if (line.mid < bottom + 100 * u) continue;
+            const l = { x0: p.x0, x1: p.x1, mid: line.mid, h: line.h };
+            if (redBy(l) >= 0.01) continue;
+            if (w > 11 * u && w < 23 * u && line.h > 12 * u) replace = true;
+            else if (w > 27 * u && w < 41 * u && line.h > 12 * u) end = true;
+          }
+        }
+      }
+    }
     // The office: "Instigate" with "Bestow" to its right on the same line,
     // neither on the Consume card's red (its jaws can read as a long word).
     const office = single.some((a) => a.n >= 8 && a.n <= 10 && a.span > 4.3 && a.span < 6.5 && redBy(a) < 0.01
@@ -2059,7 +2115,7 @@
     // left on the same line, and a Consume card or a Replace label.
     // The Consume card's own label is red on red, which isn't read as text:
     // its red block left of "End" counts as that label (report 310).
-    const row = ends.some((e) => lefts.some((l) => Math.abs(l.mid - e.mid) < e.h / 2 && l.x1 < e.x0 && e.x0 - l.x1 < 30 * e.h) || (consume && redX < e.x0 && e.x0 - redX < 30 * e.h));
+    const row = (CJK && end && (consume || replace)) || ends.some((e) => lefts.some((l) => Math.abs(l.mid - e.mid) < e.h / 2 && l.x1 < e.x0 && e.x0 - l.x1 < 30 * e.h) || (consume && redX < e.x0 && e.x0 - redX < 30 * e.h));
     if (!title && !(row && (consume || replace))) return null;
     if (office) return { office: true, replace: false, consume: false, end: false, title };
     return { replace, consume, end, title, red: Math.round(1000 * red) / 1000 };
@@ -2073,6 +2129,7 @@
   // as the player set it: not English, door cards are read by their numbers.
   function scan(img, ref, opts) {
     const t0 = Date.now();
+    CJK = !!(opts && opts.lang && /^(zh|tw)/i.test(opts.lang));
     const gray = grayOf(img);
     const sharp = blur(gray, img.width, img.height, 1);
     const cache = opts && opts.cache;

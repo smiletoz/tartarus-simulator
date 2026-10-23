@@ -21,7 +21,9 @@
     <nav class="az-nav" aria-label="塔羅斯模擬器">
       <a href="./">← 回到模擬器</a>
       <a href="strategy.html">策略指南</a>
+      <a id="lang-switch" href="en/analyze.html" lang="en" hreflang="en">English</a>
     </nav>
+<script>(function(){var a=document.getElementById("lang-switch");if(!a)return;var b=a.getAttribute("href");function u(){a.setAttribute("href",b+location.search+location.hash);}u();a.addEventListener("pointerdown",u);a.addEventListener("focus",u);a.addEventListener("click",u);})();</script>
     <p class="eyebrow">塔羅斯模擬器 · 盤面分析器</p>
     <h1 class="az-title">我該怎麼做？</h1>
     <p class="az-lede">照遊戲裡的樣子擺好你的盤面：每間牢房裡有什麼、典獄長站在哪、今天的門和你的刑具。然後按下詢問，訓練好的策略會挑出你的動作，並用數百次模擬驗證。</p>
@@ -203,6 +205,7 @@
         </div>
         <div class="az-ask">
           <button type="button" class="btn btn-primary az-go" id="az-go">我該怎麼做？</button>
+          <label class="toggle az-fast" style="margin-top: 6px;"><input type="checkbox" id="az-fast"><span><strong>快速模式</strong><small>模擬次數較少，建議較快出來，準確度略低。此設定會記在這個瀏覽器。</small></span></label>
           <ul class="az-problems" id="az-problems" hidden></ul>
           <p class="field-note az-share" id="az-share" aria-live="polite"></p>
         </div>

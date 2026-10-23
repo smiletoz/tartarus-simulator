@@ -1,0 +1,592 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tartarus Simulator</title>
+<meta name="description" content="Fan-made English practice simulator for the Tartarus prison season of Torchlight: Infinite.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 18'%3E%3Crect width='16' height='18' rx='3' fill='%230f1216'/%3E%3Cpath d='M6 1h4v2H6z' fill='%23eadfc5'/%3E%3Cpath d='M4 4h8l-1 10H5z' fill='%23eadfc5'/%3E%3Cpath d='M5 15h6v2H5z' fill='%23eadfc5'/%3E%3Cpath d='M8 6.5c1.4 1.6 1.6 3 0 4.6-1.6-1.6-1.4-3 0-4.6Z' fill='%23f28c36'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;500;600;700&family=Big+Shoulders+Stencil+Display:wght@600;800&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="css/style.css?v=20261022a">
+</head>
+<body>
+<div class="app" id="app">
+
+  <!-- Title screen -->
+  <section class="title" id="screen-title" hidden>
+    <div class="title-copy">
+      <p class="eyebrow">Torchlight: Infinite · Season 14 · Warden practice</p>
+      <h1 class="brand"><span class="brand-main">Tartarus</span><span class="brand-sub">Prison simulator</span></h1>
+      <p class="lede">Walk the ring of fifteen cells around the warden's office. Patrol a door each morning, let beasts consume rivals of the same rarity, and raise inmates from Normal to Rainbow before the handoff.</p>
+      <div class="title-actions">
+        <a class="route route-featured" href="analyze.html">
+          <span class="route-name">Board analyzer</span>
+          <span class="route-text">Playing live? Enter your board exactly as it is, with your tools, and get the best move for that position.</span>
+          <span class="route-meta">Your position · move advice</span>
+        </a>
+        <button type="button" class="btn btn-primary btn-continue" id="btn-continue" hidden>
+          <span>Continue run</span><small id="continue-meta"></small>
+        </button>
+        <button type="button" class="route" data-route="drill">
+          <span class="route-name">Rules drill</span>
+          <span class="route-text">Start from an empty prison: day 1, all 15 cells sealed. Best for a first run.</span>
+          <span class="route-meta">20 days · practice values</span>
+        </button>
+        <button type="button" class="route" data-route="markers">
+          <span class="route-name">Focused drills</span>
+          <span class="route-text">Fixed scenes for special events, Tusk, Prey, Scratch and Rat nest, so you can test each one on its own.</span>
+          <span class="route-meta">5 scenes</span>
+        </button>
+        <a class="route" href="strategy.html">
+          <span class="route-name">Strategy guide</span>
+          <span class="route-text">New here? Learn a rough strategy first: what over 25 million simulated runs say about vaulting Rainbows.</span>
+          <span class="route-meta">5-minute read</span>
+        </a>
+      </div>
+      <div class="title-utils">
+        <button type="button" class="link" data-open="dlg-handbook">Handbook</button>
+        <button type="button" class="link" id="btn-title-import">Import save</button>
+        <button type="button" class="link" id="btn-title-sound">Sound: on</button>
+        <button type="button" class="link" data-open="dlg-about">About</button>
+        <a class="link" id="lang-switch" href="../index.html" lang="zh-Hant" hreflang="zh-Hant">繁體中文</a>
+<script>(function(){var a=document.getElementById("lang-switch");if(!a)return;var b=a.getAttribute("href");function u(){a.setAttribute("href",b+location.search+location.hash);}u();a.addEventListener("pointerdown",u);a.addEventListener("focus",u);a.addEventListener("click",u);})();</script>
+      </div>
+    </div>
+    <figure class="title-art" aria-hidden="true">
+      <div class="board board-sample" id="sample-board"></div>
+      <figcaption class="sample-caption">A sample block. Cell 01 is the warden's office, and the prison cells run clockwise from 02. The lantern marks the warden, and glowing cells are today's patrol choices.</figcaption>
+    </figure>
+    <footer class="title-credits">
+      <p class="source-note">
+        <span class="source-tag">Made by</span>
+        This English version is made by <strong>CoffeeBns</strong>: <a href="https://twitch.tv/coffeebns" target="_blank" rel="noopener">twitch.tv/coffeebns</a> and <a href="https://youtube.com/@CoffeeBns" target="_blank" rel="noopener">youtube.com/@CoffeeBns</a>.
+      </p>
+      <p class="source-note">
+        <span class="source-tag">Translation</span>
+        This began as an English translation of <a href="https://torchlightskill.com/talos/" target="_blank" rel="noopener">塔羅斯监狱 (Talos Prison)</a>, a free Chinese fan simulator by 爱玩游戏的吉吉罗. The board layout follows the original, but the rules in this version have been updated to match the video reveal, so it now differs heavily from the Chinese sim. The original author is not involved in this version.
+      </p>
+      <p class="fineprint">Free, fan-made and unofficial. Not affiliated with or endorsed by the makers of Torchlight: Infinite. Odds and costs are practice values and may differ from the live game.</p>
+    </footer>
+  </section>
+
+  <!-- Game screen -->
+  <section class="game" id="screen-game" hidden>
+    <header class="topbar">
+      <div class="tb-brand">
+        <button type="button" class="tb-logo" id="btn-home" title="Back to the title screen">Tartarus</button>
+        <span class="chip" id="mode-chip"></span>
+      </div>
+      <div class="tb-day" aria-live="polite">
+        <span class="day-label">Day</span>
+        <span class="day-num" id="day-num">01</span>
+        <span class="day-of" id="day-of">/ 20</span>
+        <span class="phase" id="phase-pill">Patrol</span>
+        <span class="handoff" id="handoff"></span>
+      </div>
+      <div class="tb-tools">
+        <button type="button" class="btn btn-ghost" id="btn-advisor" aria-pressed="false" title="Show the trainer: the recommended move, a live check of every option, and a grade for each move you make">Trainer</button>
+        <button type="button" class="btn btn-ghost" id="btn-sound" aria-pressed="true">Sound</button>
+        <button type="button" class="btn btn-ghost" id="btn-full">Fullscreen</button>
+        <button type="button" class="btn" id="btn-menu">Menu</button>
+      </div>
+    </header>
+
+    <aside class="rail" id="log-panel" aria-label="Warden's log">
+      <h2 class="panel-title">Warden's log</h2>
+      <ol class="log" id="log"></ol>
+    </aside>
+
+    <main class="block">
+      <div class="board" id="board" role="group" aria-label="Cell block, numbered clockwise from the top-left corner">
+        <div class="board-emblem" aria-hidden="true">
+          <svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="44"></circle><path d="M60 16a44 44 0 0 1 44 44"></path><path class="tip" d="M98 50l6 12 7-11"></path></svg>
+          <span id="emblem-text">Clockwise patrol</span>
+        </div>
+        <div class="board-center">
+          <div class="decision" id="decision" aria-live="polite">
+            <div class="decision-text">
+              <p class="decision-title" id="decision-title"></p>
+              <p class="decision-detail" id="decision-detail"></p>
+            </div>
+            <div class="decision-actions" id="decision-actions"></div>
+          </div>
+        </div>
+      </div>
+      <div class="dest-bar" id="dest-bar" hidden>
+        <p class="dest-title">Select a destination</p>
+        <div class="dest-cards" id="dest-cards"></div>
+        <p class="dest-hint" id="dest-hint">Go to a locked cell to open it, or to a known inmate so it makes today's consume. Click a card to choose it, then click it again or press Enter to go. A double-click goes at once.</p>
+      </div>
+      <section class="recap" id="day-recap" aria-labelledby="recap-title" hidden>
+        <h2 class="recap-title" id="recap-title">Today so far</h2>
+        <ul class="recap-items" id="recap-items"></ul>
+      </section>
+      <div class="actionbar">
+        <button type="button" class="btn" id="btn-swap">Replace</button>
+        <button type="button" class="btn" id="btn-hunt" hidden>Hunt</button>
+        <button type="button" class="btn" id="btn-undo">Undo</button>
+        <button type="button" class="btn btn-primary" id="btn-end">End day</button>
+      </div>
+    </main>
+
+    <aside class="ledger" id="ledger" aria-label="Run details">
+      <section class="panel" id="panel-goal">
+        <h2 class="panel-title" id="goal-title">Objective</h2>
+        <p class="panel-text" id="goal-text"></p>
+        <dl class="facts" id="goal-facts"></dl>
+        <div class="objective" id="goal-objective"></div>
+      </section>
+
+      <section class="panel" id="panel-advisor" hidden>
+        <h2 class="panel-title">Trainer</h2>
+        <div id="solver-box">
+          <div class="trainer-pick" id="trainer-pick" hidden>
+            <div class="trainer-body" id="trainer-pick-head"></div>
+            <div class="trainer-play"><button type="button" class="btn btn-primary" id="btn-trainer-play">Play it</button></div>
+            <div class="trainer-body" id="trainer-pick-body"></div>
+          </div>
+          <div class="trainer-grade" id="trainer-grade" aria-live="polite" hidden></div>
+          <p class="solver-status" id="solver-status" aria-live="polite"></p>
+          <ol class="solver-list" id="solver-list"></ol>
+          <p class="panel-note" id="solver-note"></p>
+        </div>
+        <ol class="tips" id="advisor-list" hidden></ol>
+      </section>
+
+      <section class="panel" id="panel-vault">
+        <h2 class="panel-title">Rainbow vault</h2>
+        <div class="vault" id="vault"></div>
+        <p class="panel-note" id="vault-note"></p>
+      </section>
+
+      <section class="panel" id="panel-tools">
+        <h2 class="panel-title">Tools</h2>
+        <ul class="tools" id="tool-list"></ul>
+      </section>
+
+      <section class="panel" id="panel-chain">
+        <h2 class="panel-title">Food chain</h2>
+        <svg class="chain" id="chain-svg" viewBox="0 0 240 200" role="img" aria-labelledby="chain-desc">
+          <desc id="chain-desc">Single-meal food chain: Mammoth eats Lion. Lion eats Wolf. Wolf eats Rat. Rat eats Mammoth.</desc>
+          <defs>
+            <marker id="chain-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+              <path d="M0 0 L10 5 L0 10 z"></path>
+            </marker>
+          </defs>
+          <g class="chain-edges">
+            <line x1="72" y1="52" x2="166" y2="52"></line>
+            <line x1="190" y1="74" x2="190" y2="124"></line>
+            <line x1="168" y1="148" x2="74" y2="148"></line>
+            <line x1="50" y1="126" x2="50" y2="76"></line>
+          </g>
+          <g class="chain-nodes">
+            <circle cx="50" cy="52" r="20"></circle><text x="50" y="60">M</text><text class="chain-name" x="50" y="20">Mammoth</text>
+            <circle cx="190" cy="52" r="20"></circle><text x="190" y="60">L</text><text class="chain-name" x="190" y="20">Lion</text>
+            <circle cx="190" cy="148" r="20"></circle><text x="190" y="156">W</text><text class="chain-name" x="190" y="190">Wolf</text>
+            <circle cx="50" cy="148" r="20"></circle><text x="50" y="156">R</text><text class="chain-name" x="50" y="190">Rat</text>
+          </g>
+        </svg>
+        <p class="panel-note" id="chain-note">Mammoths eat Lions and Wolves, Lions eat Wolves and Rats, Wolves eat Rats, and Rats eat Mammoths. Arrows point from eater to meal. Both must share a rarity. A consume raises the eater one tier, then re-rolls its beast.</p>
+        <ol class="ladder" aria-label="Rarity ladder">
+          <li class="t0">Normal</li><li class="t1">Magic</li><li class="t2">Rare</li><li class="t3">Legendary</li><li class="t4">Supreme</li><li class="t5">Rainbow</li>
+        </ol>
+      </section>
+    </aside>
+  </section>
+
+  <div class="toast" id="toast" role="status" popover="manual"></div>
+</div>
+
+<!-- New run -->
+<dialog class="sheet" id="dlg-new" aria-labelledby="new-title">
+  <form class="sheet-inner" id="form-new" method="dialog">
+    <header class="sheet-head">
+      <div><p class="eyebrow">New run</p><h2 id="new-title">Open the block</h2></div>
+      <button type="button" class="x" data-close aria-label="Close">×</button>
+    </header>
+    <div class="sheet-body">
+      <fieldset class="field" id="new-scenarios">
+        <legend>Starting scene</legend>
+        <div class="options" id="scenario-options"></div>
+      </fieldset>
+      <div class="field">
+        <label class="field-label" for="new-seed">Seed</label>
+        <div class="seed-row">
+          <input type="text" id="new-seed" maxlength="40" autocomplete="off" spellcheck="false">
+          <button type="button" class="btn" id="btn-reseed">New seed</button>
+        </div>
+        <p class="field-note">The same seed, settings and moves replay the same results. Share a seed to compare runs.</p>
+      </div>
+      <p class="field-note warn" id="new-replace" hidden>Starting a new run replaces the current one. Export it from Run &amp; saves first if you want to keep it.</p>
+    </div>
+    <footer class="sheet-foot">
+      <button type="button" class="btn" data-close>Cancel</button>
+      <button type="submit" class="btn btn-primary" id="btn-start">Start run</button>
+    </footer>
+  </form>
+</dialog>
+
+<!-- Menu -->
+<dialog class="sheet sheet-narrow" id="dlg-menu" aria-labelledby="menu-title">
+  <div class="sheet-inner">
+    <header class="sheet-head">
+      <div><p class="eyebrow">Warden's office</p><h2 id="menu-title">Menu</h2></div>
+      <button type="button" class="x" data-close aria-label="Close">×</button>
+    </header>
+    <nav class="sheet-body menu">
+      <a class="menu-item menu-featured" href="analyze.html"><strong>Board analyzer</strong><span>Enter your live board and get the best move</span></a>
+      <button type="button" class="menu-item" data-open="dlg-handbook"><strong>Handbook</strong><span>Patrols, events, the food chain, markers and tools</span></button>
+      <a class="menu-item" href="strategy.html"><strong>Strategy guide</strong><span>A rough strategy from over 25 million simulated runs</span></a>
+      <button type="button" class="menu-item" data-open="dlg-run"><strong>Run &amp; saves</strong><span>Inmates, undo, export and import</span></button>
+      <button type="button" class="menu-item" data-open="dlg-prefs"><strong>Preferences</strong><span>Trainer, quick decisions, motion and sound</span></button>
+      <button type="button" class="menu-item" data-open="dlg-lab"><strong>Lab</strong><span>Scene editor and practice values</span></button>
+      <button type="button" class="menu-item" id="btn-menu-new"><strong>New run</strong><span>Pick a starting scene and a seed</span></button>
+      <button type="button" class="menu-item" data-open="dlg-about"><strong>About</strong><span>Credits and disclaimer</span></button>
+    </nav>
+    <footer class="sheet-foot">
+      <button type="button" class="btn" id="btn-menu-title">Title screen</button>
+      <button type="button" class="btn btn-primary" data-close>Back to the block</button>
+    </footer>
+  </div>
+</dialog>
+
+<!-- Handbook -->
+<dialog class="sheet sheet-wide" id="dlg-handbook" aria-labelledby="hb-title">
+  <div class="sheet-inner">
+    <header class="sheet-head">
+      <div><p class="eyebrow">Warden's handbook</p><h2 id="hb-title">How the block works</h2></div>
+      <button type="button" class="x" data-close aria-label="Close">×</button>
+    </header>
+    <div class="sheet-body prose">
+      <h3>The ring</h3>
+      <p>Sixteen cells form a ring, numbered clockwise from 01 in the top-left corner: 01 to 06 across the top, 07 to 09 down the right, 10 to 14 back along the bottom and 15 to 16 up the left. Cell 01 is the warden's office. Every run starts there, and nothing is ever held in it, so the other 15 cells hold the prisoners. The lantern marks where the warden stands.</p>
+
+      <h3>A day on the block</h3>
+      <ol class="steps">
+        <li><strong>Patrol.</strong> Each morning offers three destination cells from the next six clockwise from the warden. They glow on the ring and appear as cards under it. A destination can be a locked cell, which opens when the warden arrives, a cell whose inmate you already know, or the warden's office. You can't see inside a locked cell until it opens. You must patrol before anything else.</li>
+        <li><strong>The office.</strong> When the warden walks to the office, choose one: <strong>Instigate</strong> puts a new special event on a random cell, behind a locked door or beside an inmate (2 when the board has none), and <strong>Bestow</strong> raises 1 random inmate on the block a tier.</li>
+        <li><strong>Consume.</strong> Once a day, after the patrol, and only the inmate in the warden's cell can start it. Double-click a highlighted target to consume it, or click it once to preview the bite and again to confirm. The eater then goes on eating while it has a valid target: after each bite you pick its next meal, even when there's only one, or stop the chain, as the game's Cancel button does. The eater keeps what it gained. The log and the recap under the ring show every bite as icons.</li>
+        <li><strong>Replace.</strong> Once a day, replace the inmate in the warden's cell with a brand-new random one. It can come out stronger or weaker. No other cell's inmate can be replaced. A day has a Replace or a consume, not both: either one uses up the other.</li>
+        <li><strong>End the day.</strong> The next morning, prey marks grow, ripe nests hatch, and new destinations are drawn. A recap of the day you just finished appears under the destination cards.</li>
+      </ol>
+      <p>When an inmate is consumed or sent off, its cell seals again. The next time that door opens, someone new is inside.</p>
+
+      <h3>The food chain</h3>
+      <p>Both sides must share a rarity: Mammoth eats Lion, Lion eats Wolf, Wolf eats Rat, and Rat eats Mammoth, and Mammoths also eat Wolves and Lions also eat Rats, as players' games show. No beast eats its own kind unless you hold the Skewered Rat Heads, which lets Rats eat Rats.</p>
+
+      <h3>Rarity</h3>
+      <p>Normal, Magic, Rare, Legendary, Supreme, Rainbow. A consume raises the eater one tier, then re-rolls its beast, so check its new matchups before the next meal. An inmate that reaches Rainbow leaves its cell for the vault and opens the Warden's Treasure. You can keep raising more Rainbows for the rest of the run.</p>
+
+      <h3>Special events</h3>
+      <p>Some sealed doors carry an event badge. When your patrol opens one, the event appears and you choose to accept or skip it. Doors opened any other way use up their event without triggering it.</p>
+      <dl class="defs">
+        <dt class="m-event">Chain reaction</dt>
+        <dd>Your next patrol walks clockwise from the warden to the chosen destination and opens every sealed door on the way.</dd>
+        <dt class="m-event">Execution</dt>
+        <dd>The inmate in the opened cell removes every inmate on the block that it can eat and that has a lower rarity. It gains one tier for each.</dd>
+        <dt class="m-event">Behind Closed Doors</dt>
+        <dd>The inmate in the opened cell becomes a Supreme of the scarcest beast on the block (none counts; a tie is settled at random). It triggers no other effects.</dd>
+        <dt class="m-event">Ravenous Appetite</dt>
+        <dd>A random inmate of the lowest rarity on the block gets 5 tries at +1 tier, each with a 50% chance.</dd>
+        <dt class="m-event">High-Risk Convict</dt>
+        <dd>A random locked cell opens with a Legendary or better inmate inside. It triggers no other effects.</dd>
+        <dt class="m-event">Crow Whispers</dt>
+        <dd>The next 4 locked cells clockwise from the warden show the rarity of the inmate inside. Their beasts stay hidden until the doors open.</dd>
+        <dt class="m-event">Taste of Freedom</dt>
+        <dd>3 random locked cells open. They trigger no other effects.</dd>
+        <dt class="m-event">Extra Portion</dt>
+        <dd>Up to 3 random inmates rise a tier (all of them, with fewer on the block).</dd>
+        <dt class="m-event">Usurpation I</dt>
+        <dd>1 random inmate rises a tier. Usurpation I then leaves the special events and Usurpation II joins them, and one appears behind a random locked door at once.</dd>
+        <dt class="m-event">Usurpation II</dt>
+        <dd>2 random inmates rise a tier (its card hasn't been seen yet).</dd>
+        <dt class="m-event">"Treasure" Hunt</dt>
+        <dd>Every locked cell holding a Normal or Magic inmate shows its rarity (a "?" portrait), so the locked doors left dark hold Rare or better. Its card has only Confirm.</dd>
+      </dl>
+      <p>Special events (the game calls them Prison Incidents) turn up behind random locked doors, each kind in the pool equally likely, and their badge shows at once. Most runs start with one, and new ones keep appearing: some mornings, after a patrol, and after a Consume or Replace. An event can also wait in an open cell beside its inmate; walking in sets it off.</p>
+
+      <h3>Markers</h3>
+      <dl class="defs">
+        <dt class="m-ivory">Tusk</dt>
+        <dd>Belongs to a cell. Replace that cell's inmate while the warden stands there, and four random inmates on the block each gain a tier. The mark stays until the cell empties.</dd>
+        <dt class="m-prey">Prey</dt>
+        <dd>A Lion marks a same-rarity inmate it can eat. On each of the next three mornings both gain a tier. The mark ends if either leaves the block or changes beast.</dd>
+        <dt class="m-scratch">Scratch</dt>
+        <dd>A scratched door shows the rarity inside. A Wolf of that rarity can consume the occupant through the door, whatever its beast, and gains +3.</dd>
+        <dt class="m-nest">Rat nest</dt>
+        <dd>A sealed nest hatches a Rare Rat on the morning two days after it appears. Opening the door before then destroys it.</dd>
+      </dl>
+
+      <h3>Objectives, tools and the Warden's Treasure</h3>
+      <p>Every drill starts with a pick of three random tools, as the live game does: take one, and it lasts for the whole run. As in the live game's offers, the eight named for a beast (Berserk Lion, Mammoth, Alpha Wolf, Colossal Rat) come up only about an eighth as often as the others. Each run also draws a random objective, shown with the run's goal: <strong>King of the Caged</strong> (at least 1 inmate's rarity reaches Supreme) or <strong>Prison Walk</strong> (move 18 tiles: every cell the warden walks counts). Meeting it earns a tool: pick one of three, and it lasts for the rest of the run. So a Supreme earns a tool only in runs whose objective is King of the Caged. The live game has more objectives, and what they pay isn't known yet, so every objective here pays a tool.</p>
+      <p>Each Rainbow that reaches the vault opens the Warden's Treasure: pick one gift, which takes effect at once. In the Lab you can change how many tools a drill starts with, or switch rewards off for pure rules practice.</p>
+      <dl class="defs" id="hb-tools"></dl>
+
+      <h3>The trainer</h3>
+      <p>Press <strong>Trainer</strong> at the top to show it beside the block while you play. It works in every situation: patrols, events, consumes, Replaces, tools and gifts.</p>
+      <ul>
+        <li><strong>Recommended.</strong> The trained strategy's pick appears at once, with its reason and the lesson training found for that kind of decision. The recommended cell or button is marked on the board.</li>
+        <li><strong>Live check.</strong> Every option you have right now is played out hundreds of times from the current position. Everything you can't see is re-rolled each time, so it never peeks behind a door, and the trained strategy makes every later choice. Options are ranked by Rainbows vaulted by the end of the run. Each option is compared with the best on the same dice, and once the check finds a clearly better move, that becomes the recommendation. Consume options also show their exact chain odds.</li>
+        <li><strong>Grades.</strong> Each move you make is graded against the live check of the position before it: the best move, close to the best (within the margin of error), or what it cost. The panel keeps a tally for the run.</li>
+      </ul>
+      <p>For the big picture before you play, read the <a href="strategy.html">strategy guide</a>. To get advice on your own board in the live game, open the <a href="analyze.html">board analyzer</a>: set every cell and your tools, and it recommends the move the same way the trainer does.</p>
+      <p>There's no AI involved: the strategy is a set of scoring rules whose weights were tuned over millions of simulated runs. Its main lessons: consume whenever you can (unless it would break a prey mark, which gives free tiers every morning), replace a low-tier inmate in the warden's cell (Normal and Magic; Rare too when you have tools) when no consume there is worth more, since a day has one or the other, accept Chain reactions, Behind Closed Doors, Ravenous Appetite, High-Risk Convict, Crow Whispers, Taste of Freedom and the Usurpations, accept an Execution when it gains more than it removes, and keep opening doors. A Wolf or a Rat waiting at a tier feeds two of the four beasts a chain's eater can re-roll into, a Lion or a Mammoth one, and a Mammoth, a Rat and a Lion or a Wolf together keep any chain going. Held from day 1, the best instruments were the Elephant-Foot Maul, the Blood-Stained Trap and the Iron Crown of the Prison King, and the Severed Iron Maiden with Hangman's Noose turns most Replaces into Rainbows. The Squirming Iron Box hurt the most, then the Forged Key and the Gaoler's Execution Axe, and the Iron Pestle, the Searing Branding Iron and the Short-Chained Shackles came out level with no instrument.</p>
+
+      <h3>Practice values</h3>
+      <p>The live game's exact odds, daily limits and some timing details are not public. This simulator uses stated practice values for them. You can change the drill values in the Lab. Riots, followers, loot and combat are not simulated.</p>
+    </div>
+    <footer class="sheet-foot">
+      <button type="button" class="btn btn-primary" data-close>Close</button>
+    </footer>
+  </div>
+</dialog>
+
+<!-- Run & saves -->
+<dialog class="sheet" id="dlg-run" aria-labelledby="run-title">
+  <div class="sheet-inner">
+    <header class="sheet-head">
+      <div><p class="eyebrow">Current run</p><h2 id="run-title">Run &amp; saves</h2></div>
+      <button type="button" class="x" data-close aria-label="Close">×</button>
+    </header>
+    <div class="sheet-body">
+      <dl class="facts facts-wide" id="run-facts"></dl>
+      <h3 class="sub">Inmates on the block</h3>
+      <ul class="roster" id="run-inmates"></ul>
+      <div class="button-row">
+        <button type="button" class="btn" id="btn-run-undo">Undo last move</button>
+        <button type="button" class="btn" id="btn-run-export">Export save</button>
+        <button type="button" class="btn" id="btn-run-import">Import save</button>
+        <button type="button" class="btn btn-danger" id="btn-run-end">End run now</button>
+      </div>
+      <p class="field-note">Your run saves automatically in this browser. Importing a save replaces the current run.</p>
+    </div>
+    <footer class="sheet-foot">
+      <button type="button" class="btn btn-primary" data-close>Done</button>
+    </footer>
+  </div>
+</dialog>
+
+<!-- Export / import -->
+<dialog class="sheet" id="dlg-save" aria-labelledby="save-title">
+  <div class="sheet-inner">
+    <header class="sheet-head">
+      <div><p class="eyebrow">Save file</p><h2 id="save-title">Export save</h2></div>
+      <button type="button" class="x" data-close aria-label="Close">×</button>
+    </header>
+    <div class="sheet-body">
+      <div id="save-export">
+        <p class="field-note">Copy this text and keep it somewhere safe. Paste it into Import save to continue later or on another device.</p>
+        <textarea id="save-out" rows="8" readonly spellcheck="false"></textarea>
+        <div class="button-row">
+          <button type="button" class="btn btn-primary" id="btn-save-copy">Copy save</button>
+          <button type="button" class="btn" id="btn-save-download">Download .json</button>
+        </div>
+      </div>
+      <div id="save-import" hidden>
+        <p class="field-note">Choose a save file, or paste the save text below.</p>
+        <input type="file" id="save-file" accept=".json,application/json,text/plain">
+        <textarea id="save-in" rows="8" spellcheck="false" placeholder="Paste save text here"></textarea>
+        <p class="field-note warn" id="save-error" hidden></p>
+        <div class="button-row">
+          <button type="button" class="btn btn-primary" id="btn-save-load">Load save</button>
+        </div>
+      </div>
+    </div>
+    <footer class="sheet-foot">
+      <button type="button" class="btn" data-close>Close</button>
+    </footer>
+  </div>
+</dialog>
+
+<!-- Preferences -->
+<dialog class="sheet sheet-narrow" id="dlg-prefs" aria-labelledby="prefs-title">
+  <div class="sheet-inner">
+    <header class="sheet-head">
+      <div><p class="eyebrow">Preferences</p><h2 id="prefs-title">Your block, your way</h2></div>
+      <button type="button" class="x" data-close aria-label="Close">×</button>
+    </header>
+    <div class="sheet-body toggles">
+      <label class="toggle"><input type="checkbox" id="pref-advisor"><span><strong>Trainer</strong><small>Show the recommended move beside the block, check every option live from the current position, and grade each move you make.</small></span></label>
+      <label class="toggle"><input type="checkbox" id="pref-quick"><span><strong>Quick decisions</strong><small>Patrols, consumes and Replaces happen on click, without a confirm step.</small></span></label>
+      <label class="toggle"><input type="checkbox" id="pref-motion"><span><strong>Animations</strong><small>Doors, consumes and Rainbow flashes.</small></span></label>
+      <label class="toggle"><input type="checkbox" id="pref-immersive"><span><strong>Immersive view</strong><small>Hide the log and side panels and keep the block centered.</small></span></label>
+      <label class="toggle"><input type="checkbox" id="pref-sound"><span><strong>Sound</strong><small>Plays after your first click or key press.</small></span></label>
+      <div class="field">
+        <label class="field-label" for="pref-volume">Volume</label>
+        <div class="seed-row">
+          <input type="range" id="pref-volume" min="0" max="100" step="5">
+          <button type="button" class="btn" id="btn-sound-test">Test</button>
+        </div>
+      </div>
+    </div>
+    <footer class="sheet-foot">
+      <button type="button" class="btn btn-primary" data-close>Done</button>
+    </footer>
+  </div>
+</dialog>
+
+<!-- Lab -->
+<dialog class="sheet sheet-wide" id="dlg-lab" aria-labelledby="lab-title">
+  <div class="sheet-inner">
+    <header class="sheet-head">
+      <div><p class="eyebrow">Practice only</p><h2 id="lab-title">Lab</h2></div>
+      <button type="button" class="x" data-close aria-label="Close">×</button>
+    </header>
+    <div class="tabs" role="tablist">
+      <button type="button" role="tab" class="tab" id="tab-scene" aria-selected="true" aria-controls="lab-scene">Scene editor</button>
+      <button type="button" role="tab" class="tab" id="tab-params" aria-selected="false" aria-controls="lab-params">Practice values</button>
+    </div>
+    <div class="sheet-body">
+      <div id="lab-scene" role="tabpanel" aria-labelledby="tab-scene">
+        <p class="field-note warn" id="lab-locked" hidden></p>
+        <div class="lab-layout" id="lab-editor">
+          <div>
+            <p class="field-label">Pick a cell</p>
+            <div class="mini-ring" id="lab-grid"></div>
+          </div>
+          <div class="lab-form">
+            <p class="field-label" id="lab-cell-label">Cell 02</p>
+            <p class="field-note" id="lab-office-note" hidden>The warden's office never holds an inmate, marker or event. You can still move the warden here.</p>
+            <div class="lab-contents" id="lab-contents">
+            <label class="field-label" for="lab-kind">Contents</label>
+            <select id="lab-kind">
+              <option value="open">Open cell with an inmate</option>
+              <option value="hidden">Sealed door hiding a chosen inmate</option>
+              <option value="unknown">Sealed door, occupant unknown</option>
+              <option value="nest">Rat nest</option>
+              <option value="empty">Empty open cell</option>
+            </select>
+            <div class="two-col" id="lab-inmate-fields">
+              <div>
+                <label class="field-label" for="lab-beast">Beast</label>
+                <select id="lab-beast"></select>
+              </div>
+              <div>
+                <label class="field-label" for="lab-tier">Rarity</label>
+                <select id="lab-tier"></select>
+              </div>
+            </div>
+            <div class="checks">
+              <label id="lab-ivory-wrap"><input type="checkbox" id="lab-ivory"> Tusk</label>
+              <label id="lab-scratch-wrap"><input type="checkbox" id="lab-scratch"> Scratched door</label>
+            </div>
+            <div id="lab-event-wrap">
+              <label class="field-label" for="lab-event">Special event behind the door</label>
+              <select id="lab-event">
+                <option value="none">None</option>
+                <option value="chain">Chain reaction</option>
+                <option value="execution">Execution</option>
+                <option value="trickster">Behind Closed Doors</option>
+                <option value="appetite">Ravenous Appetite</option>
+                <option value="convict">High-Risk Convict</option>
+                <option value="crow">Crow Whispers</option>
+                <option value="freedom">Taste of Freedom</option>
+                <option value="usurp1">Usurpation I</option>
+                <option value="usurp2">Usurpation II</option>
+                <option value="hunt">"Treasure" Hunt</option>
+                <option value="portion">Extra Portion</option>
+              </select>
+            </div>
+            </div>
+            <div class="button-row">
+              <button type="button" class="btn btn-primary" id="btn-lab-apply">Apply to cell 02</button>
+              <button type="button" class="btn" id="btn-lab-warden">Move the warden here</button>
+            </div>
+            <div id="lab-prey-wrap">
+              <label class="field-label" for="lab-prey">Prey for this Lion</label>
+              <div class="seed-row">
+                <select id="lab-prey"></select>
+                <button type="button" class="btn" id="btn-lab-prey">Mark prey</button>
+              </div>
+            </div>
+            <hr>
+            <label class="field-label" for="lab-tool">Tools</label>
+            <div class="seed-row">
+              <select id="lab-tool"></select>
+              <button type="button" class="btn" id="btn-lab-tool">Add tool</button>
+            </div>
+            <ul class="chips" id="lab-tools"></ul>
+          </div>
+        </div>
+        <p class="field-note">Edits change the current drill right away and can be undone.</p>
+      </div>
+      <div id="lab-params" role="tabpanel" aria-labelledby="tab-params" hidden>
+        <p class="field-note">These values apply to new drills.</p>
+        <form id="form-params" class="params"></form>
+      </div>
+    </div>
+    <footer class="sheet-foot">
+      <button type="button" class="btn" id="btn-params-reset" hidden>Reset to defaults</button>
+      <button type="button" class="btn btn-primary" id="btn-params-save" hidden>Save and start a new drill</button>
+      <button type="button" class="btn btn-primary" data-close>Done</button>
+    </footer>
+  </div>
+</dialog>
+
+<!-- Choice: starting instrument, objective tool or Warden's Treasure gift -->
+<dialog class="sheet" id="dlg-choice" aria-labelledby="choice-title">
+  <div class="sheet-inner">
+    <header class="sheet-head">
+      <div><p class="eyebrow" id="choice-eyebrow">Reward</p><h2 id="choice-title">Choose one</h2></div>
+      <button type="button" class="x" data-close aria-label="Close">×</button>
+    </header>
+    <div class="sheet-body">
+      <p class="field-note" id="choice-note"></p>
+      <div class="refit" id="choice-options"></div>
+    </div>
+  </div>
+</dialog>
+
+<!-- Results -->
+<dialog class="sheet sheet-wide" id="dlg-results" aria-labelledby="results-title">
+  <div class="sheet-inner">
+    <header class="sheet-head">
+      <div><p class="eyebrow" id="results-eyebrow">Handoff</p><h2 id="results-title">Handoff roster</h2></div>
+      <button type="button" class="x" data-close aria-label="Close">×</button>
+    </header>
+    <div class="sheet-body">
+      <dl class="facts facts-wide" id="results-facts"></dl>
+      <h3 class="sub">Roster by rarity</h3>
+      <div class="roster-tiers" id="results-roster"></div>
+    </div>
+    <footer class="sheet-foot">
+      <button type="button" class="btn" id="btn-results-copy">Copy summary</button>
+      <button type="button" class="btn" data-close>View the block</button>
+      <button type="button" class="btn btn-primary" id="btn-results-new">New run</button>
+    </footer>
+  </div>
+</dialog>
+
+<!-- About -->
+<dialog class="sheet" id="dlg-about" aria-labelledby="about-title">
+  <div class="sheet-inner">
+    <header class="sheet-head">
+      <div><p class="eyebrow">About</p><h2 id="about-title">Tartarus Simulator</h2></div>
+      <button type="button" class="x" data-close aria-label="Close">×</button>
+    </header>
+    <div class="sheet-body prose">
+      <p>A free English practice tool for the Tartarus prison season of <em>Torchlight: Infinite</em>. Use it to learn the patrol ring, the food chain, rarity climbs, events and markers before you play the season.</p>
+      <p>This began as an English translation of the Chinese fan simulator <a href="https://torchlightskill.com/talos/" target="_blank" rel="noopener">塔羅斯监狱 (Talos Prison)</a> by 爱玩游戏的吉吉罗, and its board layout follows the original. The rules in this version have since been updated to match the video reveal, so it now differs heavily from the Chinese sim. Rules changed after the reveal include the warden's office in cell 01, patrol choices from the six cells ahead, no scouting, and one consume a day from the warden's cell, with chains that can't be stopped.</p>
+      <p>This English version was rebuilt independently with its own code and artwork, and the original author is not involved. No code, images or audio from that tool were copied.</p>
+      <p>This English version is made by CoffeeBns: <a href="https://twitch.tv/coffeebns" target="_blank" rel="noopener">twitch.tv/coffeebns</a> and <a href="https://youtube.com/@CoffeeBns" target="_blank" rel="noopener">youtube.com/@CoffeeBns</a>.</p>
+      <p>Original author: 爱玩游戏的吉吉罗 on <a href="https://v.douyin.com/okD24Xnc6wo/" target="_blank" rel="noopener">Douyin</a>, also known as 二零后游戏荒 on <a href="https://space.bilibili.com/39881994" target="_blank" rel="noopener">Bilibili</a>.</p>
+      <p>Fan-made and unofficial. It is not affiliated with or endorsed by the developers or publishers of <em>Torchlight: Infinite</em>, and game names belong to their owners. Odds and limits are practice values, so live results will differ.</p>
+    </div>
+    <footer class="sheet-foot">
+      <button type="button" class="btn btn-primary" data-close>Close</button>
+    </footer>
+  </div>
+</dialog>
+
+<script src="js/engine.js?v=20261022a"></script>
+<script src="js/board.js?v=20261022a"></script>
+<script src="js/sound.js?v=20261022a"></script>
+<script src="js/guide-data.js?v=20261022a"></script>
+<script src="js/tool-combos.js?v=20261022a"></script>
+<script src="js/solver.js?v=20261022a"></script>
+<script src="js/ui.js?v=20261022a"></script>
+<script src="js/update.js?v=20261022a"></script>
+</body>
+</html>

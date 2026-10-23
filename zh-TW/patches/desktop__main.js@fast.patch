@@ -1,0 +1,63 @@
+快速模式：狀態由分析器回報（advice 的 fast），系統匣勾選項與疊加視窗按鈕
+都送 'fast-on' / 'fast-off' 指令給分析器。辨識結果面板的顯示／隱藏記在
+settings.seenOpen（預設顯示），透過 pushShell 的 seenOpen 給疊加視窗。
+
+<<<< once
+  analyzer: null, // the analyzer window's bounds
+}, readJson(SETTINGS_FILE));
+====
+  analyzer: null, // the analyzer window's bounds
+  seenOpen: true, // 疊加視窗的「辨識結果」面板展開
+}, readJson(SETTINGS_FILE));
+>>>>
+
+<<<< once
+    screenShare: settings.screenShare ? settings.screenShare.on : null,
+====
+    screenShare: settings.screenShare ? settings.screenShare.on : null,
+    seenOpen: settings.seenOpen !== false,
+>>>>
+
+<<<< once
+let lastAdvice = null;
+let lastFollow = null;
+====
+let lastAdvice = null;
+let lastFollow = null;
+let fastNow = null; // 分析器的快速模式（它回報之前是 null）
+>>>>
+
+<<<< once
+  lastAdvice = data;
+  send('overlay', 'advice', data);
+====
+  lastAdvice = data;
+  if (typeof data.fast === 'boolean' && data.fast !== fastNow) {
+    if (fastNow !== null) note(`fast mode: ${data.fast ? 'on' : 'off'}`);
+    fastNow = data.fast;
+    rebuildMenu();
+  }
+  send('overlay', 'advice', data);
+>>>>
+
+<<<< once
+    case 'debug-report': return debugReport();
+====
+    case 'debug-report': return debugReport();
+    case 'fast-on':
+    case 'fast-off':
+      return send('analyzer', 'command', cmd);
+    case 'fast-toggle':
+      return send('analyzer', 'command', fastNow ? 'fast-off' : 'fast-on');
+    case 'seen-toggle':
+      settings.seenOpen = settings.seenOpen === false;
+      saveSettings();
+      return pushShell();
+>>>>
+
+<<<< once
+    { label: '立即截圖', accelerator: HOTKEYS.capture, click: () => command('capture') },
+====
+    { label: '立即截圖', accelerator: HOTKEYS.capture, click: () => command('capture') },
+    { label: '快速模式（模擬次數較少，建議較快出來，準確度略低）', type: 'checkbox', checked: !!fastNow, enabled: fastNow !== null, click: (i) => command(i.checked ? 'fast-on' : 'fast-off') },
+>>>>

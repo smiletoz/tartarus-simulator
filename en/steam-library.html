@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Move Your Game</title>
+<meta name="description" content="Chrome and Edge won't open files under Program Files. How to move Torchlight: Infinite to a second Steam library, or move Steam itself, so Auto Screenshot Mode can read the game log.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%230f1216'/%3E%3Ccircle cx='8' cy='8' r='4.5' fill='none' stroke='%235fc4b8' stroke-width='1.6'/%3E%3Ccircle cx='8' cy='8' r='1.6' fill='%235fc4b8'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;500;600;700&family=Big+Shoulders+Stencil+Display:wght@600;800&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="css/style.css?v=20261022a">
+<style>
+  /* A how-to in the look of follow.html. */
+  .guide {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 28px 16px 64px;
+  }
+
+  .guide-back {
+    display: inline-block;
+    margin-bottom: 22px;
+    color: var(--ash);
+    font: 500 12px/1.2 var(--font-mono);
+    letter-spacing: 0.06em;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+
+  .guide-back:hover {
+    color: var(--bone);
+  }
+
+  .guide h1 {
+    margin: 6px 0 10px;
+    font: 800 clamp(40px, 9vw, 72px) / 0.95 var(--font-display);
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+    text-wrap: balance;
+    color: var(--bone);
+  }
+
+  .guide h2 {
+    margin: 0 0 12px;
+    font: 800 clamp(24px, 4vw, 32px) / 1.05 var(--font-display);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    text-wrap: balance;
+    color: var(--chalk);
+  }
+
+  .guide h3 {
+    margin: 26px 0 8px;
+    font: 700 18px/1.2 var(--font-body);
+    color: var(--bone);
+  }
+
+  .guide p,
+  .guide li {
+    max-width: 70ch;
+  }
+
+  .guide p {
+    margin: 0 0 12px;
+  }
+
+  .guide a:not(.btn) {
+    color: var(--bone);
+  }
+
+  .guide a.btn {
+    text-decoration: none;
+  }
+
+  .guide code {
+    overflow-wrap: anywhere;
+  }
+
+  .lede {
+    font-size: 18px;
+    line-height: 1.5;
+    color: var(--chalk);
+  }
+
+  .guide-section {
+    padding: 34px 0;
+    border-top: 1px solid var(--iron);
+  }
+
+  .note {
+    font-size: 13.5px;
+    color: var(--ash);
+  }
+
+  /* Numbered steps, each a line of things to click. */
+  .steps {
+    display: grid;
+    gap: 8px;
+    margin: 0 0 14px;
+    padding-left: 1.6em;
+  }
+
+  .steps li::marker {
+    color: var(--teal);
+    font-weight: 700;
+  }
+
+  .steps b {
+    color: var(--bone);
+  }
+
+  /* The two ways, side by side on a wide screen. */
+  .ways {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 12px;
+    margin: 16px 0;
+  }
+
+  .way {
+    display: block;
+    padding: 14px 16px;
+    border: 1px solid var(--iron);
+    border-left: 3px solid var(--teal);
+    border-radius: var(--radius);
+    background: var(--slab);
+    color: var(--chalk) !important;
+    text-decoration: none;
+  }
+
+  .way:hover {
+    background: var(--slab-hi);
+  }
+
+  .way strong {
+    display: block;
+    margin-bottom: 4px;
+    color: var(--bone);
+    font-size: 17px;
+  }
+
+  .way span {
+    display: block;
+    margin-top: 8px;
+    color: var(--teal);
+    font: 500 12px/1.2 var(--font-mono);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .qa {
+    display: grid;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .qa li {
+    padding: 12px 14px;
+    border: 1px solid var(--iron);
+    border-left: 3px solid var(--teal);
+    border-radius: var(--radius);
+    background: var(--slab);
+  }
+
+  .qa b {
+    color: var(--bone);
+  }
+
+  /* A log folder to paste into the file picker, with its Copy button. */
+  .log-path {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: flex-start;
+    margin: 4px 0 14px;
+  }
+
+  .log-path code {
+    align-self: stretch;
+    padding: 6px 8px;
+    border: 1px solid var(--iron);
+    border-radius: var(--radius);
+    background: var(--slab);
+    font: 12px/1.4 var(--font-mono);
+    user-select: all;
+  }
+
+  .log-path .btn {
+    padding: 4px 12px;
+  }
+</style>
+</head>
+<body>
+<main class="guide">
+  <a class="guide-back" href="follow.html#follow">← Back to Auto Screenshot Mode</a>
+  <p class="eyebrow">Tartarus Simulator · Auto Screenshot Mode · Help</p>
+  <h1>Move the game out of Program Files</h1>
+  <p class="lede">Chrome and Edge won't let any website open a file inside <code>C:\Program Files</code> or <code>C:\Program Files (x86)</code>. When you try, they say the folder “contains system files”. Steam installs games in <code>C:\Program Files (x86)\Steam</code> unless you choose otherwise, so Auto Screenshot Mode's <b>Or choose the file</b> button can't open Torchlight: Infinite's log there. The way around it is to move the game somewhere else. Steam does the moving for you: nothing is downloaded again, and your characters aren't touched, since they're kept on the game's servers.</p>
+  <p class="note"><b>You may not need this.</b> On <a href="follow.html#follow">Auto Screenshot Mode</a>, you can drag <code>UE_game.log</code> from File Explorer onto the page instead, and that works wherever the game is installed. Move the game only if you'd rather use the button, or if dragging doesn't work for you.</p>
+
+  <section class="guide-section" aria-labelledby="where-title">
+    <h2 id="where-title">Where is your game now?</h2>
+    <ol class="steps">
+      <li>In Steam, open your <b>Library</b>, right-click <b>Torchlight: Infinite</b>, then choose <b>Manage</b>, then <b>Browse local files</b>.</li>
+      <li>File Explorer opens the game's folder. Click the address bar at the top to see its full path.</li>
+    </ol>
+    <p>If the path starts with <code>C:\Program Files</code> or <code>C:\Program Files (x86)</code>, read on.</p>
+    <p>If it doesn't (say it's <code>D:\SteamLibrary\steamapps\common\Torchlight Infinite</code>), there's nothing to move. Go back to <a href="follow.html#follow">Auto Screenshot Mode</a> and pick <code>UE_game.log</code> in <code>UE_game\TorchLight\Saved\Logs</code>, inside that folder.</p>
+  </section>
+
+  <section class="guide-section" aria-labelledby="ways-title">
+    <h2 id="ways-title">Which way fits your PC</h2>
+    <p>Steam keeps games in <em>libraries</em>: folders it looks after. It allows one library on each drive, and Steam's own folder counts as the library of the drive it's on. So it depends on whether you have a second drive.</p>
+    <div class="ways">
+      <a class="way" href="#another-drive">
+        <strong>You have another drive</strong>
+        A D:, E: or other drive inside the PC, or an external drive with room for the game. You make a Steam library there and move the game to it.
+        <span>Make a second library →</span>
+      </a>
+      <a class="way" href="#only-c">
+        <strong>You only have C:</strong>
+        Steam won't add a second library on C:. Instead, you move Steam itself, games and all, out of Program Files.
+        <span>Move Steam →</span>
+      </a>
+    </div>
+    <p class="note">Not sure? Open File Explorer and click <b>This PC</b>: your drives are listed under Devices and drives, each with its free space. The new place needs as much free space as the game uses now. Steam shows how much that is in <b>Settings</b>, then <b>Storage</b>, next to the game.</p>
+  </section>
+
+  <section class="guide-section" id="another-drive" aria-labelledby="another-title">
+    <h2 id="another-title">With another drive: make a second library</h2>
+
+    <h3>1. Make the library</h3>
+    <ol class="steps">
+      <li>In Steam, click <b>Steam</b> at the top left, then <b>Settings</b>, then <b>Storage</b>.</li>
+      <li>At the top of Storage is a drop-down showing a drive, such as <b>Local Drive (C:)</b>. Open it and choose <b>Add Drive</b>.</li>
+      <li>Pick your other drive in the list and press <b>Add</b>. Steam makes a folder called <code>SteamLibrary</code> at the top of that drive, such as <code>D:\SteamLibrary</code>.</li>
+    </ol>
+    <p class="note">To put the library in a folder of your own choosing, pick <b>Let me choose another location</b> instead, then choose or make an empty folder: not the drive itself (<code>D:\</code>), and nothing inside Program Files. If your drive isn't in the list, it already has a Steam library, so skip to moving the game and use that one. An external drive works, but it has to be plugged in whenever you play.</p>
+
+    <h3>2. Move the game</h3>
+    <ol class="steps">
+      <li>Close Torchlight: Infinite. If Steam is updating it, let the update finish first.</li>
+      <li>In <b>Settings</b>, then <b>Storage</b>, choose the drive the game is on now (<b>C:</b>) in the drop-down at the top.</li>
+      <li>Tick the box next to <b>Torchlight: Infinite</b>, then press <b>Move</b> at the bottom right.</li>
+      <li>Choose your new library and press <b>Move</b>.</li>
+      <li>Leave Steam open until it's done. Steam copies the game to the new library, then removes the old copy. Large games take a while, so don't shut the PC down in the middle.</li>
+    </ol>
+    <p class="note">Another way to the same Move: right-click the game in your Library, then <b>Properties</b>, <b>Installed Files</b>, and <b>Move install folder</b>.</p>
+    <p>Done? <a href="#then">Connect the log again</a>.</p>
+  </section>
+
+  <section class="guide-section" id="only-c" aria-labelledby="only-c-title">
+    <h2 id="only-c-title">With only C: move Steam out of Program Files</h2>
+    <p>Steam won't make a second library on the drive it's installed on. Instead, you move Steam's whole folder, with your games inside it, to a folder outside Program Files, such as <code>C:\Steam</code>. On the same drive this takes moments, since nothing is copied. Valve's Steam Support has an article about this too, called <a href="https://help.steampowered.com/en/faqs/view/4BD4-4528-6B2E-8327" target="_blank" rel="noopener">Moving a Steam Installation and Games</a>.</p>
+    <ol class="steps">
+      <li>Close the game. Then quit Steam completely: right-click the Steam icon near the clock (it may be under the <b>^</b> arrow) and choose <b>Exit</b>. Closing Steam's window isn't enough.</li>
+      <li>Open File Explorer and go to <code>C:\Program Files (x86)</code>.</li>
+      <li>Right-click the <b>Steam</b> folder and choose <b>Cut</b>.</li>
+      <li>Go to <code>C:\</code> (<b>This PC</b>, then <b>Local Disk (C:)</b>), right-click an empty spot and choose <b>Paste</b>. Windows asks for administrator permission, since the folder is leaving Program Files: choose <b>Continue</b>. If Windows says a file is in use, Steam is still running: end it in Task Manager and try again.</li>
+      <li>Open the new <code>C:\Steam</code> folder and double-click <b>steam.exe</b>. Steam updates itself for a moment, then opens as usual with your games installed. Sign in if it asks.</li>
+      <li>Your old shortcuts to Steam still point to Program Files, so make a new one. Right-click <b>steam.exe</b>, choose <b>Show more options</b> (on Windows 11), then <b>Send to</b>, then <b>Desktop (create shortcut)</b>. While Steam is running, you can also right-click its taskbar icon and choose <b>Pin to taskbar</b>.</li>
+    </ol>
+    <p>To check it worked, right-click Torchlight: Infinite, then choose <b>Manage</b>, then <b>Browse local files</b>: the path should now start with <code>C:\Steam</code>. If the game won't start, right-click it, then choose <b>Properties</b>, <b>Installed Files</b>, and <b>Verify integrity of game files</b>.</p>
+    <p>Done? <a href="#then">Connect the log again</a>.</p>
+  </section>
+
+  <section class="guide-section" aria-labelledby="launcher-title">
+    <h2 id="launcher-title">Not on Steam?</h2>
+    <p>If you play with the game's own launcher, the game has a folder of its own, often <code>C:\Program Files (x86)\Torchlight Infinite</code>. We don't know of a way to move it there. Instead, uninstall the game and install it again. When the installer asks where to put it, choose a folder outside Program Files, such as <code>C:\Games\Torchlight Infinite</code>. The game downloads again, but your characters are on the game's servers. The log is then in <code>Game\UE_game\Torchlight\Saved\Logs</code> inside that folder.</p>
+  </section>
+
+  <section class="guide-section" id="then" aria-labelledby="then-title">
+    <h2 id="then-title">Then, on Auto Screenshot Mode</h2>
+    <p>The game's log is now in its new place. If you made a library on another drive, it's here, with your drive's letter instead of D:</p>
+    <div class="log-path"><code id="path-library">D:\SteamLibrary\steamapps\common\Torchlight Infinite\UE_game\TorchLight\Saved\Logs</code><button type="button" class="btn" data-copy="path-library">Copy</button></div>
+    <p>If you moved Steam to <code>C:\Steam</code>, it's here:</p>
+    <div class="log-path"><code id="path-steam">C:\Steam\steamapps\common\Torchlight Infinite\UE_game\TorchLight\Saved\Logs</code><button type="button" class="btn" data-copy="path-steam">Copy</button></div>
+    <ol class="steps">
+      <li>Start the game once, so it writes its log in the new place.</li>
+      <li>The log Auto Screenshot Mode remembered moved with the game, so give it the log again. On <a href="follow.html#follow">Auto Screenshot Mode</a>, press <b>Or choose the file</b>.</li>
+      <li>In the window that opens, paste the folder into the address bar at the top, press Enter, and pick <code>UE_game.log</code>. Or drag the file from that folder in File Explorer onto the box in step 1.</li>
+    </ol>
+    <a class="btn btn-report" href="follow.html#follow">Back to Auto Screenshot Mode</a>
+  </section>
+
+  <section class="guide-section" aria-labelledby="faq-title">
+    <h2 id="faq-title">Questions</h2>
+    <ul class="qa">
+      <li><b>Can't I make a shortcut to the log instead?</b> No. Chrome and Edge check where a shortcut or link really leads, and refuse it if that's inside Program Files.</li>
+      <li><b>Is it only this site?</b> No. It's the browser's rule, for every website: it keeps sites away from your programs and from Windows itself.</li>
+      <li><b>Is moving safe?</b> Steam copies the game before it removes the old copy, and your characters are on the game's servers. Just don't turn the PC off in the middle of a move.</li>
+      <li><b>Will the game still update?</b> Yes. Steam updates it in its new library, as before.</li>
+    </ul>
+  </section>
+</main>
+
+<script>
+(function () {
+  'use strict';
+
+  // The log folder paths, ready to paste into the file picker.
+  document.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-copy]');
+    if (!b) return;
+    const text = document.getElementById(b.dataset.copy).textContent;
+    const done = (ok) => {
+      b.textContent = ok ? 'Copied' : 'Select it and copy';
+      setTimeout(() => (b.textContent = 'Copy'), 2000);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(() => done(true), () => done(false));
+    else done(false);
+  });
+})();
+</script>
+</body>
+</html>

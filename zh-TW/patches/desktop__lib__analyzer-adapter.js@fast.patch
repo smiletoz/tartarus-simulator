@@ -1,0 +1,70 @@
+快速模式狀態（fast）與辨識結果面板（seen）跟著 D.advice(...) 一起送給 main.js，
+再轉給疊加視窗；'fast-on' / 'fast-off' 指令呼叫 TartarusAnalyzer.setFast。
+
+<<<< once
+  // #endregion
+  function snapshot() {
+====
+  // #endregion
+  // 辨識結果面板：分析器目前盤面（截圖讀進來的）的重點，組成中文給疊加視窗。
+  // [{ k, v }]，沒有盤面時是 null。
+  function seenNow(flagged) {
+    const m = boardNow();
+    const T = window.Tartarus;
+    if (!m || !T) return null;
+    const safe = (fn, fallback) => {
+      try {
+        return fn();
+      } catch (e) {
+        return fallback;
+      }
+    };
+    const cell = (n) => (n === T.OFFICE ? '審訊室' : String(Number(n) + 1).padStart(2, '0'));
+    const out = [];
+    const day = Number(m.day) || 0;
+    const max = Number(m.maxDays) || 0;
+    out.push({ k: '天數', v: max ? `第 ${day} / ${max} 天（距暴動 ${Math.max(0, max - day)} 天）` : `第 ${day} 天` });
+    const doors = Array.isArray(m.dest) && m.dest.length ? m.dest.map(cell).join('、') : '無';
+    out.push({ k: '典獄長', v: `${Number.isInteger(m.warden) ? cell(m.warden) : '？'} · 今天的門 ${doors}` });
+    const obj = T.OBJECTIVES && T.OBJECTIVES[m.objective];
+    const need = obj ? obj.need || 0 : 0;
+    const done = !!m.milestone || (need > 0 && (Number(m.walkTiles) || 0) >= need);
+    const goal = obj ? `${obj.name}${done ? '（已完成）' : need ? `（${Math.min(need, Number(m.walkTiles) || 0)} / ${need}）` : ''}` : '？';
+    const ev = m.startEvent && m.startEvent !== 'none' && T.START_EVENTS ? T.START_EVENTS[m.startEvent] : null;
+    out.push({ k: '目標', v: `${goal} · 開局卡 ${ev ? ev.name : '無'}` });
+    const tools = Array.isArray(m.tools) ? m.tools : [];
+    out.push({ k: `刑具（${tools.length}）`, v: tools.length ? tools.slice(0, 40).map((id) => safe(() => T.toolName(id), id) || id).join('、') : '無' });
+    out.push({ k: '綺彩', v: `${Array.isArray(m.vault) ? m.vault.length : 0} 名 · 待檢查 ${flagged || 0} 間牢房` });
+    return out;
+  }
+
+  function snapshot() {
+>>>>
+
+<<<< once
+      step: text(step),
+      reading,
+      lastRead,
+    };
+====
+      step: text(step),
+      reading,
+      lastRead,
+      // 快速模式（null：網站還沒有這個功能）。
+      fast: A && typeof A.isFast === 'function' ? !!A.isFast() : null,
+      seen: seenNow(flagged),
+    };
+>>>>
+
+<<<< once
+    } else if (cmd === 'report-new') {
+      if (window.TartarusReport) window.TartarusReport.open('other');
+    }
+====
+    } else if (cmd === 'report-new') {
+      if (window.TartarusReport) window.TartarusReport.open('other');
+    } else if (cmd === 'fast-on' || cmd === 'fast-off') {
+      const A = window.TartarusAnalyzer;
+      if (A && typeof A.setFast === 'function') A.setFast(cmd === 'fast-on');
+    }
+>>>>

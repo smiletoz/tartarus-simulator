@@ -7,7 +7,7 @@
 
   const O = window.Overlay;
   const $ = (id) => document.getElementById(id);
-  const state = { shell: {}, game: {}, follow: null, advice: null, menu: false };
+  const state = { shell: {}, game: {}, follow: null, advice: null, menu: false, seenOpen: true };
 
   // A small element maker: h('p', { class: 'x' }, 'text', child).
   function h(tag, attrs, ...kids) {
@@ -162,6 +162,23 @@
     dot($('dot-win'), f ? (f.window === 'on' ? true : state.game.running ? null : false) : false, f && f.window === 'on' ? `正在分享遊戲視窗${f.lastFrame ? `，最近一張截圖在 ${ago(f.lastFrame.at)}` : ''}` : '遊戲視窗沒有分享');
     $('report-menu').hidden = !state.menu;
     $('report-reading').hidden = !(a && a.canReportReading);
+    // 快速模式：狀態由分析器回報。
+    const fast = $('fast');
+    if (fast) {
+      fast.hidden = !(a && typeof a.fast === 'boolean');
+      fast.setAttribute('aria-pressed', a && a.fast ? 'true' : 'false');
+      fast.textContent = a && a.fast ? '快速 ✓' : '快速';
+    }
+    // 辨識結果：這次截圖讀到的內容。
+    const seen = $('seen');
+    if (seen) {
+      const rows = a && Array.isArray(a.seen) ? a.seen : [];
+      seen.hidden = !rows.length;
+      $('seen-toggle').textContent = state.seenOpen ? '辨識 ▾' : '辨識 ▸';
+      $('seen-toggle').setAttribute('aria-expanded', state.seenOpen ? 'true' : 'false');
+      $('seen-list').hidden = !state.seenOpen;
+      $('seen-list').replaceChildren(...(state.seenOpen ? rows.flatMap((r) => [h('dt', null, String(r.k || '')), h('dd', null, String(r.v || ''))]) : []));
+    }
   }
 
   document.addEventListener('click', (e) => {
@@ -173,6 +190,11 @@
       return;
     }
     if (b.id === 'fold') return O.command('collapse');
+    if (b.id === 'seen-toggle') {
+      state.seenOpen = !state.seenOpen;
+      render();
+      return O.command('seen-toggle');
+    }
     if (b.dataset.cmd) {
       state.menu = false;
       O.command(b.dataset.cmd);
@@ -185,6 +207,7 @@
 
   O.onShell((s) => {
     state.shell = s || {};
+    if (typeof state.shell.seenOpen === 'boolean') state.seenOpen = state.shell.seenOpen;
     render();
   });
   O.onGame((g) => {

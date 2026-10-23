@@ -1,0 +1,86 @@
+快速模式按鈕（#fast）與「辨識結果」小面板（#seen），overlay.js@fast.patch 負責內容。
+
+<<<< once
+  [hidden] {
+    display: none !important;
+  }
+====
+  button.btn[aria-pressed="true"] {
+    border-color: var(--check);
+    color: var(--check);
+  }
+
+  /* 辨識結果：小字、低調。 */
+  .seen {
+    padding: 0 10px 6px;
+    color: var(--ash);
+    font: 400 11px/1.35 var(--font-mono);
+  }
+
+  .seen-toggle {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--ash);
+    font: 500 10.5px/1.4 var(--font-mono);
+    letter-spacing: 0.06em;
+    cursor: pointer;
+  }
+
+  .seen-toggle:hover {
+    color: var(--bone);
+  }
+
+  .seen-list {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 1px 8px;
+    margin: 3px 0 0;
+    padding: 4px 6px;
+    border: 1px solid var(--iron);
+    border-radius: 4px;
+    background: color-mix(in srgb, var(--slab) 70%, transparent);
+  }
+
+  .seen-list dt {
+    color: var(--teal);
+    white-space: nowrap;
+  }
+
+  .seen-list dd {
+    margin: 0;
+    min-width: 0;
+    color: var(--chalk);
+    overflow-wrap: anywhere;
+  }
+
+  [hidden] {
+    display: none !important;
+  }
+>>>>
+
+<<<< once
+  .is-collapsed .body,
+  .is-collapsed .foot {
+====
+  .is-collapsed .body,
+  .is-collapsed .seen,
+  .is-collapsed .foot {
+>>>>
+
+<<<< once
+  <div class="body" id="body"></div>
+====
+  <div class="body" id="body"></div>
+  <div class="seen" id="seen" hidden>
+    <button type="button" class="seen-toggle" id="seen-toggle" aria-expanded="true" title="顯示或隱藏這次截圖辨識讀到的內容">辨識 ▾</button>
+    <dl class="seen-list" id="seen-list"></dl>
+  </div>
+>>>>
+
+<<<< once
+    <button type="button" class="btn" id="report" title="回報辨識錯誤，或模擬器還沒有的東西">回報</button>
+====
+    <button type="button" class="btn" id="report" title="回報辨識錯誤，或模擬器還沒有的東西">回報</button>
+    <button type="button" class="btn" id="fast" data-cmd="fast-toggle" aria-pressed="false" title="快速模式：模擬次數較少，建議較快出來，準確度略低" hidden>快速</button>
+>>>>

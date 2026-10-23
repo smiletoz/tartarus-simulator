@@ -1,0 +1,4638 @@
+/* Tartarus Simulator
+   Layout: a night-shift cell block. Sixteen cells ring a stone courtyard,
+   numbered clockwise from the warden's office at 01, with the warden's
+   decisions in the middle. The log runs
+   down the left rail and the ledger (objective, vault, tools, food chain)
+   down the right. One deliberate dark look: rarity colors carry
+   meaning, so the stone, iron and bone around them stay quiet. */
+:root {
+  color-scheme: dark;
+
+  /* Surfaces */
+  --stone: #0f1216;
+  --glow: #1a2029;
+  --slab: #171b21;
+  --slab-hi: #1f242c;
+  --slab-top: #262c35;
+  --iron: #353c47;
+  --iron-hi: #545e6d;
+  --court: #14181e;
+  --court-glow: #232a33;
+  --mortar: #20262e;
+
+  /* Ink */
+  --chalk: #e3e6eb;
+  --ash: #959dab;
+  --bone: #eadfc5;
+  --bone-hi: #f5ecd8;
+  --bone-ink: #1c1913;
+  --p-dark: #0d1014;
+
+  /* Signals */
+  --blood: #e0675f;
+  --moss: #86c497;
+  --teal: #5fc4b8;
+  --sprout: #a3d17f;
+
+  /* Rarity ladder */
+  --t0: #cfd4dc;
+  --t1: #6b96ff;
+  /* Rare is purple, as in the game. */
+  --t2: #b07cf0;
+  --t3: #f28c36;
+  --t4: #ea4f57;
+  --t5: #f4f0ff;
+  /* Things to check, beta tags and swaps: amber, apart from the rarities. */
+  --check: #f1cd48;
+  --rainbow: conic-gradient(from 210deg, #ff6a6a, #ffb562, #f5ea5c, #6fe08c, #5fc7ff, #8b80ff, #e470ff, #ff6a6a);
+
+  /* Cell materials */
+  --door: #1a1f26;
+  --door-hi: #272e37;
+  --bar: #4a5361;
+  --floor: #14181d;
+  --floor-glow: #1d232b;
+  --claw: #d9dee6;
+  --shade: rgb(0 0 0 / 0.45);
+
+  /* The warden's office: lamplight and wood instead of iron */
+  --office: #1b1813;
+  --office-hi: #2b241b;
+  --wood: #8b6a47;
+  --wood-lo: #5c4530;
+
+  /* Type */
+  --font-display: "Big Shoulders Stencil Display", "Arial Narrow", Impact, sans-serif;
+  --font-body: "Barlow Semi Condensed", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+
+  --radius: 4px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: var(--stone);
+  background-image: radial-gradient(1100px 520px at 50% -12%, var(--glow), transparent 70%);
+  background-repeat: no-repeat;
+  color: var(--chalk);
+  font: 400 15px/1.45 var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+a {
+  color: var(--bone);
+  text-underline-offset: 3px;
+}
+
+:focus-visible {
+  outline: 2px solid var(--bone);
+  outline-offset: 2px;
+}
+
+.app {
+  height: 100%;
+}
+
+.t0 { --tc: var(--t0); }
+.t1 { --tc: var(--t1); }
+.t2 { --tc: var(--t2); }
+.t3 { --tc: var(--t3); }
+.t4 { --tc: var(--t4); }
+.t5 { --tc: var(--t5); }
+
+.eyebrow {
+  margin: 0;
+  font: 500 11px/1.3 var(--font-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ash);
+}
+
+/* ---------- Buttons ---------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 6px 14px;
+  border: 1px solid var(--iron);
+  border-radius: var(--radius);
+  background: var(--slab-hi);
+  color: var(--chalk);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: border-color 0.15s, background-color 0.15s, color 0.15s;
+}
+
+.btn:hover:not(:disabled) {
+  border-color: var(--iron-hi);
+  background: var(--slab-top);
+}
+
+.btn:disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: var(--bone);
+  border-color: var(--bone);
+  color: var(--bone-ink);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--bone-hi);
+  border-color: var(--bone-hi);
+}
+
+.btn-ghost {
+  background: transparent;
+}
+
+.btn-ghost[aria-pressed="true"] {
+  border-color: var(--bone);
+  color: var(--bone);
+}
+
+.btn-danger {
+  background: transparent;
+  border-color: color-mix(in srgb, var(--blood) 55%, var(--iron));
+  color: var(--blood);
+}
+
+.btn small {
+  font-weight: 500;
+  opacity: 0.75;
+}
+
+.link {
+  padding: 4px 0;
+  border: 0;
+  background: none;
+  color: var(--ash);
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-color: var(--iron-hi);
+  text-underline-offset: 3px;
+}
+
+.link:hover {
+  color: var(--chalk);
+}
+
+/* ---------- Title screen ---------- */
+
+/* The copy and, under it, the credits fill the first column. The sample
+   board spans both rows of the second. */
+.title {
+  min-height: 100%;
+  max-width: 1320px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: 24px clamp(24px, 4vw, 64px);
+  align-content: center;
+  align-items: center;
+  padding-block: clamp(24px, 6vh, 64px);
+  padding-inline: clamp(16px, 4vw, 64px);
+}
+
+.brand {
+  margin: 10px 0 16px;
+  line-height: 0.86;
+}
+
+.brand-main {
+  display: block;
+  font: 800 clamp(64px, 10vw, 140px) / 0.86 var(--font-display);
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  color: var(--bone);
+}
+
+.brand-sub {
+  display: block;
+  margin-top: 12px;
+  font: 600 clamp(14px, 1.6vw, 18px) / 1.2 var(--font-body);
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--ash);
+}
+
+.lede {
+  max-width: 52ch;
+  margin: 0 0 22px;
+  font-size: 17px;
+  text-wrap: pretty;
+}
+
+.source-note {
+  max-width: 560px;
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--iron);
+  border-radius: var(--radius);
+  background: var(--slab);
+  color: var(--ash);
+  font-size: 14px;
+  text-wrap: pretty;
+}
+
+.source-note strong {
+  color: var(--chalk);
+}
+
+.source-note a {
+  color: var(--bone);
+  font-weight: 600;
+}
+
+.source-tag {
+  display: inline-block;
+  margin-right: 6px;
+  padding: 2px 6px;
+  border: 1px solid var(--bone);
+  border-radius: 2px;
+  color: var(--bone);
+  font: 500 10.5px/1.3 var(--font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  vertical-align: 1px;
+}
+
+.title-actions {
+  display: grid;
+  gap: 10px;
+  max-width: 560px;
+}
+
+.btn-continue {
+  justify-content: space-between;
+  padding: 14px 16px;
+  font-size: 16px;
+}
+
+.route {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 4px 16px;
+  padding: 14px 16px;
+  border: 1px solid var(--iron);
+  border-radius: var(--radius);
+  background: var(--slab);
+  color: var(--chalk);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s, background-color 0.15s;
+}
+
+a.route,
+a.menu-item {
+  color: var(--chalk);
+  text-decoration: none;
+}
+
+.route:hover {
+  border-color: var(--bone);
+  background: var(--slab-hi);
+}
+
+.route-name {
+  font: 800 24px/1 var(--font-display);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--bone);
+}
+
+.route-meta {
+  grid-column: 2;
+  grid-row: 1;
+  align-self: center;
+  font: 500 11px/1.2 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ash);
+  white-space: nowrap;
+}
+
+.route-text {
+  grid-column: 1 / -1;
+  font-size: 14.5px;
+  color: var(--ash);
+}
+
+/* The board analyzer leads the list, since it's the tool for the live game.
+   It takes the teal the trainer marks its recommended moves with. */
+.route-featured {
+  border-color: color-mix(in srgb, var(--teal) 55%, var(--iron));
+  background: color-mix(in srgb, var(--teal) 9%, var(--slab));
+}
+
+.route-featured:hover {
+  border-color: var(--teal);
+  background: color-mix(in srgb, var(--teal) 15%, var(--slab-hi));
+}
+
+.route-featured .route-name {
+  color: var(--teal);
+}
+
+.title-utils {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  margin-top: 18px;
+}
+
+/* The credits and the disclaimer close the title screen. */
+.title-credits {
+  display: grid;
+  gap: 10px;
+}
+
+.fineprint {
+  max-width: 62ch;
+  margin: 4px 0 0;
+  font-size: 12.5px;
+  color: var(--ash);
+}
+
+.title-art {
+  grid-row: span 2;
+  margin: 0;
+  display: grid;
+  gap: 12px;
+  justify-items: center;
+  min-width: 0;
+}
+
+.board-sample {
+  width: min(100%, 640px);
+  pointer-events: none;
+}
+
+.sample-caption {
+  max-width: 52ch;
+  font: 400 12px/1.5 var(--font-mono);
+  color: var(--ash);
+  text-align: center;
+}
+
+/* ---------- Game layout ---------- */
+
+.game {
+  height: 100%;
+  display: grid;
+  grid-template-columns: minmax(210px, 250px) minmax(0, 1fr) minmax(260px, 300px);
+  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-areas:
+    "top top top"
+    "rail block ledger";
+}
+
+.topbar {
+  grid-area: top;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 18px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--iron);
+  background: var(--slab);
+}
+
+.tb-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.tb-logo {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: 800 28px/1 var(--font-display);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--bone);
+  cursor: pointer;
+}
+
+.chip {
+  max-width: 42vw;
+  overflow: hidden;
+  padding: 4px 8px;
+  border: 1px solid var(--iron);
+  border-radius: 2px;
+  font: 500 11px/1.2 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ash);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.tb-day {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 8px;
+}
+
+.day-label {
+  font: 500 11px/1 var(--font-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ash);
+}
+
+.day-num {
+  font: 800 34px/1 var(--font-display);
+  font-variant-numeric: tabular-nums;
+  color: var(--chalk);
+}
+
+.day-of {
+  font: 600 18px/1 var(--font-display);
+  color: var(--ash);
+}
+
+.phase {
+  align-self: center;
+  margin-left: 4px;
+  padding: 5px 8px;
+  border: 1px solid var(--bone);
+  border-radius: 2px;
+  background: var(--bone);
+  color: var(--bone-ink);
+  font: 600 11px/1 var(--font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.phase.is-manage {
+  background: transparent;
+  color: var(--bone);
+}
+
+.phase.is-ended {
+  background: transparent;
+  border-color: var(--iron-hi);
+  color: var(--ash);
+}
+
+.handoff {
+  font-size: 13px;
+  color: var(--ash);
+}
+
+.tb-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.rail {
+  grid-area: rail;
+  min-height: 0;
+  overflow: auto;
+  padding: 14px 16px;
+  border-right: 1px solid var(--iron);
+}
+
+.block {
+  --block-w: clamp(300px, min(100%, calc((100dvh - 360px) * 1.5)), 940px);
+  grid-area: block;
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+}
+
+.block > .board,
+.block > .dest-bar,
+.block > .recap,
+.block > .actionbar {
+  width: var(--block-w);
+  max-width: 100%;
+  flex: none;
+}
+
+.ledger {
+  grid-area: ledger;
+  min-height: 0;
+  overflow: auto;
+  display: grid;
+  align-content: start;
+  gap: 14px;
+  padding: 14px 16px;
+  border-left: 1px solid var(--iron);
+}
+
+.game.is-immersive {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    "top"
+    "block";
+}
+
+.game.is-immersive .rail,
+.game.is-immersive .ledger {
+  display: none;
+}
+
+/* ---------- The ring ---------- */
+
+.board {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-rows: repeat(4, auto);
+  gap: clamp(4px, 0.8vw, 9px);
+  padding: clamp(6px, 1vw, 14px);
+  border: 1px solid var(--iron);
+  border-radius: 8px;
+  background-color: var(--court);
+  background-image:
+    radial-gradient(55% 60% at 50% 50%, var(--court-glow), transparent 75%),
+    repeating-linear-gradient(0deg, var(--mortar) 0 1px, transparent 1px 34px),
+    repeating-linear-gradient(90deg, var(--mortar) 0 1px, transparent 1px 52px);
+  box-shadow: inset 0 0 0 3px var(--slab), inset 0 0 70px var(--shade), 0 24px 60px var(--shade);
+}
+
+.board-center,
+.board-emblem {
+  grid-row: 2 / 4;
+  grid-column: 2 / 6;
+  min-width: 0;
+  min-height: 0;
+}
+
+/* The middle never sets the ring's height; long text scrolls inside it. */
+.board-center {
+  contain: size;
+  overflow: auto;
+  display: grid;
+  align-content: center;
+  padding: clamp(2px, 0.6vw, 8px);
+}
+
+.board-emblem {
+  display: none;
+  place-content: center;
+  justify-items: center;
+  gap: 4px;
+  pointer-events: none;
+  color: var(--iron-hi);
+}
+
+.board-emblem svg {
+  width: clamp(36px, 12vw, 70px);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 3;
+}
+
+.board-emblem svg .tip {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.board-emblem span {
+  font: 500 10px/1.2 var(--font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.cell {
+  position: relative;
+  min-width: 0;
+  aspect-ratio: 1;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--iron);
+  border-radius: 3px;
+  background: radial-gradient(120% 90% at 50% 112%, var(--floor-glow), var(--floor) 70%);
+  color: var(--chalk);
+  text-align: center;
+  cursor: pointer;
+  container-type: inline-size;
+  transition: opacity 0.2s, border-color 0.15s;
+}
+
+.cell:hover {
+  border-color: var(--iron-hi);
+}
+
+.cell-body {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  padding: 10% 5% 12%;
+}
+
+/* A badge row needs the bottom of the cell, so the portrait shrinks. */
+.cell.has-badges .cell-body {
+  padding: 6% 5% 24%;
+}
+
+.door {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background:
+    linear-gradient(180deg, transparent 17%, var(--bar) 17%, var(--bar) 21%, transparent 21%, transparent 79%, var(--bar) 79%, var(--bar) 83%, transparent 83%),
+    repeating-linear-gradient(90deg, transparent 0, transparent calc(20% - 4px), var(--bar) calc(20% - 4px), var(--bar) 20%),
+    linear-gradient(180deg, var(--door-hi), var(--door));
+  transform: translateY(0);
+}
+
+.board.is-live .door {
+  transition: transform 0.45s cubic-bezier(0.6, 0.05, 0.3, 1), box-shadow 0.15s;
+}
+
+.cell:not(.is-sealed) .door {
+  transform: translateY(-101%);
+}
+
+.cell.has-scratch::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background:
+    linear-gradient(118deg, transparent 0 44%, var(--claw) 44% 45.6%, transparent 45.6%),
+    linear-gradient(118deg, transparent 0 51%, var(--claw) 51% 52.6%, transparent 52.6%),
+    linear-gradient(118deg, transparent 0 58%, var(--claw) 58% 59.6%, transparent 59.6%);
+  -webkit-mask: linear-gradient(180deg, transparent 8%, #000 26%, #000 62%, transparent 80%);
+  mask: linear-gradient(180deg, transparent 8%, #000 26%, #000 62%, transparent 80%);
+  opacity: 0.75;
+}
+
+.cell-no {
+  position: absolute;
+  top: 4px;
+  left: 6px;
+  z-index: 4;
+  font: 800 clamp(11px, 14cqi, 20px) / 1 var(--font-display);
+  letter-spacing: 0.04em;
+  color: var(--ash);
+}
+
+.cell.is-sealed .cell-no {
+  padding: 1px 3px;
+  background: var(--door);
+  border-radius: 2px;
+}
+
+.cell-hint {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 4;
+  display: grid;
+  justify-items: center;
+  gap: 3px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.hint {
+  display: inline-block;
+  padding: 3px 5px;
+  border: 1px solid var(--tc);
+  border-radius: 2px;
+  background: var(--stone);
+  color: var(--tc);
+  font: 600 clamp(7px, 9.5cqi, 12px) / 1.1 var(--font-mono);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  box-shadow: 0 0 18px color-mix(in srgb, var(--tc) 40%, transparent);
+  white-space: nowrap;
+}
+
+.nest-count {
+  display: grid;
+  place-items: center;
+  width: clamp(22px, 32cqi, 42px);
+  aspect-ratio: 1;
+  border: 2px solid var(--sprout);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--sprout) 14%, var(--stone));
+  color: var(--sprout);
+  font: 800 clamp(12px, 17cqi, 22px) / 1 var(--font-display);
+}
+
+.nest-label {
+  padding: 2px 4px;
+  background: var(--stone);
+  color: var(--sprout);
+  font: 500 clamp(7px, 8cqi, 10px) / 1 var(--font-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.token {
+  display: grid;
+  justify-items: center;
+  gap: 1px;
+  width: 100%;
+  line-height: 1;
+}
+
+.portrait {
+  width: 50cqi;
+  height: auto;
+  overflow: visible;
+  filter: drop-shadow(0 0 7px color-mix(in srgb, var(--tc) 30%, transparent));
+}
+
+.cell.has-badges .portrait {
+  width: 38cqi;
+}
+
+.portrait .p-main { fill: var(--tc); }
+.portrait .p-shade { fill: color-mix(in srgb, var(--tc) 48%, var(--p-dark)); }
+.portrait .p-light { fill: color-mix(in srgb, var(--tc) 50%, var(--chalk)); }
+.portrait .p-ink { fill: var(--p-dark); }
+.portrait .p-ink2 { fill: color-mix(in srgb, var(--p-dark) 70%, var(--tc)); }
+.portrait .p-bonefill { fill: var(--bone); }
+
+.portrait .p-bone,
+.portrait .p-line,
+.portrait .p-inkline {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.portrait .p-bone {
+  stroke: var(--bone);
+  stroke-width: 3;
+}
+
+.portrait .p-line {
+  stroke: var(--tc);
+  stroke-width: 1.4;
+}
+
+.portrait .p-inkline {
+  stroke: var(--p-dark);
+  stroke-width: 1.4;
+}
+
+.token-beast {
+  font: 600 clamp(8px, 10cqi, 13px) / 1.1 var(--font-body);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.token-tier {
+  margin-top: 2px;
+  padding: 2px 4px;
+  border: 1px solid color-mix(in srgb, var(--tc) 55%, transparent);
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--tc) 12%, transparent);
+  color: var(--tc);
+  font: 500 clamp(7px, 8.5cqi, 11px) / 1 var(--font-mono);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* Cell 01, the warden's office. No door: a desk under candlelight. */
+.cell.is-office {
+  border-color: color-mix(in srgb, var(--bone) 30%, var(--iron));
+  background:
+    radial-gradient(60% 50% at 72% 30%, color-mix(in srgb, var(--t3) 14%, transparent), transparent 70%),
+    linear-gradient(180deg, var(--office-hi), var(--office));
+}
+
+.office {
+  display: grid;
+  justify-items: center;
+  gap: 5cqi;
+  width: 100%;
+}
+
+.office-art {
+  width: 60cqi;
+  height: auto;
+  overflow: visible;
+}
+
+.office-art .o-glow { fill: color-mix(in srgb, var(--t3) 20%, transparent); }
+.office-art .o-paper { fill: var(--bone); }
+.office-art .o-line { fill: none; stroke: var(--bone-ink); stroke-width: 1.2; stroke-linecap: round; }
+.office-art .o-wax { fill: var(--bone-hi); }
+.office-art .o-flame { fill: var(--t3); }
+.office-art .o-wood { fill: var(--wood); }
+.office-art .o-wood-lo { fill: var(--wood-lo); }
+.office-art .o-knob { fill: var(--bone); }
+
+.office-name {
+  font: 800 clamp(9px, 12cqi, 16px) / 1 var(--font-display);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--bone);
+}
+
+.cell.has-inmate {
+  border-color: color-mix(in srgb, var(--tc) 45%, var(--iron));
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--tc) 16%, transparent),
+    inset 0 -18px 36px -12px color-mix(in srgb, var(--tc) 22%, transparent);
+}
+
+.floor {
+  font: 800 clamp(9px, 12cqi, 16px) / 1 var(--font-display);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--iron-hi);
+}
+
+.cell-badges {
+  position: absolute;
+  left: 3px;
+  right: 3px;
+  bottom: 4px;
+  z-index: 4;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2px;
+  pointer-events: none;
+}
+
+.badge {
+  padding: 2px 3px;
+  border-radius: 2px;
+  font: 500 clamp(6px, 7.5cqi, 10px) / 1 var(--font-mono);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.badge-ivory {
+  background: var(--bone);
+  color: var(--bone-ink);
+}
+
+.badge-prey {
+  border: 1px solid var(--teal);
+  background: color-mix(in srgb, var(--teal) 14%, var(--stone));
+  color: var(--teal);
+}
+
+.badge-scratch {
+  border: 1px solid var(--iron-hi);
+  background: var(--stone);
+  color: var(--chalk);
+}
+
+.badge-event {
+  border: 1px solid var(--bone);
+  background: var(--stone);
+  color: var(--bone);
+}
+
+.warden {
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  z-index: 5;
+  width: clamp(14px, 20cqi, 24px);
+  height: auto;
+  fill: var(--bone);
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--bone) 70%, transparent));
+  pointer-events: none;
+}
+
+.warden .flame {
+  fill: var(--t3);
+}
+
+.cell-tag {
+  display: none;
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  z-index: 5;
+  padding: 2px 4px;
+  border-radius: 2px;
+  background: var(--bone);
+  color: var(--bone-ink);
+  font: 600 clamp(7px, 9cqi, 11px) / 1 var(--font-mono);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.cell.is-selected {
+  outline: 2px solid var(--bone);
+  outline-offset: 2px;
+  border-color: var(--bone);
+}
+
+.cell.is-target {
+  outline: 2px dashed var(--bone);
+  outline-offset: -5px;
+}
+
+.cell.is-target.is-selected {
+  outline-style: solid;
+  outline-offset: 2px;
+}
+
+.cell.is-victim {
+  outline: 2px dashed var(--blood);
+  outline-offset: -5px;
+}
+
+/* Today's patrol choices: a bright frame and glow so they stand out. */
+.cell.is-dest {
+  z-index: 1;
+  outline: 3px solid var(--bone);
+  outline-offset: 1px;
+  box-shadow: 0 0 18px 4px color-mix(in srgb, var(--bone) 60%, transparent);
+}
+
+.cell.is-dest .door {
+  box-shadow: inset 0 0 0 2px var(--bone), inset 0 0 30px color-mix(in srgb, var(--bone) 45%, transparent);
+  filter: brightness(1.35);
+}
+
+.cell.is-dest .cell-tag {
+  padding: 3px 6px;
+  font-size: clamp(8px, 11cqi, 13px);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--bone) 80%, transparent);
+}
+
+.cell.is-dest.is-selected {
+  outline-width: 4px;
+  outline-offset: 2px;
+  box-shadow: 0 0 28px 7px color-mix(in srgb, var(--bone) 80%, transparent);
+}
+
+/* While patrolling, sealed doors you can't pick today step back. */
+.board.is-patrolling .cell.is-sealed:not(.is-dest) .door {
+  filter: brightness(0.55) saturate(0.7);
+}
+
+.cell.on-path .door {
+  box-shadow: inset 0 0 0 3px color-mix(in srgb, var(--bone) 60%, transparent), inset 0 0 22px color-mix(in srgb, var(--bone) 35%, transparent);
+}
+
+.cell.is-target .cell-tag,
+.cell.is-dest .cell-tag {
+  display: block;
+}
+
+.cell.is-dim {
+  opacity: 0.42;
+}
+
+.cell-fx {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.cell-fx.fx-open {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--bone) 35%, transparent), transparent 65%);
+  animation: fx-fade 0.7s ease-out;
+}
+
+.cell-fx.fx-devour {
+  background: radial-gradient(circle, color-mix(in srgb, var(--blood) 70%, transparent), transparent 72%);
+  animation: fx-fade 0.75s ease-out;
+}
+
+.cell-fx.fx-promote {
+  box-shadow: inset 0 0 0 3px var(--tc, var(--bone)), inset 0 0 34px var(--tc, var(--bone));
+  animation: fx-fade 0.9s ease-out;
+}
+
+.cell-fx.fx-swap,
+.cell-fx.fx-move {
+  box-shadow: inset 0 0 0 3px var(--bone), inset 0 0 30px color-mix(in srgb, var(--bone) 60%, transparent);
+  animation: fx-fade 0.7s ease-out;
+}
+
+.cell-fx.fx-hatch,
+.cell-fx.fx-nest {
+  box-shadow: inset 0 0 0 3px var(--sprout), inset 0 0 30px var(--sprout);
+  animation: fx-fade 0.9s ease-out;
+}
+
+.cell-fx.fx-rainbow {
+  background: var(--rainbow);
+  mix-blend-mode: screen;
+  animation: fx-rainbow 1.3s ease-out;
+}
+
+@keyframes fx-fade {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes fx-rainbow {
+  0% { opacity: 0.95; transform: scale(0.6) rotate(0deg); }
+  100% { opacity: 0; transform: scale(1.5) rotate(120deg); }
+}
+
+@keyframes pulse-dest {
+  0%, 100% { box-shadow: 0 0 14px 3px color-mix(in srgb, var(--bone) 50%, transparent); }
+  50% { box-shadow: 0 0 26px 8px color-mix(in srgb, var(--bone) 85%, transparent); }
+}
+
+.board.is-live .cell.is-dest:not(.is-selected) {
+  animation: pulse-dest 1.8s ease-in-out infinite;
+}
+
+@container (max-width: 80px) {
+  .token-beast {
+    display: none;
+  }
+
+  /* Narrow cells keep just the hatch day under the countdown. */
+  .nest-word {
+    display: none;
+  }
+
+  .cell-badges {
+    bottom: 2px;
+  }
+}
+
+/* ---------- Decision panel (center of the ring) ---------- */
+
+.decision {
+  display: grid;
+  gap: 8px;
+  padding: clamp(8px, 1.2vw, 14px);
+  border: 1px solid var(--iron);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--slab) 92%, transparent);
+  box-shadow: 0 10px 30px var(--shade);
+}
+
+.decision.is-pending {
+  border-color: var(--bone);
+}
+
+.decision-text {
+  min-width: 0;
+}
+
+.decision-title {
+  margin: 0;
+  font: 800 clamp(16px, 1.7vw, 21px) / 1.1 var(--font-display);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--bone);
+  text-wrap: balance;
+}
+
+.decision-detail {
+  margin: 4px 0 0;
+  font-size: clamp(13px, 1.25vw, 14.5px);
+  color: var(--ash);
+  text-wrap: pretty;
+}
+
+.decision-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.decision-actions .btn {
+  min-height: 32px;
+  padding: 4px 12px;
+}
+
+.actionbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* Destination cards under the ring, one per door offered this morning. */
+.dest-bar {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+}
+
+.dest-title {
+  margin: 0;
+  font: 800 20px/1 var(--font-display);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--bone);
+}
+
+.dest-cards {
+  display: flex;
+  justify-content: center;
+  gap: clamp(6px, 1.2vw, 12px);
+  width: 100%;
+}
+
+.dest-card {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: 250px;
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  padding: 12px 8px 10px;
+  border: 2px solid var(--iron-hi);
+  border-radius: 6px;
+  background:
+    radial-gradient(120% 80% at 50% 0%, var(--court-glow), transparent 70%),
+    linear-gradient(180deg, var(--slab-top), var(--slab));
+  color: var(--chalk);
+  cursor: pointer;
+  box-shadow: inset 0 0 0 3px var(--stone), 0 6px 18px var(--shade);
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+}
+
+.dest-card:hover:not(:disabled) {
+  border-color: var(--bone);
+  transform: translateY(-2px);
+}
+
+.dest-card.is-selected {
+  border-color: var(--bone);
+  box-shadow: inset 0 0 0 3px var(--stone), 0 0 24px 5px color-mix(in srgb, var(--bone) 55%, transparent);
+}
+
+.dest-card:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.dest-door {
+  width: 44px;
+  height: 52px;
+  border: 3px solid var(--bar);
+  border-bottom-width: 4px;
+  border-radius: 22px 22px 3px 3px;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 8px, var(--bar) 8px 11px),
+    linear-gradient(180deg, var(--door-hi), var(--door));
+  box-shadow: inset 0 0 12px var(--shade);
+}
+
+.dest-face {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border: 2px solid var(--tc);
+  border-radius: 8px;
+  background: var(--floor);
+  box-shadow: 0 0 14px color-mix(in srgb, var(--tc) 45%, transparent);
+}
+
+.dest-face .portrait {
+  width: 42px;
+}
+
+.dest-door.is-open {
+  background: radial-gradient(circle at 50% 75%, var(--court-glow), var(--floor));
+}
+
+.dest-label {
+  font: 800 clamp(13px, 1.6vw, 17px) / 1.1 var(--font-display);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.dest-meta {
+  font-size: 12.5px;
+  line-height: 1.3;
+  color: var(--ash);
+  text-align: center;
+}
+
+.dest-event {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  padding: 2px 4px;
+  border: 1px solid var(--bone);
+  border-radius: 2px;
+  background: var(--stone);
+  color: var(--bone);
+  font: 500 9.5px/1 var(--font-mono);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.dest-hint {
+  margin: 0;
+  max-width: 60ch;
+  font-size: 12.5px;
+  color: var(--ash);
+  text-align: center;
+}
+
+/* ---------- Beast icons and the day recap ---------- */
+
+/* A small portrait in its rarity color, used by the log and the recap. */
+.tok {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 22px;
+  height: 22px;
+  border: 1.5px solid var(--tc, var(--iron-hi));
+  border-radius: 5px;
+  background: var(--floor);
+  vertical-align: middle;
+}
+
+.tok .portrait {
+  width: 17px;
+  filter: none;
+}
+
+/* A meal: dimmed and struck through. */
+.tok.is-eaten {
+  opacity: 0.62;
+}
+
+.tok.is-eaten::after {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  border-radius: 3px;
+  background: linear-gradient(135deg, transparent 45%, var(--blood) 45% 57%, transparent 57%);
+}
+
+.tok.is-rainbow {
+  border-color: transparent;
+  background: linear-gradient(var(--floor), var(--floor)) padding-box, var(--rainbow) border-box;
+}
+
+.chain-strip {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 3px;
+  max-width: 100%;
+}
+
+/* One bite stays on one line: eater, fangs and gain, meal. */
+.bite {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.fang {
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+  color: var(--blood);
+  font: 600 10px/1 var(--font-mono);
+}
+
+.fangs {
+  width: 12px;
+  height: auto;
+  fill: var(--blood);
+}
+
+.then {
+  color: var(--ash);
+  font-size: 14px;
+  line-height: 1;
+}
+
+.vault-note {
+  font: 500 9.5px/1 var(--font-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ash);
+}
+
+.log-text {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.log-icons {
+  display: block;
+}
+
+/* Under the destination cards each morning, under the ring after the patrol. */
+.recap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px 10px;
+}
+
+.recap-title {
+  margin: 0;
+  font: 500 11px/1.2 var(--font-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--bone);
+}
+
+.recap-items {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  min-width: 0;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.recap-item {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 5px;
+  max-width: 100%;
+  padding: 3px 7px 3px 6px;
+  border: 1px solid var(--iron);
+  border-radius: 4px;
+  background: var(--slab);
+  font-size: 12.5px;
+}
+
+.recap-item.is-devour {
+  border-color: color-mix(in srgb, var(--blood) 50%, var(--iron));
+}
+
+.recap-item.is-rainbow {
+  border-color: transparent;
+  background: linear-gradient(var(--slab), var(--slab)) padding-box, var(--rainbow) border-box;
+}
+
+.recap-label {
+  font: 500 10.5px/1 var(--font-mono);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ash);
+  white-space: nowrap;
+}
+
+.recap-note {
+  color: var(--chalk);
+}
+
+.cell.is-dest.is-aim {
+  outline-width: 4px;
+  outline-offset: 2px;
+  box-shadow: 0 0 28px 7px color-mix(in srgb, var(--bone) 80%, transparent);
+}
+
+.actionbar .btn-primary {
+  min-width: 120px;
+}
+
+.toast {
+  position: fixed;
+  inset: auto auto calc(18px + env(safe-area-inset-bottom, 0px)) 50%;
+  z-index: 50;
+  width: max-content;
+  max-width: min(520px, calc(100vw - 32px));
+  height: auto;
+  margin: 0;
+  padding: 10px 14px;
+  transform: translateX(-50%);
+  border: 1px solid var(--blood);
+  border-radius: var(--radius);
+  background: var(--slab-hi);
+  color: var(--chalk);
+  font-size: 14px;
+  box-shadow: 0 10px 30px var(--shade);
+}
+
+.toast.is-info {
+  border-color: var(--iron-hi);
+}
+
+/* A newer version of the page is out (js/update.js). */
+.update-bar {
+  position: fixed;
+  inset: auto auto calc(18px + env(safe-area-inset-bottom, 0px)) 50%;
+  z-index: 60;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  align-items: center;
+  justify-content: center;
+  width: max-content;
+  max-width: min(560px, calc(100vw - 32px));
+  padding: 10px 14px;
+  transform: translateX(-50%);
+  border: 1px solid var(--bone);
+  border-radius: var(--radius);
+  background: var(--slab-hi);
+  color: var(--chalk);
+  font-size: 14px;
+  box-shadow: 0 10px 30px var(--shade);
+}
+
+.update-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* ---------- Log rail ---------- */
+
+.panel-title {
+  margin: 0 0 8px;
+  font: 800 18px/1.1 var(--font-display);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--chalk);
+}
+
+.log {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 13.5px;
+}
+
+.log-day {
+  margin-top: 10px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--iron);
+  font: 500 11px/1.2 var(--font-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--bone);
+}
+
+.log-day:first-child {
+  margin-top: 0;
+}
+
+.log-entry {
+  display: grid;
+  grid-template-columns: 8px minmax(0, 1fr);
+  gap: 8px;
+  padding: 3px 0;
+  overflow-wrap: anywhere;
+}
+
+.log-entry::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  margin-top: 7px;
+  border-radius: 50%;
+  background: var(--k, var(--iron-hi));
+}
+
+.log-entry.k-devour { --k: var(--blood); }
+.log-entry.k-prey { --k: var(--teal); }
+.log-entry.k-nest { --k: var(--sprout); }
+.log-entry.k-ivory,
+.log-entry.k-tool,
+.log-entry.k-event { --k: var(--bone); }
+.log-entry.k-swap { --k: var(--check); }
+.log-entry.k-patrol { --k: var(--chalk); }
+
+.log-entry.k-rainbow::before {
+  background: var(--rainbow);
+}
+
+.log-entry.k-drill,
+.log-entry.k-lab,
+.log-entry.k-end {
+  color: var(--bone);
+}
+
+.log-empty {
+  color: var(--ash);
+  font-size: 13.5px;
+}
+
+/* ---------- Ledger panels ---------- */
+
+.panel {
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--iron);
+}
+
+.panel:last-child {
+  border-bottom: 0;
+}
+
+.panel-text {
+  margin: 0 0 10px;
+}
+
+.panel-note {
+  margin: 8px 0 0;
+  font-size: 12.5px;
+  color: var(--ash);
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+}
+
+.facts-wide {
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+}
+
+.facts div {
+  min-width: 0;
+}
+
+.facts dt {
+  font: 500 10.5px/1.3 var(--font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ash);
+}
+
+.facts dd {
+  margin: 3px 0 0;
+  font: 800 22px/1 var(--font-display);
+  font-variant-numeric: tabular-nums;
+  color: var(--chalk);
+  overflow-wrap: anywhere;
+}
+
+.facts dd.is-text {
+  font: 600 15px/1.2 var(--font-body);
+}
+
+/* The run's objective under the goal, as the live game's left panel shows
+   it, with a bar for Prison Walk's tiles. */
+.objective {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--iron);
+  border-radius: var(--radius);
+  background: var(--slab);
+}
+
+.objective-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 8px;
+  margin: 0;
+}
+
+.objective-tag {
+  font: 500 10.5px/1.3 var(--font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ash);
+}
+
+.objective-name {
+  font: 800 17px/1.1 var(--font-display);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--bone);
+}
+
+.objective-status {
+  margin-left: auto;
+  font: 500 12px/1.2 var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--ash);
+}
+
+.objective-status.is-done {
+  color: var(--moss);
+}
+
+.objective-text {
+  margin: 4px 0 0;
+  font-size: 13.5px;
+  color: var(--ash);
+}
+
+.objective-bar {
+  display: block;
+  height: 4px;
+  margin-top: 8px;
+  border-radius: 2px;
+  background: var(--iron);
+  overflow: hidden;
+}
+
+.objective-bar span {
+  display: block;
+  height: 100%;
+  background: var(--bone);
+}
+
+.objective-bar.is-done span {
+  background: var(--moss);
+}
+
+.vault {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.vault-slot {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 2px dashed var(--iron);
+  border-radius: 50%;
+}
+
+.vault-slot.is-filled {
+  padding: 3px;
+  border: 0;
+  background: var(--rainbow);
+}
+
+.vault-slot.is-filled span {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: var(--slab);
+  --tc: var(--t5);
+}
+
+.vault-slot .portrait {
+  width: 76%;
+}
+
+.tools {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tool {
+  display: grid;
+  gap: 3px;
+}
+
+.tool-name {
+  font-weight: 700;
+}
+
+.tool-text {
+  font-size: 13.5px;
+  color: var(--ash);
+}
+
+.tip .btn {
+  justify-self: start;
+  min-height: 30px;
+  padding: 4px 10px;
+  font-size: 13px;
+}
+
+.tips {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Trainer: the recommended move, your last move's grade, the live check. */
+.trainer-pick,
+.trainer-grade {
+  display: grid;
+  gap: 4px;
+  margin-bottom: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--teal);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--teal) 8%, var(--slab));
+}
+
+.trainer-grade {
+  border-color: var(--iron-hi);
+  background: var(--slab);
+}
+
+.trainer-pick p,
+.trainer-grade p {
+  margin: 0;
+}
+
+.trainer-eyebrow {
+  font: 500 10.5px/1.3 var(--font-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ash);
+}
+
+.trainer-move {
+  font: 800 18px/1.15 var(--font-display);
+  letter-spacing: 0.03em;
+  color: var(--chalk);
+}
+
+.trainer-why,
+.trainer-detail {
+  font-size: 13px;
+  color: var(--chalk);
+}
+
+.trainer-lesson,
+.trainer-session {
+  font-size: 12px;
+  color: var(--ash);
+}
+
+.trainer-play {
+  margin: 4px 0 2px;
+}
+
+.trainer-source {
+  font: 500 10.5px/1.3 var(--font-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ash);
+}
+
+.trainer-verdict {
+  font: 700 14px/1.2 var(--font-body);
+  color: var(--chalk);
+}
+
+.trainer-verdict.is-best,
+.trainer-verdict.is-close {
+  color: var(--moss);
+}
+
+.trainer-verdict.is-costly {
+  color: var(--blood);
+}
+
+/* The trainer's recommended cell, card or button. */
+.cell.is-hint {
+  outline: 2px dashed var(--teal);
+  outline-offset: 2px;
+}
+
+.cell.is-hint .cell-tag {
+  background: var(--teal);
+}
+
+.dest-card.is-hint {
+  border-color: var(--teal);
+}
+
+.dest-card.is-hint .dest-label::before {
+  content: "★ ";
+  color: var(--teal);
+}
+
+.actionbar .btn.is-hint {
+  box-shadow: 0 0 0 2px var(--teal);
+}
+
+/* Live check: each option with its expected result and a bar to compare. */
+.solver-status {
+  margin: 0 0 8px;
+  font: 500 11px/1.3 var(--font-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ash);
+}
+
+.solver-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.solver-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 5px 10px;
+  padding: 8px 10px;
+  border: 1px solid var(--iron);
+  border-radius: var(--radius);
+  background: var(--slab);
+}
+
+/* The recommended option, in the trainer's color. */
+.solver-row.is-best {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--teal) 25%, transparent);
+}
+
+.solver-row.is-best .solver-meter span {
+  background: var(--teal);
+}
+
+.solver-label {
+  font-size: 13.5px;
+  line-height: 1.3;
+}
+
+.solver-tag {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 4px;
+  border: 1px solid var(--iron-hi);
+  border-radius: 2px;
+  font: 500 9.5px/1.2 var(--font-mono);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ash);
+  vertical-align: 1px;
+}
+
+.solver-value {
+  font: 600 13px/1.2 var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--chalk);
+  white-space: nowrap;
+}
+
+.solver-meter {
+  grid-column: 1 / -1;
+  height: 5px;
+  overflow: hidden;
+  border-radius: 3px;
+  background: var(--iron);
+}
+
+.solver-meter span {
+  display: block;
+  height: 100%;
+  background: var(--bone);
+  transition: width 0.25s;
+}
+
+.solver-row:not(.is-best) .solver-meter span {
+  background: var(--iron-hi);
+}
+
+.solver-sub {
+  grid-column: 1 / -1;
+  font-size: 12px;
+  color: var(--ash);
+}
+
+.solver-row .btn {
+  grid-column: 1 / -1;
+  justify-self: start;
+  min-height: 30px;
+  padding: 4px 10px;
+  font-size: 13px;
+}
+
+/* The trainer's text sits above its button, which stays put between updates. */
+.trainer-body {
+  display: grid;
+  gap: 4px;
+}
+
+.trainer-body p {
+  margin: 0;
+}
+
+.tip {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: start;
+  font-size: 13.5px;
+}
+
+.chain {
+  display: block;
+  width: 100%;
+  max-width: 260px;
+  margin: 0 auto;
+}
+
+.chain-edges line {
+  stroke: var(--iron-hi);
+  stroke-width: 2;
+  marker-end: url(#chain-arrow);
+}
+
+#chain-arrow path {
+  fill: var(--iron-hi);
+}
+
+.chain-nodes circle {
+  fill: var(--slab-hi);
+  stroke: var(--bone);
+  stroke-width: 1.5;
+}
+
+.chain-nodes text {
+  fill: var(--bone);
+  font: 800 22px var(--font-display);
+  text-anchor: middle;
+}
+
+.chain-nodes .chain-name {
+  fill: var(--ash);
+  font: 500 11px var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.ladder {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ladder li {
+  padding: 4px 6px;
+  border: 1px solid color-mix(in srgb, var(--tc) 50%, transparent);
+  border-radius: 2px;
+  color: var(--tc);
+  font: 500 10.5px/1 var(--font-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.ladder li.t5 {
+  border: 1px solid transparent;
+  background: linear-gradient(var(--slab), var(--slab)) padding-box, var(--rainbow) border-box;
+}
+
+/* ---------- Dialogs ---------- */
+
+dialog.sheet {
+  width: min(640px, calc(100vw - 32px));
+  max-height: min(880px, calc(100dvh - 32px));
+  padding: 0;
+  border: 1px solid var(--iron-hi);
+  border-radius: 6px;
+  background: var(--slab);
+  color: var(--chalk);
+  box-shadow: 0 30px 80px var(--shade);
+}
+
+dialog.sheet[open] {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+dialog.sheet-narrow {
+  width: min(470px, calc(100vw - 32px));
+}
+
+dialog.sheet-wide {
+  width: min(840px, calc(100vw - 32px));
+}
+
+dialog::backdrop {
+  background: rgb(6 8 11 / 0.74);
+}
+
+.sheet-inner {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+  margin: 0;
+}
+
+.sheet-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 20px 12px;
+  border-bottom: 1px solid var(--iron);
+}
+
+.sheet-head h2 {
+  margin: 4px 0 0;
+  font: 800 28px/1 var(--font-display);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--bone);
+  text-wrap: balance;
+}
+
+.x {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--iron);
+  border-radius: var(--radius);
+  background: none;
+  color: var(--ash);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.x:hover {
+  color: var(--chalk);
+  border-color: var(--iron-hi);
+}
+
+.sheet-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  padding: 16px 20px;
+}
+
+.sheet-foot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 12px 20px 16px;
+  border-top: 1px solid var(--iron);
+}
+
+.sub {
+  margin: 18px 0 8px;
+  font: 500 11px/1.3 var(--font-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ash);
+}
+
+/* Forms */
+
+.field {
+  min-width: 0;
+  margin: 0 0 16px;
+  padding: 0;
+  border: 0;
+}
+
+.field legend,
+.field-label {
+  display: block;
+  margin: 0 0 6px;
+  padding: 0;
+  font: 500 11px/1.3 var(--font-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ash);
+}
+
+.field-note {
+  margin: 8px 0 0;
+  font-size: 13px;
+  color: var(--ash);
+}
+
+.field-note.warn {
+  color: var(--blood);
+}
+
+input[type="text"],
+input[type="number"],
+select,
+textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--iron);
+  border-radius: var(--radius);
+  background: var(--stone);
+  color: var(--chalk);
+}
+
+input[type="checkbox"],
+input[type="radio"],
+input[type="range"] {
+  accent-color: var(--bone);
+}
+
+textarea {
+  font: 12px/1.45 var(--font-mono);
+  resize: vertical;
+}
+
+.seed-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.seed-row > :first-child {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.options {
+  display: grid;
+  gap: 8px;
+}
+
+.option {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 2px 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--iron);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.option input {
+  grid-row: span 2;
+  margin: 3px 0 0;
+}
+
+.option strong {
+  font-weight: 700;
+}
+
+.option small {
+  grid-column: 2;
+  font-size: 13px;
+  color: var(--ash);
+}
+
+.option:has(input:checked) {
+  border-color: var(--bone);
+  background: color-mix(in srgb, var(--bone) 7%, transparent);
+}
+
+.toggles {
+  display: grid;
+  gap: 14px;
+}
+
+.toggle {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  cursor: pointer;
+}
+
+.toggle input {
+  width: 18px;
+  height: 18px;
+  margin: 2px 0 0;
+}
+
+.toggle strong,
+.toggle small {
+  display: block;
+}
+
+.toggle small {
+  font-size: 13px;
+  color: var(--ash);
+}
+
+.menu {
+  display: grid;
+  gap: 6px;
+}
+
+.menu-item {
+  display: grid;
+  gap: 2px;
+  padding: 12px 14px;
+  border: 1px solid var(--iron);
+  border-radius: var(--radius);
+  background: var(--slab-hi);
+  text-align: left;
+  cursor: pointer;
+}
+
+.menu-item:hover {
+  border-color: var(--bone);
+}
+
+.menu-item strong {
+  font: 800 18px/1.1 var(--font-display);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.menu-item span {
+  font-size: 13.5px;
+  color: var(--ash);
+}
+
+/* The board analyzer, in the same teal as its card on the title screen. */
+.menu-featured {
+  border-color: color-mix(in srgb, var(--teal) 55%, var(--iron));
+  background: color-mix(in srgb, var(--teal) 9%, var(--slab-hi));
+}
+
+.menu-featured:hover {
+  border-color: var(--teal);
+}
+
+.menu-featured strong {
+  color: var(--teal);
+}
+
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+/* Handbook and about */
+
+.prose {
+  max-width: 72ch;
+}
+
+.prose h3 {
+  margin: 22px 0 8px;
+  font: 800 19px/1.1 var(--font-display);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--bone);
+}
+
+.prose h3:first-child {
+  margin-top: 0;
+}
+
+.prose p {
+  margin: 0 0 10px;
+}
+
+.steps {
+  display: grid;
+  gap: 6px;
+  margin: 0 0 10px;
+  padding-left: 20px;
+}
+
+.defs {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 8px 14px;
+  margin: 0 0 10px;
+}
+
+.defs dt {
+  font: 600 11px/1.7 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--bone);
+}
+
+.defs dd {
+  margin: 0;
+}
+
+.defs .m-prey { color: var(--teal); }
+.defs .m-scratch { color: var(--chalk); }
+.defs .m-nest { color: var(--sprout); }
+
+/* Lab */
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  padding: 10px 20px 0;
+  border-bottom: 1px solid var(--iron);
+}
+
+.tab {
+  margin-bottom: -1px;
+  padding: 8px 12px;
+  border: 1px solid transparent;
+  border-bottom: 0;
+  border-radius: var(--radius) var(--radius) 0 0;
+  background: none;
+  color: var(--ash);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.tab[aria-selected="true"] {
+  border-color: var(--iron);
+  background: var(--slab);
+  color: var(--bone);
+}
+
+.lab-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 300px) minmax(0, 1fr);
+  gap: 22px;
+}
+
+.mini-ring {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-rows: repeat(4, auto);
+  gap: 4px;
+}
+
+.mini {
+  display: grid;
+  place-content: center;
+  aspect-ratio: 1;
+  min-width: 0;
+  padding: 1px;
+  border: 1px solid var(--iron);
+  border-radius: 3px;
+  background: var(--stone);
+  color: var(--ash);
+  font: 500 8px/1.15 var(--font-mono);
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.mini b {
+  font: 800 15px/1 var(--font-display);
+  color: var(--tc, var(--ash));
+}
+
+.mini.is-warden {
+  border-color: var(--bone);
+}
+
+.mini.is-office {
+  background: var(--office-hi);
+  color: var(--bone);
+}
+
+.mini[aria-pressed="true"] {
+  outline: 2px solid var(--bone);
+  outline-offset: 1px;
+}
+
+.lab-form,
+.lab-contents {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+}
+
+.lab-form hr {
+  width: 100%;
+  margin: 8px 0;
+  border: 0;
+  border-top: 1px solid var(--iron);
+}
+
+.two-col {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.checks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chips li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 4px 3px 8px;
+  border: 1px solid var(--iron);
+  border-radius: 2px;
+  font-size: 13px;
+}
+
+.chips button {
+  padding: 0 5px;
+  border: 0;
+  background: none;
+  color: var(--ash);
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.params {
+  display: grid;
+  gap: 20px;
+}
+
+.param-group {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.param-group legend {
+  margin-bottom: 6px;
+  padding: 0;
+  font: 800 16px/1 var(--font-display);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--bone);
+}
+
+.param {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+}
+
+.param > span {
+  font-size: 14px;
+}
+
+.param input[type="number"] {
+  width: 84px;
+}
+
+.param select {
+  width: auto;
+}
+
+.param .list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.param .list label {
+  display: grid;
+  gap: 2px;
+  font: 500 10px/1.2 var(--font-mono);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ash);
+}
+
+.param .list input {
+  width: 64px;
+}
+
+/* Choices */
+
+.refit {
+  display: grid;
+  gap: 10px;
+}
+
+.refit-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 4px 12px;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid var(--iron);
+  border-radius: var(--radius);
+  background: var(--slab-hi);
+}
+
+.refit-card strong {
+  font: 800 18px/1.1 var(--font-display);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.refit-card p {
+  grid-column: 1;
+  margin: 0;
+  font-size: 13.5px;
+  color: var(--ash);
+}
+
+.refit-card .btn {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+}
+
+/* Results */
+
+.roster-tiers {
+  display: grid;
+  gap: 8px;
+}
+
+.roster-row {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr);
+  gap: 10px;
+  align-items: baseline;
+}
+
+.roster-row .tier-name {
+  font: 600 12px/1.3 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--tc);
+}
+
+.roster-row .names {
+  font-size: 14px;
+}
+
+.roster-empty {
+  color: var(--ash);
+}
+
+.roster {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 6px;
+  margin: 0 0 14px;
+  padding: 0;
+  list-style: none;
+  font-size: 13.5px;
+}
+
+.roster li {
+  padding: 6px 8px;
+  border: 1px solid var(--iron);
+  border-radius: 3px;
+}
+
+.roster li b {
+  font-weight: 600;
+  color: var(--tc);
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 1180px) {
+  .game {
+    height: auto;
+    min-height: 100%;
+    grid-template-columns: minmax(0, 1fr) minmax(250px, 300px);
+    grid-template-rows: auto auto auto;
+    grid-template-areas:
+      "top top"
+      "block ledger"
+      "rail rail";
+  }
+
+  .block {
+    --block-w: clamp(300px, min(100%, calc((100dvh - 360px) * 1.5)), 900px);
+    overflow: visible;
+  }
+
+  .rail {
+    max-height: 420px;
+    border-right: 0;
+    border-top: 1px solid var(--iron);
+  }
+
+  .ledger {
+    overflow: visible;
+  }
+}
+
+@media (max-width: 960px) {
+  .title {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* One column: the copy, the sample board, then the credits. */
+  .title-art {
+    grid-row: auto;
+  }
+
+  .route {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .route-meta {
+    grid-column: 1;
+    grid-row: auto;
+  }
+}
+
+/* On narrow screens the decision panel drops below the ring. */
+@media (max-width: 680px) {
+  .block {
+    --block-w: 100%;
+  }
+
+  .board-emblem {
+    display: grid;
+  }
+
+  .board-center {
+    grid-row: 5;
+    grid-column: 1 / -1;
+    contain: none;
+    overflow: visible;
+    padding: 4px 0 0;
+  }
+}
+
+@media (max-width: 760px) {
+  .game {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "top"
+      "block"
+      "ledger"
+      "rail";
+  }
+
+  .ledger {
+    border-left: 0;
+    border-top: 1px solid var(--iron);
+  }
+
+  .block {
+    padding: 12px 16px;
+  }
+
+  .topbar {
+    padding: 8px 16px;
+  }
+
+  .tb-logo {
+    font-size: 24px;
+  }
+
+  .day-num {
+    font-size: 28px;
+  }
+
+  .handoff {
+    flex-basis: 100%;
+  }
+
+  .lab-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .defs {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .param {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .param .list {
+    justify-content: flex-start;
+  }
+
+  .roster-row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2px;
+  }
+}
+
+/* ---------- Motion ---------- */
+
+.no-motion *,
+.no-motion *::before,
+.no-motion *::after {
+  animation: none !important;
+  transition: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* ---------- Board analyzer (analyze.html) ----------
+   The player's own board: the same ring as the game, a cell editor under
+   it, and the run's settings, the question and the advice beside it. */
+
+.analyzer {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 20px 16px 56px;
+}
+
+.az-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  margin-bottom: 18px;
+}
+
+.az-nav a {
+  color: var(--ash);
+  font: 500 12px/1.2 var(--font-mono);
+  letter-spacing: 0.06em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.az-nav a:hover {
+  color: var(--bone);
+}
+
+.az-title {
+  margin: 6px 0 8px;
+  font: 800 clamp(36px, 7vw, 64px) / 0.95 var(--font-display);
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  text-wrap: balance;
+  color: var(--bone);
+}
+
+.az-lede {
+  max-width: 70ch;
+  margin: 0 0 14px;
+  font-size: 16.5px;
+  line-height: 1.5;
+}
+
+.az-head-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.az-notice {
+  min-height: 1.4em;
+  margin: 10px 0 0;
+  font-size: 14px;
+  color: var(--teal);
+}
+
+.az-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 400px);
+  gap: 20px;
+  align-items: start;
+  margin-top: 14px;
+}
+
+.az-main,
+.az-side {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+}
+
+.az-court-rec .decision {
+  border-color: var(--teal);
+}
+
+.az-court-rec .decision-title {
+  color: var(--teal);
+}
+
+.az-court-eyebrow {
+  display: block;
+  margin-bottom: 4px;
+  font: 500 10.5px/1.3 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ash);
+}
+
+.az-keys {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.7;
+  color: var(--ash);
+}
+
+.az-keys kbd {
+  padding: 0 4px;
+  border: 1px solid var(--iron-hi);
+  border-radius: 3px;
+  font: 500 11px/1.4 var(--font-mono);
+  color: var(--chalk);
+}
+
+.az-panel {
+  min-width: 0;
+  padding: 14px 16px;
+  border: 1px solid var(--iron);
+  border-radius: var(--radius);
+  background: var(--slab);
+}
+
+.az-h2 {
+  margin: 0 0 12px;
+  font: 800 21px/1.1 var(--font-display);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--chalk);
+}
+
+.az-editor-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 12px;
+  margin-bottom: 12px;
+}
+
+.az-editor-head .az-h2 {
+  margin: 0;
+}
+
+.az-editor-flags,
+.az-seg {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.az-flag,
+.az-seg button,
+.az-door,
+.az-tool {
+  min-height: 34px;
+  padding: 6px 10px;
+  border: 1px solid var(--iron);
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--chalk);
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s, background-color 0.15s;
+}
+
+.az-seg button {
+  flex: 1 1 auto;
+}
+
+.az-flag:hover,
+.az-seg button:hover:not(:disabled),
+.az-door:hover,
+.az-tool:hover {
+  border-color: var(--iron-hi);
+}
+
+.az-flag[aria-pressed="true"],
+.az-seg button[aria-pressed="true"],
+.az-door[aria-pressed="true"],
+.az-tool[aria-pressed="true"] {
+  border-color: var(--bone);
+  background: color-mix(in srgb, var(--bone) 9%, transparent);
+  color: var(--bone);
+}
+
+.az-seg button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.az-beasts {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.az-beast {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  padding: 8px 4px 7px;
+  border: 1px solid var(--iron);
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--chalk);
+  font: 600 13px/1 var(--font-body);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.az-beast .portrait {
+  width: 46px;
+  filter: none;
+}
+
+.az-beast:hover {
+  border-color: var(--iron-hi);
+}
+
+.az-beast[aria-pressed="true"] {
+  border-color: var(--tc);
+  background: color-mix(in srgb, var(--tc) 12%, transparent);
+  color: var(--tc);
+}
+
+.az-tiers {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.az-tier {
+  min-height: 36px;
+  padding: 6px 2px;
+  border: 1px solid color-mix(in srgb, var(--tc) 40%, var(--iron));
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--tc);
+  font: 600 11.5px/1 var(--font-mono);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.az-tier[aria-pressed="true"] {
+  border-color: var(--tc);
+  background: color-mix(in srgb, var(--tc) 18%, transparent);
+  box-shadow: 0 0 0 1px var(--tc);
+}
+
+.az-inmate-extra {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.az-prey {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(96px, 1fr);
+  gap: 10px;
+}
+
+.az-prey .field,
+.az-inmate-extra .field-note {
+  margin: 0;
+}
+
+.az-nest {
+  display: block;
+  max-width: 200px;
+}
+
+.az-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.az-row .field {
+  display: block;
+}
+
+.az-fixed {
+  display: block;
+  padding: 8px 0;
+  font-weight: 600;
+}
+
+.az-steps button {
+  flex: 1 1 140px;
+}
+
+.az-stepbox {
+  margin: -4px 0 16px;
+  padding: 10px 12px;
+  border: 1px solid var(--iron);
+  border-radius: var(--radius);
+  background: var(--stone);
+}
+
+.az-stepbox .field-label {
+  margin-bottom: 6px;
+}
+
+.az-stepbox .field-note {
+  margin-top: 8px;
+}
+
+.az-doors {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.az-door {
+  display: grid;
+  justify-items: center;
+  gap: 3px;
+  min-width: 66px;
+  font: 800 18px/1 var(--font-display);
+}
+
+.az-door small {
+  font: 500 10px/1.1 var(--font-mono);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--ash);
+}
+
+.az-offer {
+  display: grid;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.az-offer .field {
+  display: block;
+  margin: 0;
+}
+
+.az-tools {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  margin: 0 0 14px;
+}
+
+.az-tool {
+  text-align: left;
+  font-size: 14px;
+}
+
+.az-reward-toggles {
+  margin-bottom: 16px;
+}
+
+.az-vault {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 2px 0 10px;
+}
+
+.az-vault-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 4px 3px 6px;
+  border: 1px solid var(--iron-hi);
+  border-radius: 999px;
+  font-size: 13.5px;
+}
+
+.az-vault-item .portrait {
+  width: 22px;
+  filter: none;
+}
+
+.az-vault-item button {
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--slab-top);
+  color: var(--chalk);
+  line-height: 1;
+  cursor: pointer;
+}
+
+.az-empty {
+  font-size: 13.5px;
+  color: var(--ash);
+}
+
+.az-vault-add {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+}
+
+.az-ask {
+  display: grid;
+  gap: 4px;
+}
+
+.az-go {
+  width: 100%;
+  min-height: 54px;
+  font-size: 19px;
+  letter-spacing: 0.03em;
+}
+
+.az-problems {
+  margin: 6px 0 0;
+  padding-left: 20px;
+  font-size: 14px;
+  color: var(--blood);
+}
+
+.az-results {
+  border-color: var(--teal);
+  background: color-mix(in srgb, var(--teal) 6%, var(--slab));
+}
+
+.az-results.is-stale {
+  border-color: var(--iron);
+  background: var(--slab);
+}
+
+.az-res-move {
+  margin: 2px 0 10px;
+  font: 800 24px/1.12 var(--font-display);
+  letter-spacing: 0.03em;
+  text-wrap: balance;
+  color: var(--chalk);
+}
+
+.az-res-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 12px;
+}
+
+/* After a screenshot: fix the board, then recheck. */
+.az-res-shot {
+  margin: 0 0 12px;
+  padding: 8px 10px 0;
+  border-left: 3px solid var(--iron-hi);
+  background: var(--slab);
+}
+
+.az-res-shot .trainer-why {
+  margin: 0 0 8px;
+}
+
+.az-res-shot .az-res-actions {
+  margin-bottom: 8px;
+}
+
+.az-results .trainer-body {
+  margin-bottom: 12px;
+}
+
+.az-applied {
+  border-color: var(--check);
+}
+
+.az-applied p {
+  margin: 0 0 6px;
+}
+
+.az-applied-move {
+  font: 800 20px/1.15 var(--font-display);
+  letter-spacing: 0.03em;
+  color: var(--chalk);
+}
+
+/* Cells the simulator's dice decided, for the player to check against their game. */
+.cell.is-check {
+  outline: 2px dashed var(--check);
+  outline-offset: -4px;
+}
+
+.az-board .cell.is-check .cell-tag,
+.az-board .cell.is-hint .cell-tag {
+  display: block;
+}
+
+.az-board .cell.is-check:not(.is-hint) .cell-tag {
+  background: var(--check);
+  color: var(--bone-ink);
+}
+
+/* The beta notice at the top of the analyzer. */
+.az-beta {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 0 0 18px;
+  padding: 12px 14px;
+  border: 1px solid var(--check);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--check) 8%, var(--slab));
+}
+
+.az-beta p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.az-beta-tag {
+  flex: none;
+  padding: 2px 8px;
+  border-radius: var(--radius);
+  background: var(--check);
+  color: var(--bone-ink);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ---------- The prison screen, laid out like the live game ---------- */
+
+.az-screen {
+  margin-top: 18px;
+}
+
+.az-game {
+  padding: 12px 14px 16px;
+  border: 1px solid var(--iron);
+  border-radius: 8px;
+  background:
+    radial-gradient(60% 55% at 50% 45%, color-mix(in srgb, #6b4a2a 16%, transparent), transparent 75%),
+    var(--slab);
+}
+
+.az-game-top {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.az-game-title {
+  color: var(--ash);
+  font-weight: 600;
+}
+
+.az-riot {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  color: var(--ash);
+  font-size: 20px;
+}
+
+.az-riot input[type="number"] {
+  width: 3.4ch;
+  padding: 2px 4px;
+  font-size: 26px;
+  font-weight: 700;
+  text-align: center;
+  color: var(--chalk);
+  -moz-appearance: textfield;
+}
+
+.az-riot input::-webkit-inner-spin-button,
+.az-riot input::-webkit-outer-spin-button {
+  margin: 0;
+  -webkit-appearance: none;
+}
+
+.az-dayof {
+  justify-self: end;
+  color: var(--ash);
+  font-size: 13px;
+}
+
+.az-game-mid {
+  display: grid;
+  grid-template-columns: 190px minmax(0, 880px) 132px;
+  justify-content: center;
+  align-items: start;
+  gap: 16px;
+}
+
+.az-game-h {
+  margin: 0 0 6px;
+  color: #d9a066;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.az-game-left {
+  display: grid;
+  gap: 18px;
+}
+
+.az-objective p {
+  margin: 0 0 6px;
+  color: var(--ash);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+/* The objective's name is picked, since runs draw different ones. */
+.az-objective-pick {
+  max-width: 100%;
+  padding: 1px 4px;
+  border: 1px solid var(--iron);
+  border-radius: var(--radius);
+  background: var(--slab);
+  color: #d9a066;
+  font: inherit;
+}
+
+.az-walk {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 6px;
+  color: var(--ash);
+  font-size: 13px;
+}
+
+.az-walk input {
+  width: 5ch;
+  padding: 2px 4px;
+  border: 1px solid var(--iron);
+  border-radius: var(--radius);
+  background: var(--slab);
+  color: var(--chalk);
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  -moz-appearance: textfield;
+}
+
+.az-walk input::-webkit-inner-spin-button,
+.az-walk input::-webkit-outer-spin-button {
+  margin: 0;
+  -webkit-appearance: none;
+}
+
+.az-done {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.az-done input:checked + span {
+  color: #79c27a;
+}
+
+/* Every instrument the simulator knows: lit when held, dim when not. */
+.az-instruments {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.az-instrument {
+  display: grid;
+  justify-items: center;
+  gap: 3px;
+  min-width: 0;
+  padding: 6px 4px 5px;
+  border: 1px solid var(--iron);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--court) 70%, transparent);
+  color: var(--ash);
+  font-size: 10.5px;
+  line-height: 1.15;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.15s, background-color 0.15s, opacity 0.15s;
+}
+
+.az-instrument .instrument {
+  width: 42px;
+  height: 42px;
+  opacity: 0.45;
+  filter: grayscale(0.7);
+  transition: opacity 0.15s, filter 0.15s;
+}
+
+.az-instrument:hover {
+  border-color: var(--iron-hi);
+}
+
+/* The run's instruments: first in the list, lit up and marked. */
+.az-instrument[aria-pressed="true"] {
+  position: relative;
+  border-color: #d9a066;
+  background: color-mix(in srgb, #d9a066 18%, var(--court));
+  box-shadow: 0 0 0 1px #d9a066, 0 0 12px color-mix(in srgb, #d9a066 40%, transparent);
+  color: var(--bone);
+  font-weight: 600;
+}
+
+.az-instrument[aria-pressed="true"]::before {
+  content: "In this run";
+  position: absolute;
+  top: 3px;
+  left: 4px;
+  padding: 1px 4px;
+  border-radius: 3px;
+  background: #d9a066;
+  color: #1a1410;
+  font: 700 8.5px/1.2 var(--font-mono);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* Between the run's instruments and the rest. */
+.az-tools-rest {
+  grid-column: 1 / -1;
+  margin: 4px 0 0;
+  padding-top: 6px;
+  border-top: 1px solid var(--iron);
+  color: var(--ash);
+  font: 500 10.5px/1.2 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.az-instrument[aria-pressed="true"] .instrument {
+  opacity: 1;
+}
+
+.az-instrument[aria-pressed="true"] .glow-red { filter: drop-shadow(0 0 4px #c0282d); }
+.az-instrument[aria-pressed="true"] .glow-blue { filter: drop-shadow(0 0 4px #4b4fd8); }
+.az-instrument[aria-pressed="true"] .glow-teal { filter: drop-shadow(0 0 4px #3aa39a); }
+.az-instrument[aria-pressed="true"] .glow-orange { filter: drop-shadow(0 0 4px #e0702a); }
+.az-instrument[aria-pressed="true"] .glow-green { filter: drop-shadow(0 0 4px #9bc23a); }
+
+/* The instruments scroll in their own window, so a long list never pushes
+   the prompt bar and the board's advice off the screen. Beside the board,
+   the left column is exactly as tall as the board; stacked under it on
+   narrow screens, the list gets a height of its own. */
+.az-instruments {
+  align-content: start;
+  padding-right: 2px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--iron-hi) transparent;
+}
+
+.az-instrument {
+  padding: 4px 3px;
+}
+
+.az-instrument .instrument {
+  width: 34px;
+  height: 34px;
+}
+
+@media (min-width: 901px) {
+  .az-game-left {
+    display: flex;
+    flex-direction: column;
+    align-self: stretch;
+    min-height: 0;
+    contain: size;
+  }
+
+  .az-play-notes {
+    margin-top: 0.6rem;
+    font-size: 0.85rem;
+    line-height: 1.4;
+  }
+  .az-play-notes h4 {
+    margin: 0 0 0.3rem;
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    opacity: 0.8;
+  }
+  .az-play-notes ul {
+    display: grid;
+    gap: 0.35rem;
+    margin: 0;
+    padding-left: 1.1rem;
+  }
+  .az-instruments-panel {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  .az-instruments {
+    flex: 1;
+    min-height: 120px;
+    overflow-y: auto;
+  }
+}
+
+@media (max-width: 900px) {
+  .az-instruments {
+    max-height: 236px;
+    overflow-y: auto;
+  }
+}
+
+/* Chromatic Prisoner: ten hexagonal slots, like the game's panel. */
+.az-chromatic {
+  display: grid;
+  grid-template-columns: repeat(2, 52px);
+  gap: 6px 8px;
+  justify-content: center;
+}
+
+.az-hex {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 46px;
+  padding: 0;
+  border: 0;
+  clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);
+  background: color-mix(in srgb, var(--iron) 55%, transparent);
+}
+
+.az-hex.is-filled {
+  background: conic-gradient(from 90deg, #ea4f57, #f28c36, #f1cd48, #79c27a, #5fc4b8, #6b96ff, #b07cf0, #ea4f57);
+  cursor: pointer;
+}
+
+.az-hex .portrait {
+  width: 34px;
+  height: 34px;
+  padding: 3px;
+  border-radius: 50%;
+  background: var(--slab);
+}
+
+.az-hex.is-filled:hover {
+  opacity: 0.75;
+}
+
+.az-chromatic-add {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin-top: 10px;
+}
+
+.az-chromatic-add .field-label {
+  width: 100%;
+  text-align: center;
+}
+
+/* The bottom of the screen: what the game is asking, then the answer. */
+.az-game-bottom {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 280px);
+  align-items: end;
+  gap: 16px;
+  margin-top: 14px;
+}
+
+.az-decide {
+  display: grid;
+  gap: 10px;
+  justify-items: center;
+  text-align: center;
+}
+
+.az-prompts {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px;
+}
+
+.az-prompts button {
+  padding: 4px 10px;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  background: none;
+  color: var(--ash);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.az-prompts button:hover {
+  color: var(--chalk);
+}
+
+.az-prompts button[aria-pressed="true"] {
+  border-color: var(--iron-hi);
+  color: var(--chalk);
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.az-doorcards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.az-doorcard {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  width: 122px;
+  padding: 10px 6px 8px;
+  border: 2px solid var(--iron);
+  border-radius: 4px;
+  background: linear-gradient(180deg, #23272e, #15181c);
+  color: var(--ash);
+  cursor: pointer;
+  opacity: 0.55;
+  transition: opacity 0.15s, border-color 0.15s, box-shadow 0.15s;
+}
+
+.az-doorcard:hover {
+  opacity: 0.85;
+}
+
+.az-doorcard[aria-pressed="true"] {
+  border-color: #8a6a4a;
+  color: var(--chalk);
+  opacity: 1;
+  box-shadow: 0 0 0 1px #3a2a1c, 0 0 16px color-mix(in srgb, #d9a066 25%, transparent);
+}
+
+.az-doorcard-arch {
+  width: 30px;
+  height: 36px;
+  border: 2px solid #8b8f99;
+  border-bottom-width: 3px;
+  border-radius: 15px 15px 2px 2px;
+  background: repeating-linear-gradient(90deg, #3a3e46 0 5px, #2a2d33 5px 7px);
+}
+
+.az-doorcard-go {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.az-doorcard small {
+  font-size: 11px;
+  color: var(--ash);
+}
+
+.az-used {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  text-align: left;
+}
+
+.az-game-bottom .az-stepbox {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+}
+
+.az-chromatic-add .az-ico {
+  width: 30px;
+  height: 30px;
+}
+
+.az-chromatic-add .az-ico .portrait {
+  width: 22px;
+  height: 22px;
+}
+
+.az-game-bottom .az-ask {
+  align-self: end;
+}
+
+/* The picker that opens by a clicked cell: inmates by rarity, then marks. */
+.az-pick {
+  position: absolute;
+  z-index: 6;
+  display: grid;
+  gap: 3px;
+  padding: 8px;
+  border: 1px solid var(--bone);
+  border-radius: 6px;
+  background: var(--slab-top);
+  box-shadow: 0 10px 28px var(--shade);
+}
+
+.az-pick-row {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.az-pick-label {
+  width: 66px;
+  flex: none;
+  color: var(--ash);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.az-pick-label[class*=" t"] {
+  color: var(--tc);
+}
+
+.az-ico {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  padding: 2px;
+  border: 1px solid var(--iron);
+  border-radius: 4px;
+  background: var(--court);
+  cursor: pointer;
+}
+
+.az-ico[class*=" t"] {
+  border-color: color-mix(in srgb, var(--tc) 55%, var(--iron));
+}
+
+.az-ico .portrait,
+.az-ico .mark {
+  width: 28px;
+  height: 28px;
+}
+
+.az-ico:hover,
+.az-ico:focus-visible {
+  border-color: var(--bone);
+  background: var(--slab-hi);
+}
+
+.az-ico[aria-pressed="true"] {
+  border-color: var(--bone);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--bone) 45%, transparent);
+}
+
+.az-ico:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* The notice pinned to the window while a pasted screenshot is read. */
+.az-toast {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 40;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 12px;
+  max-width: min(440px, calc(100vw - 32px));
+  padding: 12px 14px;
+  border: 1px solid var(--teal);
+  border-radius: 6px;
+  background: var(--slab-top);
+  box-shadow: 0 12px 32px var(--shade);
+}
+
+.az-toast.is-bad {
+  border-color: var(--blood);
+}
+
+.az-toast-text {
+  flex: 1 1 220px;
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.az-toast-spin {
+  display: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--iron-hi);
+  border-top-color: var(--teal);
+  border-radius: 50%;
+  animation: az-spin 0.8s linear infinite;
+}
+
+.az-toast.is-busy .az-toast-spin {
+  display: block;
+}
+
+.az-toast-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.az-toast-actions:empty {
+  display: none;
+}
+
+@keyframes az-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 1180px) {
+  .az-game-mid {
+    grid-template-columns: 170px minmax(0, 1fr) 124px;
+  }
+}
+
+@media (max-width: 900px) {
+  .az-game-mid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .az-game-mid .az-board {
+    grid-column: 1 / -1;
+    order: -1;
+  }
+
+  .az-game-left {
+    order: 1;
+  }
+
+  .az-game-right {
+    order: 2;
+  }
+
+  .az-instruments {
+    grid-template-columns: repeat(auto-fill, minmax(76px, 1fr));
+  }
+
+  .az-game-bottom {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 520px) {
+  .az-game {
+    padding: 10px 8px 12px;
+  }
+
+  .az-game-top {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: 2px;
+  }
+
+  .az-game-title {
+    display: none;
+  }
+
+  .az-dayof {
+    justify-self: center;
+  }
+
+  .az-game-mid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .az-doorcard {
+    width: 96px;
+  }
+
+  .az-pick-label {
+    width: 50px;
+    font-size: 9.5px;
+  }
+
+  .az-ico {
+    width: 32px;
+    height: 32px;
+  }
+
+  .az-ico .portrait,
+  .az-ico .mark {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .az-toast-spin {
+    animation-duration: 2.4s;
+  }
+}
+
+/* Confirms a cell marked Check without changing it. */
+.az-flag.az-match {
+  border-style: dashed;
+  border-color: var(--check);
+  color: var(--check);
+}
+
+.az-flag.az-match:hover {
+  background: color-mix(in srgb, var(--check) 10%, transparent);
+}
+
+/* Whether boards are shared, under the ask button. */
+.az-share {
+  margin-top: 6px;
+  line-height: 1.5;
+}
+
+.az-share .link {
+  padding: 0;
+  font: inherit;
+}
+
+.az-foot {
+  max-width: 80ch;
+  margin-top: 36px;
+  padding-top: 18px;
+  border-top: 1px solid var(--iron);
+  font-size: 13.5px;
+  color: var(--ash);
+}
+
+.az-foot p {
+  margin: 0 0 8px;
+}
+
+.az-foot strong {
+  color: var(--chalk);
+}
+
+@media (max-width: 1060px) {
+  .az-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 520px) {
+  .az-beast .portrait {
+    width: 34px;
+  }
+
+  .az-tier {
+    font-size: 9.5px;
+    letter-spacing: 0;
+  }
+
+  .az-prey {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* The screenshot reader: paste, drop or choose a screenshot; the reading is
+   drawn over it for the player to check before it fills the board. */
+.az-scan {
+  margin-top: 16px;
+  border-style: dashed;
+  border-color: var(--iron-hi);
+  transition: border-color 0.15s, background-color 0.15s;
+}
+
+.az-scan.is-drop {
+  border-color: var(--teal);
+  background: color-mix(in srgb, var(--teal) 8%, var(--slab));
+}
+
+.az-scan-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px 20px;
+}
+
+.az-scan-head .az-h2 {
+  margin-bottom: 6px;
+}
+
+.az-scan-lede {
+  max-width: 78ch;
+  margin: 0;
+  font-size: 14px;
+  color: var(--ash);
+}
+
+.az-scan-lede kbd {
+  padding: 0 4px;
+  border: 1px solid var(--iron-hi);
+  border-radius: 3px;
+  font: 500 11px/1.4 var(--font-mono);
+  color: var(--chalk);
+}
+
+.az-scan-buttons .btn {
+  cursor: pointer;
+}
+
+.az-scan-status {
+  min-height: 1.4em;
+  margin: 10px 0 0;
+  font-size: 14px;
+  color: var(--teal);
+}
+
+.az-scan-status.is-bad {
+  color: var(--blood);
+}
+
+.az-scan-status:empty {
+  display: none;
+}
+
+.az-scan-result {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(240px, 340px);
+  gap: 16px;
+  align-items: start;
+  margin-top: 12px;
+}
+
+.az-scan-preview {
+  min-width: 0;
+}
+
+.az-scan-preview canvas {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border: 1px solid var(--iron);
+  border-radius: var(--radius);
+}
+
+.az-scan-side {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+
+.az-scan-summary {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 14px;
+}
+
+.az-scan-summary li {
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr);
+  gap: 8px;
+}
+
+.az-scan-summary b {
+  font: 500 11px/1.9 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ash);
+}
+
+.az-scan-summary li.is-check {
+  color: var(--check);
+}
+
+.az-scan-summary li.is-note {
+  display: block;
+  font-size: 13px;
+  color: var(--ash);
+}
+
+.az-scan-objective canvas {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin-top: 4px;
+  border: 1px solid var(--iron);
+  border-radius: var(--radius);
+}
+
+@media (max-width: 760px) {
+  .az-scan-result {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Report something new (js/report.js): teal everywhere, so it stands out. */
+
+.btn-report,
+.az-report-link {
+  border-color: color-mix(in srgb, var(--teal) 70%, transparent);
+  background: color-mix(in srgb, var(--teal) 14%, var(--slab-hi));
+  color: var(--teal);
+}
+
+.btn-report:hover:not(:disabled),
+.az-report-link:hover {
+  border-color: var(--teal);
+  background: color-mix(in srgb, var(--teal) 26%, var(--slab-hi));
+  color: var(--bone-hi);
+}
+
+.btn-report span,
+.az-report-link span {
+  font-weight: 800;
+}
+
+.az-report-link {
+  align-self: flex-start;
+  margin-top: 10px;
+  padding: 5px 10px;
+  border: 1px solid color-mix(in srgb, var(--teal) 70%, transparent);
+  border-radius: var(--radius);
+  font: 600 12px/1.3 var(--font-mono);
+  text-align: left;
+  cursor: pointer;
+}
+
+.link[data-report] {
+  color: var(--teal);
+  font-weight: 600;
+  text-decoration-color: color-mix(in srgb, var(--teal) 55%, transparent);
+}
+
+.link[data-report]:hover {
+  color: var(--bone-hi);
+}
+
+.rp .az-seg {
+  flex-wrap: wrap;
+}
+
+.rp-drop {
+  padding: 22px 16px;
+  border: 1px dashed var(--iron-hi);
+  border-radius: var(--radius);
+  color: var(--ash);
+  text-align: center;
+}
+
+.rp-drop.is-drop {
+  border-color: var(--bone);
+  color: var(--chalk);
+}
+
+.rp-shot canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--iron);
+  border-radius: var(--radius);
+  cursor: crosshair;
+  touch-action: none;
+}
+
+.rp-shot .field-note {
+  margin-top: 6px;
+}
+
+.rp-shot-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.rp-shot-actions [hidden] {
+  display: none;
+}
+
+.rp textarea,
+.rp input[type="text"] {
+  width: 100%;
+}
+
+.rp-status {
+  min-height: 1.3em;
+  margin: 8px 0 0;
+}
+
+.rp-status.is-ok {
+  color: var(--moss);
+}
+
+.rp-status.is-bad {
+  color: var(--blood);
+}
+
+.rp .sheet-body > .field-note:first-child {
+  margin: 0 0 14px;
+}
+
+/* Auto Screenshot Mode (js/auto.js, beta) */
+
+.az-auto-beta {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 6px;
+  border: 1px solid color-mix(in srgb, var(--teal) 70%, transparent);
+  border-radius: var(--radius);
+  color: var(--teal);
+  font: 600 11px/1.2 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+
+.az-auto-steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.az-auto-step {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 12px;
+  border: 1px solid var(--iron);
+  border-radius: var(--radius);
+}
+
+.az-auto-step .field-note {
+  margin: 6px 0 0;
+}
+
+.az-auto-n {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--teal) 22%, var(--slab-hi));
+  color: var(--teal);
+  font-weight: 700;
+}
+
+.az-auto-note {
+  min-height: 1.2em;
+  margin: 10px 0 0;
+  color: var(--blood);
+}
+
+.az-auto-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.az-auto-caps {
+  display: grid;
+  gap: 8px;
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.az-auto-caps li {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 8px;
+  border: 1px solid var(--iron);
+  border-radius: var(--radius);
+}
+
+.az-auto-caps li p {
+  margin: 0;
+}
+
+.az-auto-caps img,
+.az-auto-nothumb {
+  display: block;
+  flex: none;
+  width: 160px;
+  max-width: 40vw;
+  aspect-ratio: 2560 / 1080;
+  object-fit: cover;
+  border-radius: 2px;
+  background: var(--slab-hi);
+}
+
+.az-auto-empty {
+  color: var(--ash);
+  border-style: dashed !important;
+}
+
+.az-auto-dev {
+  margin-top: 14px;
+}
+
+.az-auto-dev summary {
+  cursor: pointer;
+  color: var(--ash);
+}
+
+.az-auto-dev textarea,
+.az-auto-dev input[type="text"] {
+  width: 100%;
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+.az-auto-seen {
+  max-height: 320px;
+  overflow: auto;
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+  font: 12px/1.45 var(--font-mono);
+}
+
+.az-auto-seen li {
+  display: flex;
+  gap: 8px;
+  padding: 2px 0;
+  border-bottom: 1px solid var(--iron);
+  color: var(--ash);
+  overflow-wrap: anywhere;
+}
+
+.az-auto-seen li.is-hit {
+  color: var(--chalk);
+}
+
+.az-auto-at {
+  flex: none;
+  color: var(--iron-hi);
+}
+
+.az-auto-kind {
+  flex: none;
+  color: var(--teal);
+}
+
+.az-auto-gate {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 12px;
+  padding: 14px;
+  border: 1px solid color-mix(in srgb, var(--teal) 50%, var(--iron));
+  border-radius: var(--radius);
+}
+
+.az-auto-gate p {
+  flex: 1 1 320px;
+  margin: 0;
+}
+
+/* Auto Screenshot Mode's status, at the top of the analyzer (js/auto.js). */
+.az-follow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  align-items: center;
+  margin: 8px 0 0;
+  padding: 8px 12px;
+  border: 1px solid var(--iron);
+  border-left: 3px solid var(--ash);
+  border-radius: var(--radius);
+  background: var(--slab);
+  font-size: 14px;
+  color: var(--chalk);
+}
+
+.az-follow.is-ok {
+  border-left-color: var(--teal);
+}
+
+.az-follow.is-off {
+  border-left-color: var(--blood);
+}
+
+/* Following the log, but no game events yet: maybe the game's Enable Log
+   is off. The bar's title says how to turn it on (js/auto.js). */
+.az-follow.is-warn {
+  border-left-color: var(--check);
+}
+
+.az-follow a {
+  color: var(--bone);
+}
+
+.az-follow p {
+  flex: 1 1 320px;
+  margin: 0;
+}
+
+.az-follow .btn {
+  padding: 4px 12px;
+}
+
+/* Under the reader's status: show a folded screenshot, or take it back. */
+.az-scan-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 18px;
+}
+
+.az-scan-always {
+  margin-top: 6px;
+}
+
+/* Thinking: a picture being read, or the live check playing out the moves. */
+.az-spin {
+  display: inline-block;
+  width: 0.85em;
+  height: 0.85em;
+  margin-right: 0.45em;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  vertical-align: -0.08em;
+  animation: az-spin 0.8s linear infinite;
+}
+
+@keyframes az-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .az-spin {
+    animation: az-pulse 1.6s ease-in-out infinite;
+    border-top-color: currentColor;
+  }
+
+  @keyframes az-pulse {
+    50% { opacity: 0.35; }
+  }
+}
+
+.az-court-busy .decision-title {
+  color: var(--teal);
+}
+
+.solver-row.is-working .solver-value {
+  color: var(--ash);
+  font-variant-numeric: tabular-nums;
+}
+
+.solver-row.is-working .solver-meter span {
+  background: color-mix(in srgb, var(--teal) 60%, transparent);
+  transition: width 0.3s;
+}
+
+/* Asking the player to confirm the run's instruments (js/analyze.js). */
+.az-tools-confirm {
+  margin: 0 0 8px;
+  padding: 8px 10px;
+  border: 1px solid var(--check);
+  border-left-width: 3px;
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--check) 10%, var(--slab));
+  color: var(--bone);
+  font-size: 12.5px;
+  line-height: 1.35;
+}
+
+.az-tools-confirm p {
+  margin: 0 0 6px;
+}
+
+.az-tools-confirm .btn {
+  padding: 3px 10px;
+  font-size: 12px;
+}
+
+/* A Warden's Treasure waiting for the board behind it (js/analyze.js). */
+.az-treasure-wait {
+  border-color: var(--check);
+  border-left: 3px solid var(--check);
+}
+
+.az-treasure-wait p {
+  max-width: 70ch;
+}
+
+/* The instruments in a window over the middle of the board, with a search
+   by name (placed by placeTools in js/analyze.js). */
+.az-tools-open {
+  width: 100%;
+  margin-bottom: 6px;
+}
+
+.az-tools-dialog {
+  position: fixed;
+  inset: auto;
+  z-index: 60;
+  width: min(780px, calc(100vw - 16px));
+  max-height: min(80vh, 760px);
+  margin: 0;
+  padding: 12px 14px 14px;
+  border: 1px solid var(--teal);
+  border-radius: var(--radius);
+  background: var(--slab);
+  color: var(--chalk);
+  box-shadow: 0 18px 60px rgb(0 0 0 / 0.6);
+}
+
+.az-tools-dialog[open] {
+  display: flex;
+  flex-direction: column;
+}
+
+.az-tools-dialog-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.az-tools-dialog-head .az-game-h {
+  margin: 0;
+}
+
+.az-tools-search {
+  flex: 1;
+  min-width: 160px;
+  padding: 6px 10px;
+  border: 1px solid var(--iron-hi);
+  border-radius: var(--radius);
+  background: var(--court);
+  color: var(--chalk);
+  font: inherit;
+}
+
+.az-tools-dialog-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 0;
+}
+
+.az-tools-dialog .az-instruments {
+  grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
+  min-height: 0;
+  max-height: none;
+  overflow-y: auto;
+}
+
+.az-tools-dialog .az-instrument .instrument {
+  width: 44px;
+  height: 44px;
+}
+
+.az-instrument[hidden] {
+  display: none;
+}

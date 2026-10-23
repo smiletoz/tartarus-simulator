@@ -1,0 +1,9 @@
+中／英語言切換連結（標題畫面工具列）。保留 location.search 與 hash。
+
+<<<< once
+        <button type="button" class="link" data-open="dlg-about">關於</button>
+====
+        <button type="button" class="link" data-open="dlg-about">關於</button>
+        <a class="link" id="lang-switch" href="en/index.html" lang="en" hreflang="en">English</a>
+<script>(function(){var a=document.getElementById("lang-switch");if(!a)return;var b=a.getAttribute("href");function u(){a.setAttribute("href",b+location.search+location.hash);}u();a.addEventListener("pointerdown",u);a.addEventListener("focus",u);a.addEventListener("click",u);})();</script>
+>>>>

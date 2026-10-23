@@ -350,6 +350,8 @@
 <body>
 <main class="guide">
   <a class="guide-back" href="analyze.html">← 回到盤面分析器</a>
+  <a class="guide-back" id="lang-switch" href="en/follow.html" lang="en" hreflang="en" style="margin-left: 18px">English</a>
+<script>(function(){var a=document.getElementById("lang-switch");if(!a)return;var b=a.getAttribute("href");function u(){a.setAttribute("href",b+location.search+location.hash);}u();a.addEventListener("pointerdown",u);a.addEventListener("focus",u);a.addEventListener("click",u);})();</script>
   <p class="eyebrow">塔羅斯模擬器 · 盤面分析器 · 測試版</p>
   <h1>自動截圖模式</h1>
   <p class="lede">自動截圖模式讓盤面分析器自己跟上你的遊戲進度。你在這個頁面連接遊戲的紀錄檔，並分享遊戲視窗。每當紀錄檔顯示有動作，這個頁面就會擷取一張遊戲畫面，交給在另一個分頁開著的盤面分析器，由它讀出盤面並更新建議。一切都在你的瀏覽器裡、你的電腦上進行。下面會清楚說明它讀取什麼、看到什麼，並附上負責每個部分的程式碼。這些程式碼直接從你的瀏覽器正在執行的同一批檔案載入，所以不可能和這裡的說明不一致。</p>

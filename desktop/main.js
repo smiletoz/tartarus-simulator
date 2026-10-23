@@ -95,6 +95,7 @@ const settings = Object.assign({
   screenShare: null,
   logPath: '', // a log the player chose, when the app didn't find it
   analyzer: null, // the analyzer window's bounds
+  seenOpen: true, // 疊加視窗的「辨識結果」面板展開
 }, readJson(SETTINGS_FILE));
 delete settings.onlyWithGame; // 0.1.1 hid the overlay behind other windows by default
 delete settings.locked; // before 0.2.5 the overlay could be locked (clicks went through)
@@ -1116,6 +1117,7 @@ function pushShell(patch) {
     appUpdate,
     hotkeys: HOTKEYS,
     screenShare: settings.screenShare ? settings.screenShare.on : null,
+    seenOpen: settings.seenOpen !== false,
     local: /^(localhost|127\.0\.0\.1)$/.test(SITE_URL.hostname),
     version: app.getVersion(),
   }, shellExtra));
@@ -1123,6 +1125,7 @@ function pushShell(patch) {
 
 let lastAdvice = null;
 let lastFollow = null;
+let fastNow = null; // 分析器的快速模式（它回報之前是 null）
 const small = (data) => {
   try {
     return JSON.stringify(data).length < 50000;
@@ -1399,6 +1402,11 @@ ipcMain.on('site:advice', (e, data) => {
   if (sum(data) !== sum(was) && sum(data) && sum(data) !== 'working') note(sum(data));
   if (data.toolsConfirm && data.toolsConfirm !== was.toolsConfirm) note('instruments to confirm:', data.toolsConfirm);
   lastAdvice = data;
+  if (typeof data.fast === 'boolean' && data.fast !== fastNow) {
+    if (fastNow !== null) note(`fast mode: ${data.fast ? 'on' : 'off'}`);
+    fastNow = data.fast;
+    rebuildMenu();
+  }
   send('overlay', 'advice', data);
 });
 
@@ -1441,6 +1449,15 @@ function command(cmd) {
     case 'treasure-now':
       return send('analyzer', 'command', cmd);
     case 'debug-report': return debugReport();
+    case 'fast-on':
+    case 'fast-off':
+      return send('analyzer', 'command', cmd);
+    case 'fast-toggle':
+      return send('analyzer', 'command', fastNow ? 'fast-off' : 'fast-on');
+    case 'seen-toggle':
+      settings.seenOpen = settings.seenOpen === false;
+      saveSettings();
+      return pushShell();
     case 'enable-log':
       // The Auto Screenshot Mode page's box on turning on the game's log.
       show('follow');
@@ -1662,6 +1679,7 @@ function rebuildMenu() {
     { type: 'separator' },
     { label: '盤面分析器', accelerator: HOTKEYS.analyzer, click: () => show('analyzer') },
     { label: '立即截圖', accelerator: HOTKEYS.capture, click: () => command('capture') },
+    { label: '快速模式（模擬次數較少，建議較快出來，準確度略低）', type: 'checkbox', checked: !!fastNow, enabled: fastNow !== null, click: (i) => command(i.checked ? 'fast-on' : 'fast-off') },
     { label: '自動截圖模式（狀態與同意事項）', click: () => show('follow') },
     { label: '選擇遊戲紀錄檔…', click: () => pickLog() },
     {

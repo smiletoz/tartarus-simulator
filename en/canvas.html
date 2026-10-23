@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex"><!-- hidden for now: no links to this page until the canvas work resumes -->
+<title>Frozen Canvas Trainer</title>
+<meta name="description" content="Practice the Frozen Canvas from Torchlight: Infinite, or enter your own canvas, and the trainer tells you how to paint a Lv7 Treasure Chest.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%230f1216'/%3E%3Cpath d='M3 6h10v7H3z' fill='%23c9a35a'/%3E%3Cpath d='M3 6c0-3 10-3 10 0' fill='%23e0a030'/%3E%3Crect x='7' y='7' width='2' height='3' fill='%233b2f19'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;500;600;700&family=Big+Shoulders+Stencil+Display:wght@600;800&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="css/style.css?v=20261022a">
+<link rel="stylesheet" href="css/canvas.css?v=20261022a">
+</head>
+<body>
+<main class="cv" id="cv">
+  <aside class="az-beta" role="note">
+    <span class="az-beta-tag">Beta</span>
+    <p>The Frozen Canvas trainer is new. Its rules come from the game's texts and gameplay footage. The odds the game hides (how often a chest appears, which Coloring Paints and brushstrokes come) are practice values for now, and I'll tune them as we see the mechanic live.</p>
+  </aside>
+
+  <header class="az-head">
+    <nav class="az-nav" aria-label="Tartarus Simulator">
+      <a href="./">← The Tartarus simulator</a>
+      <a href="analyze.html">Tartarus board analyzer</a>
+      <a href="strategy.html">Strategy guide</a>
+    </nav>
+    <p class="eyebrow">Frozen Canvas · 画中雪原</p>
+    <h1 class="az-title">Paint a Lv7 chest</h1>
+    <p class="az-lede">The goal on a canvas is the Treasure Chest: get it to Lv7 before the canvas fills. With no chest, go for as many rainbow (Lv7) paints as you can. Practice on random canvases with the trainer beside you, or set up the canvas from your game and ask what to play.</p>
+    <div class="cv-modes" role="tablist" aria-label="Mode">
+      <button type="button" role="tab" data-mode="practice" aria-selected="true">Practice</button>
+      <button type="button" role="tab" data-mode="mine" aria-selected="false">My canvas</button>
+    </div>
+    <p class="az-notice" id="cv-notice" aria-live="polite"></p>
+  </header>
+
+  <section class="cv-screen" aria-label="The canvas">
+    <div class="cv-game">
+      <div class="cv-left">
+        <div class="cv-board" id="cv-board" role="grid" aria-label="The canvas, 6 by 6"></div>
+        <p class="cv-hint" id="cv-hint"></p>
+      </div>
+
+      <div class="cv-right">
+        <div class="cv-top">
+          <span class="cv-max">Current Max Paint Level 7</span>
+          <span class="cv-count" id="cv-count"></span>
+        </div>
+
+        <div class="cv-objective" id="cv-objective"></div>
+        <div class="cv-offer" id="cv-offer" hidden></div>
+
+        <div class="cv-inv-head">
+          <span class="field-label">Paints</span>
+          <span class="cv-inv-note" id="cv-inv-note"></span>
+        </div>
+        <div class="cv-inventory" id="cv-inventory"></div>
+
+        <div class="cv-actions">
+          <button type="button" class="btn cv-force" id="cv-force"></button>
+          <button type="button" class="btn" id="cv-reset"></button>
+        <button type="button" class="btn" id="cv-undo">Undo</button>
+          <button type="button" class="btn" id="cv-new">New canvas</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="cv-edit" id="cv-edit" hidden>
+      <div class="cv-edit-row">
+        <span class="field-label">Editing</span>
+        <div class="az-seg" id="cv-edit-mode">
+          <button type="button" data-v="board" aria-pressed="true">Cells</button>
+          <button type="button" data-v="paints" aria-pressed="false">Paints in hand</button>
+          <button type="button" data-v="objective" aria-pressed="false">Objective</button>
+          <button type="button" data-v="offer" aria-pressed="false">Brushstroke on offer</button>
+        </div>
+        <button type="button" class="btn btn-danger" id="cv-clear">Clear the canvas</button>
+      </div>
+      <div class="cv-edit-body" id="cv-edit-body"></div>
+    </div>
+  </section>
+
+  <section class="az-panel cv-trainer" id="cv-trainer" aria-live="polite">
+    <div class="cv-trainer-head">
+      <h2 class="az-h2">Trainer</h2>
+      <button type="button" class="btn btn-primary" id="cv-ask">What should I do?</button>
+    </div>
+    <div id="cv-advice"><p class="field-note">Ask, and every move is played out hundreds of times from this canvas. Moves are ranked by how often the chest ends at Lv7; without a chest, by rainbow (Lv7) paints.</p></div>
+  </section>
+
+  <section class="az-panel cv-stats" id="cv-stats" aria-live="polite"></section>
+
+  <details class="az-panel cv-lab" id="cv-lab">
+    <summary><h2 class="az-h2">Practice values</h2></summary>
+    <p class="field-note">The game doesn't show these odds. Change them to match what you see live; new canvases use them.</p>
+    <div class="cv-lab-grid" id="cv-lab-grid"></div>
+    <div class="az-res-actions"><button type="button" class="btn" id="cv-lab-reset">Reset to defaults</button></div>
+  </details>
+
+  <section class="az-panel cv-rules">
+    <h2 class="az-h2">How a canvas works</h2>
+    <ol class="cv-rules-list">
+      <li><b>The canvas.</b> 6×6 cells: blank cells take paints, ice cells (blocked) and void cells don't. One Coloring Paint starts on the canvas, marked "!". A Treasure Chest is never on the canvas at the start, but about 1 canvas in 4 or 5 has one among your paints, usually at Lv2.</li>
+      <li><b>The objective.</b> The active Coloring Paint asks for paints of a type (monster, gameplay or any) in its range: Horizontal (its row), Vertical (its column), Diagonal (both its diagonals) or Adjacent (the 4 cells next to it). Paints already there count; the Coloring Paint itself doesn't, and its own objective doesn't raise it.</li>
+      <li><b>Meeting it.</b> Once enough are in range, every matching paint in range rises 1 level (more with Layer), to Lv7 at most. The Treasure Chest is a gameplay paint, so gameplay and "any" objectives that reach it raise it.</li>
+      <li><b>The next Coloring Paint.</b> A new one is offered. Pick a brushstroke direction: Reimagine (change its target or range), Spread (turn an ice cell blank, repair a broken cell, or place it on an ice, void, broken or painted cell, where it replaces the paint), or Layer (an extra effect when it's met). Then pick 1 of 2 effects, and place it. On a void cell its objective works from there, but it isn't a paint and doesn't take a blank cell.</li>
+      <li><b>When stuck.</b> Forced Color Mixing meets the objective right away, for Colored Snow (5, then 10, then 15; 3 a canvas). The price: 1 random paint on the canvas breaks. The paint is gone, and nothing can go on that cell until a Spread effect repairs it. It can be the chest.</li>
+      <li><b>Starting over.</b> For Colored Snow you can start the canvas over: the same canvas and the same paints, with new Coloring Paints and brushstrokes to come. With a chest in hand, that's how you fish for a Lv7 chest when the luck goes bad.</li>
+      <li><b>The end.</b> The canvas is done when its cells are full. An objective fails when its range has no blank cell left and it’s still short; paints that don’t match can go in its range without failing it, but they don’t rise. After a fail no new Coloring Paints come, so nothing levels up, unless you force the failed objective. Then the painting becomes a map, and a Lv7 chest is where the money is. Without a chest, aim for as many rainbow (Lv7) paints as you can: their eggs can drop skills too.</li>
+    </ol>
+    <p class="field-note">Sources: the game's own texts and tooltips, the SS7 and SS13 painting guides on bilibili, and the Torchlight: Infinite wiki (tlidb). The canvas has been in the game since SS6 and is still there in SS14.</p>
+  </section>
+
+  <footer class="az-foot">
+    <p>Made by <strong>CoffeeBns</strong>: <a href="https://twitch.tv/coffeebns" target="_blank" rel="noopener">twitch.tv/coffeebns</a> and <a href="https://youtube.com/@CoffeeBns" target="_blank" rel="noopener">youtube.com/@CoffeeBns</a>.</p>
+    <p>The trainer is a rules-based strategy with no AI: it scores each move from what you can see, then plays every option out from your canvas many times. Your canvases are saved in this browser only.</p>
+  </footer>
+</main>
+
+<script src="js/canvas-engine.js?v=20261022a"></script>
+<script src="js/canvas-solver.js?v=20261022a"></script>
+<script src="js/canvas-ui.js?v=20261022a"></script>
+</body>
+</html>

@@ -1,0 +1,69 @@
+快速模式（可切換）：模擬預算 9600 → 3000、每選項 400～1600 → 150～500。
+狀態存在 localStorage 'tartarus-sim:fast:v1'（'1' 為開）。
+window.TartarusAnalyzer.isFast() / setFast(on)；勾選框 #az-fast（analyze.html@fast.patch）。
+
+<<<< once
+  const PLAYOUT_BUDGET = 9600; // playouts per check, shared across the options
+====
+  const PLAYOUT_BUDGET = 9600; // playouts per check, shared across the options
+  // 快速模式：模擬次數較少，建議較快出來，準確度略低。
+  const FAST_KEY = 'tartarus-sim:fast:v1';
+  const FAST_BUDGET = 3000;
+  let fastMode = false;
+  try {
+    fastMode = localStorage.getItem(FAST_KEY) === '1';
+  } catch (e) {
+    // Without storage, the standard check.
+  }
+>>>>
+
+<<<< once
+    const rollouts = clamp(Math.round(PLAYOUT_BUDGET / Math.max(1, options)), 400, 1600);
+====
+    const rollouts = fastMode
+      ? clamp(Math.round(FAST_BUDGET / Math.max(1, options)), 150, 500)
+      : clamp(Math.round(PLAYOUT_BUDGET / Math.max(1, options)), 400, 1600);
+>>>>
+
+<<<< once
+  function startCheck(id, st, rollouts) {
+====
+  // 切換快速模式：記在這個瀏覽器；正在進行的檢驗以新設定重新檢驗目前盤面。
+  function setFast(on) {
+    const next = !!on;
+    const box = document.getElementById('az-fast');
+    if (box) box.checked = next;
+    if (next === fastMode) return fastMode;
+    fastMode = next;
+    try {
+      localStorage.setItem(FAST_KEY, fastMode ? '1' : '0');
+    } catch (e) {
+      // Kept until the page closes.
+    }
+    const running = fresh() && !(solver.result && solver.result.done);
+    if (running) ask(true);
+    else render();
+    return fastMode;
+  }
+
+  function startCheck(id, st, rollouts) {
+>>>>
+
+<<<< once
+    $('az-recheck').addEventListener('click', () => ask());
+====
+    $('az-recheck').addEventListener('click', () => ask());
+    if ($('az-fast')) {
+      $('az-fast').checked = fastMode;
+      $('az-fast').addEventListener('change', (e) => setFast(e.target.checked));
+    }
+>>>>
+
+<<<< once
+      ask: () => ask(true),
+====
+      ask: () => ask(true),
+      // 快速模式（桌面程式的疊加視窗與系統匣也用這個切換）。
+      isFast: () => fastMode,
+      setFast: (on) => setFast(on),
+>>>>

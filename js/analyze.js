@@ -60,6 +60,15 @@
   }
   const SAVE_KEY = 'tartarus-sim:save:v2';
   const PLAYOUT_BUDGET = 9600; // playouts per check, shared across the options
+  // 快速模式：模擬次數較少，建議較快出來，準確度略低。
+  const FAST_KEY = 'tartarus-sim:fast:v1';
+  const FAST_BUDGET = 3000;
+  let fastMode = false;
+  try {
+    fastMode = localStorage.getItem(FAST_KEY) === '1';
+  } catch (e) {
+    // Without storage, the standard check.
+  }
   const LIVE_MIN = 150; // playouts per option before the live check can lead
   const SWITCH_MIN = 0.05; // Rainbows a live pick must gain over the strategy's to replace it
   // The check ends early once the leader is ahead of every other move by
@@ -586,13 +595,33 @@
       solver.instant = null;
     }
     const options = S.candidates(st).length;
-    const rollouts = clamp(Math.round(PLAYOUT_BUDGET / Math.max(1, options)), 400, 1600);
+    const rollouts = fastMode
+      ? clamp(Math.round(FAST_BUDGET / Math.max(1, options)), 150, 500)
+      : clamp(Math.round(PLAYOUT_BUDGET / Math.max(1, options)), 400, 1600);
     solver.target = rollouts;
     solver.startedAt = Date.now();
     startCheck(solver.id, st, rollouts);
     render();
     if (quiet !== true) $('az-results').scrollIntoView({ block: 'nearest', behavior: 'smooth' });
     return true;
+  }
+
+  // 切換快速模式：記在這個瀏覽器；正在進行的檢驗以新設定重新檢驗目前盤面。
+  function setFast(on) {
+    const next = !!on;
+    const box = document.getElementById('az-fast');
+    if (box) box.checked = next;
+    if (next === fastMode) return fastMode;
+    fastMode = next;
+    try {
+      localStorage.setItem(FAST_KEY, fastMode ? '1' : '0');
+    } catch (e) {
+      // Kept until the page closes.
+    }
+    const running = fresh() && !(solver.result && solver.result.done);
+    if (running) ask(true);
+    else render();
+    return fastMode;
   }
 
   function startCheck(id, st, rollouts) {
@@ -1701,6 +1730,7 @@
   const DOORS_READ = ['zh', 'ko', 'ru'];
   function langNote() {
     if (gameLang === 'en') return '';
+    if (ZH_GAME()) return '你的遊戲是中文客戶端。繁中版辨識器已支援：盤面、今天的門、決策卡片（吃／換／結束）、刑具欄小圖、綺彩囚犯數量、距離暴動天數，以及目標與開局卡（用中文文字辨識，第一次使用時會下載約 1.6 MB 的繁中辨識模型）。刑具選擇卡片依卡片圖案辨識。認錯的地方請手動修正，並用「回報辨識錯誤」把截圖傳回來。';
     const doors = DOORS_READ.includes(gameLang)
       ? '盤面上的牢房、野獸和稀有度，以及今天的門（依牢房編號），在任何語言下都能辨識'
       : '盤面上的牢房、野獸和稀有度在任何語言下都能辨識；今天的門會依牢房編號辨識，但還沒在你的語言的盤面上驗證過，所以請在「選擇目的地」下檢查';
@@ -1925,6 +1955,7 @@
   // whose instrument offer comes next.
   let runObjective = null;
   function readObjective(source) {
+    if (ZH_GAME()) return readObjectiveZh(source);
     const scale = Math.min(1, 2600 / source.width);
     const w = Math.round(source.width * scale);
     const h = Math.round(source.height * scale);
@@ -1964,7 +1995,119 @@
   // an early consume for the instrument. One try at a time, three failures
   // in a row a day.
   const corner = { busy: false, tries: 0, day: 0, done: false };
+  // ---------- 繁中版：中文客戶端的文字辨識 ----------
+  const ZH_GAME = () => /^(zh|tw)/i.test(gameLang || '');
+  // 遊戲裡的名稱（繁中客戶端，加上簡中寫法），用來比對中文辨識結果。
+  const ZH_NAMES = {
+    objective: {
+      king: ['困獸稱王', '困兽称王'],
+      walk: ['巡獄之路', '巡狱之路'],
+      incident: ['暗流湧動', '暗流涌动'],
+      consume: ['適者生存', '适者生存'],
+      doors: ['牢門之後', '牢门之后'],
+    },
+    start: {
+      opulence: ['奢靡'],
+      cagefight: ['囚徒困鬥', '囚徒困斗'],
+      ironlaw: ['鐵律', '铁律'],
+      tyranny: ['暴政'],
+    },
+  };
+  let ocrZh = null;
+  function ocrWorkerZh() {
+    if (!ocrZh) {
+      ocrZh = ocrWorker()
+        .then(() => (window.Tesseract ? window.Tesseract.createWorker('chi_tra', 1, { langPath: 'https://cdn.jsdelivr.net/npm/@tesseract.js-data/chi_tra/4.0.0' }) : null))
+        .then((w) => w, () => {
+          ocrZh = null;
+          return null;
+        });
+    }
+    const limit = new Promise((resolve) => setTimeout(() => resolve(null), 30000));
+    return Promise.race([ocrZh, limit]);
+  }
+  // 名稱的每個字依序出現在辨識文字裡的比例（辨識常把字拆開或漏字）。
+  function zhScore(text, name) {
+    let i = 0;
+    let hit = 0;
+    for (const ch of name) {
+      const at = text.indexOf(ch, i);
+      if (at >= 0) {
+        hit += 1;
+        i = at + 1;
+      }
+    }
+    return hit / name.length;
+  }
+  function zhBest(text, groups) {
+    const t = text.replace(/\s+/g, '');
+    let best = null;
+    for (const group of groups) {
+      for (const [id, names] of Object.entries(ZH_NAMES[group])) {
+        for (const name of names) {
+          const score = zhScore(t, name);
+          if (!best || score > best.score) best = { group, id, score };
+        }
+      }
+    }
+    return best && best.score >= 0.75 ? best : null;
+  }
+  async function zhText(source, x0, y0, w, h) {
+    const worker = await ocrWorkerZh();
+    if (!worker || w < 8 || h < 8) return null;
+    const z = Math.max(1, Math.min(3, 600 / w));
+    const c = document.createElement('canvas');
+    c.width = Math.round(w * z);
+    c.height = Math.round(h * z);
+    const g = c.getContext('2d', { willReadFrequently: true });
+    g.drawImage(source, x0, y0, w, h, 0, 0, c.width, c.height);
+    // 彩色字（綠色的「已完成」、藍色的連結）轉成亮度，辨識比較穩。
+    const px = g.getImageData(0, 0, c.width, c.height);
+    for (let i = 0; i < px.data.length; i += 4) {
+      const m = Math.max(px.data[i], px.data[i + 1], px.data[i + 2]);
+      px.data[i] = px.data[i + 1] = px.data[i + 2] = m;
+    }
+    g.putImageData(px, 0, 0);
+    try {
+      return (await worker.recognize(c)).data.text || '';
+    } catch (e) {
+      return null;
+    }
+  }
+  // 盤面左上角的「目標：暗流湧動 / 累計觸發 2 次 / 已完成」
+  async function readCornerObjectiveZh(source, box) {
+    const [x0, y0, x1, y1] = box.map(Math.round);
+    // 目標框只框到四個字以上的行，下面的「已完成」（三個字）要另外往下多讀一些。
+    const text = await zhText(source, x0, y0, x1 - x0, Math.min(source.height - 1, y1 + Math.round(0.45 * (y1 - y0))) - y0);
+    if (!text) return { ok: false };
+    const best = zhBest(text, ['objective']);
+    if (!best || !T.OBJECTIVES[best.id]) return { ok: false };
+    const count = text.replace(/\s+/g, '').match(/(\d{1,2})\/(\d{1,2})/);
+    const need = count ? Number(count[2]) : null;
+    let have = count ? Number(count[1]) : null;
+    if (have !== null && have > need) have = null;
+    return { ok: true, id: best.id, name: T.OBJECTIVES[best.id].name, completed: /已完成|已完成/.test(text.replace(/\s+/g, '')), have, need: have === null ? null : need };
+  }
+  // 開局的目標彈窗與開局卡（塔羅斯異聞）彈窗：讀畫面上方中間的標題。
+  async function readObjectiveZh(source) {
+    setReading(true);
+    try {
+      const W = source.width;
+      const H = source.height;
+      const text = await zhText(source, Math.round(W * 0.2), Math.round(H * 0.08), Math.round(W * 0.6), Math.round(H * 0.4));
+      if (text === null) return { ok: false, objective: true, reason: '繁中辨識模型沒有載入成功' };
+      const best = zhBest(text, ['objective', 'start']);
+      if (!best) return { ok: false, objective: true, reason: '這不是模擬器認得的目標或開局卡' };
+      const card = best.group === 'start' ? (T.START_EVENTS || {})[best.id] : T.OBJECTIVES[best.id];
+      if (!card) return { ok: false, objective: true, reason: '這不是模擬器認得的目標或開局卡' };
+      return { ok: true, objective: true, id: best.id, name: card.name };
+    } finally {
+      setReading(false);
+    }
+  }
+
   async function readCornerObjective(source, box) {
+    if (ZH_GAME()) return readCornerObjectiveZh(source, box);
     const worker = await ocrWorker();
     if (!worker) return { ok: false };
     const [x0, y0, x1, y1] = box.map(Math.round);
@@ -3386,6 +3529,10 @@
     });
     $('az-fix').addEventListener('click', fixBoard);
     $('az-recheck').addEventListener('click', () => ask());
+    if ($('az-fast')) {
+      $('az-fast').checked = fastMode;
+      $('az-fast').addEventListener('change', (e) => setFast(e.target.checked));
+    }
     // A screenshot's board waits to be shared until the player moves on; a
     // closing tab counts as moving on.
     window.addEventListener('pagehide', shareHeld);
@@ -3415,6 +3562,9 @@
       },
       useReading: () => useScan(),
       ask: () => ask(true),
+      // 快速模式（桌面程式的疊加視窗與系統匣也用這個切換）。
+      isFast: () => fastMode,
+      setFast: (on) => setFast(on),
       recommendation: () => (fresh() && settled() ? recommendation() : null),
       // What the reader made of the last picture, in full (the desktop app's
       // test record keeps it).

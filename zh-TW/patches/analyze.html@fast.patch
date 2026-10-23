@@ -1,0 +1,8 @@
+快速模式勾選框（js__analyze.js@fast.patch 讀寫 #az-fast）。
+
+<<<< once
+          <button type="button" class="btn btn-primary az-go" id="az-go">我該怎麼做？</button>
+====
+          <button type="button" class="btn btn-primary az-go" id="az-go">我該怎麼做？</button>
+          <label class="toggle az-fast" style="margin-top: 6px;"><input type="checkbox" id="az-fast"><span><strong>快速模式</strong><small>模擬次數較少，建議較快出來，準確度略低。此設定會記在這個瀏覽器。</small></span></label>
+>>>>
