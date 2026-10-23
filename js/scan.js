@@ -1249,7 +1249,7 @@
 
   // foreign: the game isn't in English (the player's setting), so cards in
   // another language are looked for by their numbers.
-  function readDoors(img, gray, loc, ref, foreign, cellReads) {
+  function readDoors(img, gray, loc, ref, foreign, cellReads, warden) {
     let cards = doorCards(img, loc, gray, ref);
     let any = false;
     // Another language's cards: their numbers only (report 319).
@@ -1294,7 +1294,11 @@
         const g = readRow(row);
         if (!g) continue;
         const plain = g.cells.filter((n) => cellReads[n] && cellReads[n].kind === 'locked' && !cellReads[n].shown);
-        if (plain.length && plain.every((n) => cellLight(img, cellReads[n]) >= 40)) {
+        // 中文客戶端：三扇門都可能是有囚犯的牢房（沒有上鎖的門可以比對亮度）。
+        // 門一定在典獄長順時針往前 6 格內，而且彼此不同：用這個驗證。
+        const ahead = (n) => warden && ((n - warden.cell + 16) % 16) >= 1 && ((n - warden.cell + 16) % 16) <= 6;
+        const inReach = CJK && warden && g.cells.length >= 2 && g.cells.length === g.read.length && g.cells.every(ahead);
+        if (inReach || (plain.length && plain.every((n) => cellLight(img, cellReads[n]) >= 40))) {
           got = g;
           break;
         }
@@ -2086,6 +2090,11 @@
     // 中文客戶端：標題「請進行決策」在棋盤正下方，卡片名稱「換」（一個字）、
     // 「結束」（兩個字）在卡片下緣；「吃」在紅色卡片上，由紅色判斷。
     if (CJK) {
+      // 英文規則（七個字母的單字、Make Your Decision）在中文畫面上會誤判
+      // （「請進行決策」被當成 Replace），所以全部重新判斷。
+      title = false;
+      replace = false;
+      end = false;
       const u = loc.s;
       const mx = (Math.min(at(loc, 0, 0)[0], at(loc, 0, 3)[0]) + Math.max(at(loc, 5, 0)[0], at(loc, 5, 3)[0])) / 2;
       for (const r of textRadii(img)) {
@@ -2094,7 +2103,8 @@
           for (const p of line.pieces) {
             const w = p.x1 - p.x0;
             const cx = (p.x0 + p.x1) / 2;
-            if (line.mid < bottom + 70 * u && w > 75 * u && w < 125 * u && Math.abs(cx - mx) < 60 * u) title = true;
+            // 標題「請進行決策」五個字約 99 單位寬；「請選擇目的地」六個字約 119，不算。
+            if (line.mid < bottom + 70 * u && w > 85 * u && w < 110 * u && Math.abs(cx - mx) < 60 * u) title = true;
             if (line.mid < bottom + 100 * u) continue;
             const l = { x0: p.x0, x1: p.x1, mid: line.mid, h: line.h };
             if (redBy(l) >= 0.01) continue;
@@ -2115,7 +2125,9 @@
     // left on the same line, and a Consume card or a Replace label.
     // The Consume card's own label is red on red, which isn't read as text:
     // its red block left of "End" counts as that label (report 310).
-    const row = (CJK && end && (consume || replace)) || ends.some((e) => lefts.some((l) => Math.abs(l.mid - e.mid) < e.h / 2 && l.x1 < e.x0 && e.x0 - l.x1 < 30 * e.h) || (consume && redX < e.x0 && e.x0 - redX < 30 * e.h));
+    // 中文客戶端：沒有讀到標題「請進行決策」就不當成決策卡片（門卡片「去8號」之類也會被讀成單字）。
+    if (CJK && !title) return null;
+    const row = ends.some((e) => lefts.some((l) => Math.abs(l.mid - e.mid) < e.h / 2 && l.x1 < e.x0 && e.x0 - l.x1 < 30 * e.h) || (consume && redX < e.x0 && e.x0 - redX < 30 * e.h));
     if (!title && !(row && (consume || replace))) return null;
     if (office) return { office: true, replace: false, consume: false, end: false, title };
     return { replace, consume, end, title, red: Math.round(1000 * red) / 1000 };
@@ -2151,7 +2163,7 @@
     // An open cell can hold an event beside its inmate (the cell popup's
     // "Can trigger Prison Incident"): 8 saved screenshots show one.
     for (const n of findEvents(img, loc, cells, warden)) if (cells[n].kind === 'locked' || cells[n].kind === 'inmate') cells[n].event = true;
-    const doors = readDoors(img, sharp, loc, ref, !!(opts && opts.lang && opts.lang !== 'en'), cells);
+    const doors = readDoors(img, sharp, loc, ref, !!(opts && opts.lang && opts.lang !== 'en'), cells, warden);
     const days = readDays(img, sharp, loc, ref);
     const tools = readTools(img, loc, ref);
     const badge = readBadge(img, tools.label, ref);

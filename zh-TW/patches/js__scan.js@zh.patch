@@ -1,12 +1,28 @@
-繁中版：中文客戶端（遊戲語言 zh）的截圖辨識——天數、刑具欄、綺彩囚犯、決策卡片。
+繁中版：中文客戶端（遊戲語言 zh）的截圖辨識——天數、刑具欄、綺彩囚犯、決策卡片、門卡（以典獄長可達範圍驗證）。
 
 <<<< once
-  function dayNumber(img, loc) {
+  function readDoors(img, gray, loc, ref, foreign, cellReads) {
 ====
+  function readDoors(img, gray, loc, ref, foreign, cellReads, warden) {
+>>>>
+
+<<<< once
+        if (plain.length && plain.every((n) => cellLight(img, cellReads[n]) >= 40)) {
+====
+        // 中文客戶端：三扇門都可能是有囚犯的牢房（沒有上鎖的門可以比對亮度）。
+        // 門一定在典獄長順時針往前 6 格內，而且彼此不同：用這個驗證。
+        const ahead = (n) => warden && ((n - warden.cell + 16) % 16) >= 1 && ((n - warden.cell + 16) % 16) <= 6;
+        const inReach = CJK && warden && g.cells.length >= 2 && g.cells.length === g.read.length && g.cells.every(ahead);
+        if (inReach || (plain.length && plain.every((n) => cellLight(img, cellReads[n]) >= 40))) {
+>>>>
+
+<<<< once
+  // the start of the line, and the rest of the line is smaller and dimmer.
+====
+  // the start of the line, and the rest of the line is smaller and dimmer.
   // 繁中版：中文客戶端（opts.lang 為 zh）時，標籤與版面改用中文的形狀判斷。
   let CJK = false;
 
-  function dayNumber(img, loc) {
 >>>>
 
 <<<< once
@@ -17,8 +33,19 @@
 >>>>
 
 <<<< once
-  // Torture instruments: the icons under the "Torture Instrument" label,
+        if (!best || off < best.off) best = { off, x0: p.x0, x1: p.x1, y0: p.y0, y1: p.y1, h: line.h, words: p.words.map((w) => w.glyphs.length) };
+      }
+    }
+    return best;
+  }
+
 ====
+        if (!best || off < best.off) best = { off, x0: p.x0, x1: p.x1, y0: p.y0, y1: p.y1, h: line.h, words: p.words.map((w) => w.glyphs.length) };
+      }
+    }
+    return best;
+  }
+
   // 中文客戶端的「刑具」標籤：兩個字，寬約 34 個棋盤單位。找到後換算成英文標籤
   // 「Torture Instrument」在同一位置會有的大小（字高 = 中文標籤寬 / 3.35），
   // 後面的刑具欄、開局卡徽章、目標文字位置就都沿用原本的計算。
@@ -46,7 +73,6 @@
     return { off: best.off, x0: p.x0, x1: p.x0 + 12.2 * h, y0: p.y1 - h, y1: p.y1, h, words: [], cjk: true };
   }
 
-  // Torture instruments: the icons under the "Torture Instrument" label,
 >>>>
 
 <<<< once
@@ -72,11 +98,19 @@
 >>>>
 
 <<<< once
-    // The office: "Instigate" with "Bestow" to its right on the same line,
+      if (l.red < 0.01) replace = true;
+    }
 ====
+      if (l.red < 0.01) replace = true;
+    }
     // 中文客戶端：標題「請進行決策」在棋盤正下方，卡片名稱「換」（一個字）、
     // 「結束」（兩個字）在卡片下緣；「吃」在紅色卡片上，由紅色判斷。
     if (CJK) {
+      // 英文規則（七個字母的單字、Make Your Decision）在中文畫面上會誤判
+      // （「請進行決策」被當成 Replace），所以全部重新判斷。
+      title = false;
+      replace = false;
+      end = false;
       const u = loc.s;
       const mx = (Math.min(at(loc, 0, 0)[0], at(loc, 0, 3)[0]) + Math.max(at(loc, 5, 0)[0], at(loc, 5, 3)[0])) / 2;
       for (const r of textRadii(img)) {
@@ -85,7 +119,8 @@
           for (const p of line.pieces) {
             const w = p.x1 - p.x0;
             const cx = (p.x0 + p.x1) / 2;
-            if (line.mid < bottom + 70 * u && w > 75 * u && w < 125 * u && Math.abs(cx - mx) < 60 * u) title = true;
+            // 標題「請進行決策」五個字約 99 單位寬；「請選擇目的地」六個字約 119，不算。
+            if (line.mid < bottom + 70 * u && w > 85 * u && w < 110 * u && Math.abs(cx - mx) < 60 * u) title = true;
             if (line.mid < bottom + 100 * u) continue;
             const l = { x0: p.x0, x1: p.x1, mid: line.mid, h: line.h };
             if (redBy(l) >= 0.01) continue;
@@ -95,13 +130,14 @@
         }
       }
     }
-    // The office: "Instigate" with "Bestow" to its right on the same line,
 >>>>
 
 <<<< once
-    const row = ends.some((e) => lefts.some((l) => Math.abs(l.mid - e.mid) < e.h / 2 && l.x1 < e.x0 && e.x0 - l.x1 < 30 * e.h) || (consume && redX < e.x0 && e.x0 - redX < 30 * e.h));
+    // its red block left of "End" counts as that label (report 310).
 ====
-    const row = (CJK && end && (consume || replace)) || ends.some((e) => lefts.some((l) => Math.abs(l.mid - e.mid) < e.h / 2 && l.x1 < e.x0 && e.x0 - l.x1 < 30 * e.h) || (consume && redX < e.x0 && e.x0 - redX < 30 * e.h));
+    // its red block left of "End" counts as that label (report 310).
+    // 中文客戶端：沒有讀到標題「請進行決策」就不當成決策卡片（門卡片「去8號」之類也會被讀成單字）。
+    if (CJK && !title) return null;
 >>>>
 
 <<<< once
@@ -111,4 +147,10 @@
   function scan(img, ref, opts) {
     const t0 = Date.now();
     CJK = !!(opts && opts.lang && /^(zh|tw)/i.test(opts.lang));
+>>>>
+
+<<<< once
+    const doors = readDoors(img, sharp, loc, ref, !!(opts && opts.lang && opts.lang !== 'en'), cells);
+====
+    const doors = readDoors(img, sharp, loc, ref, !!(opts && opts.lang && opts.lang !== 'en'), cells, warden);
 >>>>
