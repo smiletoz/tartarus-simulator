@@ -96,6 +96,8 @@ const settings = Object.assign({
   logPath: '', // a log the player chose, when the app didn't find it
   analyzer: null, // the analyzer window's bounds
   seenOpen: true, // 疊加視窗的「辨識結果」面板展開
+  autoAppUpdate: true, // 繁中版：程式更新下載後在結束時自動安裝；關閉時改為下載完成就詢問
+  autoSiteUpdate: true, // 繁中版：網站更新在沒玩遊戲時自動重新載入；關閉時先詢問
 }, readJson(SETTINGS_FILE));
 delete settings.onlyWithGame; // 0.1.1 hid the overlay behind other windows by default
 delete settings.locked; // before 0.2.5 the overlay could be locked (clicks went through)
@@ -1606,16 +1608,65 @@ async function checkSite() {
     const res = await net.fetch(SITE + PAGES.analyzer, { cache: 'no-store' });
     const m = /[?&]v=([\w.-]+)/.exec(await res.text());
     const mine = await pageTag();
-    if (!m || !mine || m[1] === mine) return;
+    if (!m || !mine || m[1] === mine) return false;
     note(`site updated: ${mine} -> ${m[1]}${game.running ? ' (offering a reload)' : ' (reloading)'}`);
-    if (!game.running) reloadSite();
+    if (!game.running && !settings.autoSiteUpdate) {
+      if (!siteUpdate) {
+        siteUpdate = true;
+        pushShell();
+        rebuildMenu();
+        askReloadSite();
+      }
+    } else if (!game.running) reloadSite();
     else if (!siteUpdate) {
       siteUpdate = true;
       pushShell();
     }
+    return true;
   } catch (e) {
     // Offline: next time.
+    return null;
   }
+}
+// 繁中版：手動確認模式下，網站有更新時先詢問。
+let askingSite = false;
+async function askReloadSite() {
+  if (askingSite) return;
+  askingSite = true;
+  try {
+    const r = await dialog.showMessageBox({ type: 'info', title: 'Tartarus Overlay 繁中版', message: '網站有新版本（辨識與建議的更新）', detail: '要現在重新載入嗎？選「稍後」的話，可以之後從系統匣選單「重新載入網站」。', buttons: ['現在重新載入', '稍後'], defaultId: 0, cancelId: 1, noLink: true });
+    if (r.response === 0) reloadSite();
+  } finally {
+    askingSite = false;
+  }
+}
+// 繁中版：系統匣「檢查更新」。網站和程式各檢查一次，並回報結果。
+let checkingNow = false;
+async function checkNow() {
+  if (checkingNow) return;
+  checkingNow = true;
+  rebuildMenu();
+  const lines = [];
+  try {
+    const site = await checkSite();
+    lines.push(site === true ? '網站：有新版本。' : site === false ? '網站：已是最新版。' : '網站：無法連線，稍後再試。');
+    if (!updater) lines.push(`程式：這個版本（${app.getVersion()}）不支援自動更新（沒有經過安裝）。`);
+    else if (appUpdate) lines.push(`程式：新版 ${appUpdate} 已下載好，重新啟動就會安裝。`);
+    else {
+      const r = await updater.checkForUpdates().catch((e) => ({ error: e }));
+      const v = r && r.updateInfo && r.updateInfo.version;
+      if (r && r.error) lines.push('程式：無法連線到 GitHub，稍後再試。');
+      else if (v && v !== app.getVersion()) lines.push(`程式：找到新版 ${v}，正在背景下載，下載完成會再通知你。`);
+      else lines.push(`程式：已是最新版（${app.getVersion()}）。`);
+    }
+  } finally {
+    checkingNow = false;
+    rebuildMenu();
+  }
+  const buttons = appUpdate ? ['重新啟動並更新', '關閉'] : siteUpdate ? ['重新載入網站', '關閉'] : ['好'];
+  const r = await dialog.showMessageBox({ type: 'info', title: 'Tartarus Overlay 繁中版', message: '檢查更新', detail: lines.join('\n'), buttons, defaultId: 0, cancelId: buttons.length - 1, noLink: true });
+  if (r.response === 0 && appUpdate) command('restart');
+  else if (r.response === 0 && siteUpdate) reloadSite();
 }
 // A site update that came during play waits for a safe moment: a run's end
 // (Ignore on the Riot screen), or the prison after the Riot's fight. Not the
@@ -1646,12 +1697,18 @@ function startUpdater() {
     return;
   }
   updater.autoDownload = true;
-  updater.autoInstallOnAppQuit = true;
+  updater.autoInstallOnAppQuit = settings.autoAppUpdate !== false;
   updater.on('update-downloaded', (info) => {
     note('app update downloaded:', info.version);
     appUpdate = info.version;
     pushShell();
     rebuildMenu();
+    // 繁中版：手動確認模式，下載完成就問。
+    if (settings.autoAppUpdate === false) {
+      dialog.showMessageBox({ type: 'info', title: 'Tartarus Overlay 繁中版', message: `新版程式 ${info.version} 已下載好`, detail: game.running ? '遊戲正在執行，建議打完這一局再更新。之後可以從系統匣選單「重新啟動以更新程式」。' : '要現在重新啟動並更新嗎？', buttons: ['現在重新啟動並更新', '稍後'], defaultId: game.running ? 1 : 0, cancelId: 1, noLink: true })
+        .then((r) => r.response === 0 && command('restart'))
+        .catch(() => {});
+    }
   });
   updater.on('error', (e) => note('app update check failed:', String((e && e.message) || e).slice(0, 300)));
   const check = () => updater.checkForUpdates().catch(() => {});
@@ -1696,6 +1753,16 @@ function rebuildMenu() {
     },
     { type: 'separator' },
     { label: '隨 Windows 啟動', type: 'checkbox', checked: login, click: (i) => app.setLoginItemSettings({ openAtLogin: i.checked }) },
+    {
+      label: appUpdate || siteUpdate ? '更新（有新版本）' : '更新',
+      submenu: [
+        { label: checkingNow ? '正在檢查更新…' : '檢查更新…', enabled: !checkingNow, click: () => checkNow() },
+        { type: 'separator' },
+        { label: '自動安裝程式更新（關閉時：下載完成先詢問）', type: 'checkbox', checked: settings.autoAppUpdate !== false, click: (i) => { settings.autoAppUpdate = i.checked; if (updater) updater.autoInstallOnAppQuit = i.checked; saveSettings(); } },
+        { label: '自動重新載入網站更新（關閉時：先詢問）', type: 'checkbox', checked: settings.autoSiteUpdate !== false, click: (i) => { settings.autoSiteUpdate = i.checked; saveSettings(); } },
+        { label: '開啟 Releases 頁面（更新說明）', click: () => shell.openExternal('https://github.com/smiletoz/tartarus-simulator/releases') },
+      ],
+    },
     { label: siteUpdate ? '重新載入網站（有更新可用）' : '重新載入網站', click: () => reloadSite() },
     appUpdate ? { label: `重新啟動以更新程式（${appUpdate}）`, click: () => command('restart') } : { label: `版本 ${app.getVersion()}${DEV ? '（除錯版）' : ''}`, enabled: false },
     { label: '記錄每個盤面與建議（測試用）', type: 'checkbox', checked: settings.record, click: (i) => { settings.record = i.checked; saveSettings(); } },
