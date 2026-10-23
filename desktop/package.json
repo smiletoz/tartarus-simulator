@@ -22,7 +22,7 @@
     "electron-builder": "26.16.1"
   },
   "build": {
-    "appId": "io.github.10840130.tartarus-overlay-tw",
+    "appId": "io.github.smiletoz.tartarus-overlay-tw",
     "productName": "Tartarus Overlay TW",
     "files": [
       "main.js",
@@ -49,7 +49,7 @@
     "publish": [
       {
         "provider": "github",
-        "owner": "10840130",
+        "owner": "smiletoz",
         "repo": "tartarus-simulator",
         "releaseType": "release"
       }

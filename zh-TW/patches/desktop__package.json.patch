@@ -20,7 +20,7 @@ version 不動（由打包流程設定）。
     "appId": "io.github.blahdot3h.tartarus-overlay",
     "productName": "Tartarus Overlay",
 ====
-    "appId": "io.github.10840130.tartarus-overlay-tw",
+    "appId": "io.github.smiletoz.tartarus-overlay-tw",
     "productName": "Tartarus Overlay TW",
 >>>>
 
@@ -33,5 +33,5 @@ version 不動（由打包流程設定）。
 <<<< once
         "owner": "blahdot3h",
 ====
-        "owner": "10840130",
+        "owner": "smiletoz",
 >>>>

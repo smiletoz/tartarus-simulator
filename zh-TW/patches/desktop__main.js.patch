@@ -5,7 +5,7 @@ note(...) 與 debugReportText 的內容是給開發者看的，保持英文。
 <<<< once
 const LIVE_SITE = 'https://blahdot3h.github.io/tartarus-simulator/';
 ====
-const LIVE_SITE = 'https://10840130.github.io/tartarus-simulator/';
+const LIVE_SITE = 'https://smiletoz.github.io/tartarus-simulator/';
 >>>>
 
 遊戲視窗標題：英文與中文用戶端都接受。
@@ -21,7 +21,7 @@ const GAME_TITLE = new RegExp(arg('game-title') || '^(Torchlight: Infinite|火�
 <<<< once
 app.setAppUserModelId('io.github.blahdot3h.tartarus-overlay');
 ====
-app.setAppUserModelId('io.github.10840130.tartarus-overlay-tw');
+app.setAppUserModelId('io.github.smiletoz.tartarus-overlay-tw');
 >>>>
 
 <<<< once

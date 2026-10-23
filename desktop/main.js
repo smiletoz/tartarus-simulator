@@ -36,7 +36,7 @@ const arg = (name) => {
 };
 const flag = (name) => process.argv.includes(`--${name}`);
 
-const LIVE_SITE = 'https://10840130.github.io/tartarus-simulator/';
+const LIVE_SITE = 'https://smiletoz.github.io/tartarus-simulator/';
 let SITE = arg('site') || process.env.TARTARUS_SITE || LIVE_SITE;
 if (!SITE.endsWith('/')) SITE += '/';
 const SITE_URL = new URL(SITE);
@@ -64,7 +64,7 @@ app.commandLine.appendSwitch('disable-backgrounding-occluded-windows');
 // The app never plays sound: no page it loads, now or after a site change,
 // can make any (the user heard sounds in the background while gaming).
 app.commandLine.appendSwitch('mute-audio');
-app.setAppUserModelId('io.github.10840130.tartarus-overlay-tw');
+app.setAppUserModelId('io.github.smiletoz.tartarus-overlay-tw');
 
 // ---------- Settings ----------
 

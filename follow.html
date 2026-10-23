@@ -502,7 +502,7 @@
 
   <section class="guide-section" id="desktop">
     <h2>桌面版</h2>
-    <p>Tartarus Overlay 是一個 Windows 程式，會替你執行自動截圖模式，並在遊戲上方用一張小卡片顯示建議，所以一台螢幕就夠了。它在程式裡開啟的就是這個網站自己的頁面（這個頁面和盤面分析器），所以上面說的一切在那裡依然成立，只有下面列出的差異。它的程式碼放在網站儲存庫的 <code>desktop/</code> 底下，每個部分在這裡也都用同樣方式列出。<a href="https://github.com/10840130/tartarus-simulator/releases/latest" target="_blank" rel="noopener">下載</a>（Windows；目前還沒有程式碼簽章，Windows 可能會要你確認：點「其他資訊」，再點「仍要執行」）。</p>
+    <p>Tartarus Overlay 是一個 Windows 程式，會替你執行自動截圖模式，並在遊戲上方用一張小卡片顯示建議，所以一台螢幕就夠了。它在程式裡開啟的就是這個網站自己的頁面（這個頁面和盤面分析器），所以上面說的一切在那裡依然成立，只有下面列出的差異。它的程式碼放在網站儲存庫的 <code>desktop/</code> 底下，每個部分在這裡也都用同樣方式列出。<a href="https://github.com/smiletoz/tartarus-simulator/releases/latest" target="_blank" rel="noopener">下載</a>（Windows；目前還沒有程式碼簽章，Windows 可能會要你確認：點「其他資訊」，再點「仍要執行」）。</p>
 
     <h3>它會自己找到紀錄檔</h3>
     <p>你不用把紀錄檔拖進來，程式會到遊戲寫紀錄檔的地方找。遊戲執行時，紀錄檔就在遊戲本身旁邊：Windows 會告訴程式關於遊戲的兩件事：它的執行檔在哪裡，以及遊戲（或啟動它的程式）是否以系統管理員身分執行。第二件事只會寫進程式的除錯紀錄，因為如果程式本身沒有以系統管理員身分執行，Windows 會切斷對該遊戲視窗的分享。除此之外，程式對遊戲一無所知。遊戲沒在執行時，它會到每個裝有這款遊戲的 Steam 收藏庫（依 Steam 自己的收藏庫清單）以及遊戲啟動器的預設資料夾尋找，取用其中最新的 <code>UE_game.log</code>。你也可以從系統匣選單選擇紀錄檔、把紀錄檔拖到這個頁面，或使用步驟 1 的按鈕。在桌面版中，是由程式本身讀取那個檔案，所以不管遊戲裝在哪裡都能用，也不會再問你。只有這個頁面能讀取它，而且只能讀它的大小和它要求的位元組。上面的追蹤器依然只讀新寫入的紀錄行。</p>
@@ -560,7 +560,7 @@
   'use strict';
 
   const KEY = 'tartarus-sim:auto:v1';
-  const REPO = 'https://github.com/10840130/tartarus-simulator/blob/main/';
+  const REPO = 'https://github.com/smiletoz/tartarus-simulator/blob/main/';
   const VERSION = (window.TartarusCapture && window.TartarusCapture.CONSENT_VERSION) || 1;
   const FILES = [
     ['js/capture.js', '追蹤紀錄檔、檢查你的同意，並擷取分享視窗的畫面。'],

@@ -430,10 +430,10 @@ target="_blank" rel="noopener">本站提供的版本</a> · <a href="${REPO}${es
 <<<< once
 <a href="https://github.com/blahdot3h/tartarus-simulator/releases/latest" target="_blank" rel="noopener">
 ====
-<a href="https://github.com/10840130/tartarus-simulator/releases/latest" target="_blank" rel="noopener">
+<a href="https://github.com/smiletoz/tartarus-simulator/releases/latest" target="_blank" rel="noopener">
 >>>>
 <<<< once
   const REPO = 'https://github.com/blahdot3h/tartarus-simulator/blob/main/';
 ====
-  const REPO = 'https://github.com/10840130/tartarus-simulator/blob/main/';
+  const REPO = 'https://github.com/smiletoz/tartarus-simulator/blob/main/';
 >>>>
