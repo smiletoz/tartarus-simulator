@@ -28,7 +28,7 @@
     dogtag: '多開門：有25%機率門後的囚犯出來時高一階。',
     cage: '多吞噬：有40%機率被吃掉的囚犯牢房立刻補上新囚犯，吞噬不會讓監區變空。',
     blacklist: '當未開啟的牢房剩5間以下時，巡視每打開一扇門就會讓隨機2隻囚犯升階：早點開門達到這個條件，之後繼續開。',
-    shortchain: '走近一點：巡視3格以內時，有50%機率隨機打開一間未開啟的牢房，選項差不多時選近的門。單獨持有時，實測表現比沒有刑具還差。',
+    shortchain: 'Walk short: a patrol of 3 cells or fewer has 50% to open a random locked cell, so take the near door when the choice is close. Alone it measured about even with no instrument.',
     maiden: '替換一隻「居中」的囚犯（稀有度比牠高和比牠低的囚犯數量相同；監區只剩一隻時必定居中）：新囚犯會高3階。建議會告訴你哪次替換能拿到+3。',
     whip: '每天早上少一個目的地，但吞噬的每一口都有35%機率+1階：每天吞噬，多做連鎖。',
     ravenous: '每天早上，你最高階的囚犯會移除兩側的囚犯，每移除一隻有40%機率+1階：在最好的囚犯旁邊放便宜的囚犯或空牢房。',
@@ -41,27 +41,32 @@
     trap: '典獄長站在狂獅的牢房時，尋獵會標記牠的一個獵物，之後3個早上兩者每天各升一階。早點對能往上爬的組合尋獵；最後3天效益遞減，最後一天毫無效果。每天只能在吞噬、替換、尋獵中擇一。',
   };
 
-  // Pairs worth noting: the strongest together and the worst clashes.
+  // Pairs worth noting: the strongest together and the worst clashes. Measured
+  // again with runs starting with 4 inmates out and the other live-data
+  // rules (2026-10-22).
   const PAIR_NOTES = {
-    'maiden|rope': '每次替換都至少是稀有，而監區上唯一的囚犯必定居中：替換你唯一的囚犯，牠會高3階回來。讓監區保持稀疏。實測最強組合（每局8.93隻綺彩）。',
-    'ironbox|skewer': '鼠巢孵出稀有碩鼠，而碩鼠能吃同稀有度的碩鼠：孵出的碩鼠可以互相餵養（4.50，比兩者分開多+2.83）。',
-    'coin|ironbox': '孵出的稀有碩鼠剛好成對，可讓命運幣合併：放著別動（4.50，比兩者分開多+2.42）。',
-    'maiden|scapegoat': '只替換居中的囚犯（以替罪羊移除2隻之前計算）：新囚犯+3階。不居中的替換只是白白丟掉囚犯（4.98，比兩者分開多+1.26）。',
-    'crown|keys': '鑰匙環多開的門會讓監區充滿同稀有度的獵物給狂獅吃（4.65，比兩者分開多+1.17）。',
-    'blacklist|keys': '鑰匙環能快速把未開啟的牢房降到5間，之後每開一扇門就讓2隻囚犯升階（3.29，比兩者分開多+0.98）。',
-    'coin|keys': '開更多門，就有更多成對的囚犯給命運幣合併（3.65，比兩者分開多+0.81）。',
-    'keys|trap': '開更多門，就有更多獵物可以尋獵（4.49，比兩者分開多+0.74）。',
-    'keys|maul': '開更多門，就有更多狂獅和頭狼讓巨象越級吞噬（4.38，比兩者分開多+0.74）。',
-    'maiden|stake': '替換居中的低階囚犯：40%會換出傳奇，再額外+3階（3.81，比兩者分開多+0.68）。',
-    'claws|muzzle': '隔著劃痕門吞噬能讓監區保持稀疏，吞噬就能拿到口籠的+2（4.37，比兩者分開多+0.62）。',
-    'scapegoat|trap': '衝突：替罪羊的移除會帶走獵物標記和狂獅的獵物。專心尋獵，監區上有2隻以上其他囚犯時避免替換（比兩者分開少-1.15）。',
-    'rope|scapegoat': '衝突：絞首繩的替換本來就至少是稀有，替罪羊還要為此丟掉2隻囚犯。在監區上其他囚犯少於2隻時才替換（比兩者分開少-1.08）。',
-    'maul|trap': '衝突：巨象吃狂獅，而尋獵需要狂獅活著。整局只選一種打法（比兩者分開少-0.94）。',
-    'ironbox|maul': '衝突：孵出的碩鼠會吃巨象。讓巨象避開碩鼠的稀有度，或把低階巨象讓給碩鼠吃（比兩者分開少-0.89）。',
-    'revenge|trap': '衝突：吞噬和尋獵搶同一天的行動，吞噬還可能破壞獵物標記（比兩者分開少-0.83）。',
-    'crown|scapegoat': '衝突：替罪羊的移除會帶走狂獅的獵物。在監區上其他囚犯少於2隻時才替換（比兩者分開少-0.77）。',
-    'claws|ironbox': '衝突：鼠巢會佔用利爪要留劃痕的未開啟牢房（比兩者分開少-0.75）。',
-    'crown|maul': '衝突：巨象吃狂獅。決定這局要靠哪種野獸往上爬（比兩者分開少-0.64）。',
+    'maiden|rope': 'Every Replace brings Rare or better, and an inmate alone on the block stands level: replace your only inmate and it comes back 3 tiers up. Keep the block thin: a run starts with 4 inmates out, so let consumes clear it first. One of the best pairs measured (5.37 Rainbows a run, +1.81 beyond the two apart).',
+    'ironbox|skewer': 'The nests hatch Rare Rats, and Rats eat Rats of their rarity: hatched Rats feed each other (4.54, +2.75 beyond the two apart).',
+    'coin|ironbox': 'Hatched Rare Rats come in matching pairs for the Coin to merge: leave them be (4.51, +2.07 beyond the two apart).',
+    'maiden|scapegoat': 'Replace only an inmate that stands level, counted before the Scapegoat removes 2: the new one gets +3. A Replace that isn\'t level just throws inmates away (4.95, +1.65 beyond the two apart).',
+    'crown|keys': 'The Keys\' extra doors fill the block with same-rarity meals for your Lions (4.58, +0.89 beyond the two apart).',
+    'blacklist|keys': 'The Keys take you down to 5 locked cells fast, where every opened door raises 2 inmates (3.38, +0.84 beyond the two apart).',
+    'coin|keys': 'More open doors bring more matching pairs for the Coin (3.56, +0.63 beyond the two apart).',
+    'keys|trap': 'More open doors bring more meals for a Hunt (4.73, +0.38 beyond the two apart).',
+    'keys|maul': 'More open doors bring more Lions and Wolves for Mammoths to eat up (4.39, +0.68 beyond the two apart).',
+    'maiden|stake': 'Replace low inmates that stand level: 40% come in Legendary, and +3 on top (2.80, +0.36 beyond the two apart).',
+    'claws|muzzle': 'Eating through scratched doors keeps the block thin, where consumes get the Muzzle\'s +2 (3.76, +0.46 beyond the two apart).',
+    'scapegoat|trap': 'Clash: the Scapegoat\'s removals take Prey marks and Lions\' meals. Hunt, and avoid a Replace with 2 or more others on the block (-1.78 against the two apart).',
+    'rope|scapegoat': 'Clash: Noose Replaces are already Rare or better, and the Scapegoat throws 2 inmates away for them. Replace with fewer than 2 others on the block (-1.17 against the two apart).',
+    'maul|trap': 'Clash: Mammoths eat Lions, and Hunts want Lions alive. Pick one plan for the run (-1.46 against the two apart).',
+    'ironbox|maul': 'Clash: hatched Rats eat Mammoths. Keep Mammoths away from Rat rarities, or let the Rats have the low ones (-0.87 against the two apart).',
+    'revenge|trap': 'Clash: consumes and Hunts compete for the day\'s action, and a consume can break a Prey mark (-1.43 against the two apart).',
+    'crown|scapegoat': 'Clash: the Scapegoat\'s removals take your Lions\' meals. Replace with fewer than 2 others on the block (-1.03 against the two apart).',
+    'claws|ironbox': 'Clash: nests use up the locked cells the Claws scratch (-0.66 against the two apart).',
+    'crown|maul': 'Clash: Mammoths eat Lions. Decide which beast your run climbs with (-0.83 against the two apart).',
+    'crown|trap': 'The best pair measured (5.39 Rainbows a run), though less than the two apart (-0.98): both play through Lions, and a Lion consuming its marked prey ends the Hunt. Hunt first, and let Lions consume once the marks run out.',
+    'ravenous|trap': 'Clash: each morning the Ravenous Chains\' highest inmate removes the inmates beside it, which can take a marked prey or its Lion. Keep Hunt pairs away from your best inmate (-1.11 against the two apart).',
+    'trap|whip': 'Clash: the Whip pays for consuming every day, and a Hunt uses the day\'s action instead. Pick one plan for the run (-1.11 against the two apart).',
   };
 
   // The start-of-run cards ("contracts").

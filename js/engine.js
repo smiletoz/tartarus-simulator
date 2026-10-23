@@ -71,22 +71,36 @@
     // once.
     chainStop: true,
     // Live odds from players' boards (tools/live-data.js, 2026-10-16): who's
-    // behind a door (1,011 doors without the Sorting Hook or the Dog Tag),
-    // and who a Replace brings in (261, without the instruments that change
-    // it). Both were 52/27/15/6/0 before.
+    // behind a door (1,011 doors without the Sorting Hook or the Dog Tag).
+    // Who a Replace brings in, from 30,000 runs' boards (2026-10-22): these
+    // rarities, and never the beast it replaced (0.3% of Replaces).
     tierWeights: [40, 38, 12, 8, 2],
-    swapWeights: [52, 32, 9, 6, 1.5],
+    swapWeights: [42, 34, 11.5, 9.5, 2.5],
+    swapNewBeast: true,
     beastWeights: [25, 25, 25, 25],
+    // Runs start with inmates already out on random locked cells (10,950
+    // first boards, 2026-10-22: 4 in 95% of runs, 3 in most of the rest),
+    // any beast, with these rarities.
+    startInmates: 4,
+    startInmatesFewer: 5,
+    startWeights: [44.5, 35, 10.5, 8, 2],
+    // The warden's office among the morning's doors, when it's in reach, as
+    // a % of another cell's odds: 37 gives about 24% of such mornings with
+    // 3 doors (players' boards: 21-27%).
+    officeDoorOdds: 37,
     // Second meals (Mammoths eat Wolves, Lions eat Rats) from this rarity
     // up: every rarity, as players' games show (it was 3, Legendary).
     doubleEatTier: 0,
     // Special events turn up on random locked doors, seen at once (players'
-    // boards, 2026-10-17): one at the start of 72% of runs, then a chance
-    // each morning, after the patrol's walk and after each other move.
+    // boards, 2026-10-17): one at the start of 72% of runs. After that a new
+    // one follows each event the warden sets off, on a random cell (30,000
+    // runs' boards, 2026-10-22: one new mark after about 88% of them, never
+    // two); other moves almost never bring one (0.2-0.5%, left at 0).
     eventStartChance: 72,
-    eventMorningChance: 5,
-    eventWalkChance: 9,
-    eventActionChance: 4,
+    eventFollowChance: 88,
+    eventMorningChance: 0,
+    eventWalkChance: 0,
+    eventActionChance: 0,
     executionSameTier: false,
     executionRerolls: false,
     ivoryCount: 4,
@@ -110,11 +124,17 @@
     { key: 'swapsPerDay', group: '節奏', label: '每天替換次數', type: 'int', min: 0, max: 16 },
     { key: 'reusableCells', group: '節奏', label: '清空的牢房會再次上鎖，可以重新開啟', type: 'bool' },
     { key: 'chainStop', group: '節奏', label: '吞噬連鎖可在任何一口之後停止（遊戲中的「取消」）；關閉則必須繼續', type: 'bool' },
+    { key: 'startInmates', group: 'Pace', label: 'Inmates already out when a run starts (the live game: 4)', type: 'int', min: 0, max: 14 },
+    { key: 'startInmatesFewer', group: 'Pace', label: 'Chance a run starts with one inmate fewer (%)', type: 'int', min: 0, max: 100 },
+    { key: 'officeDoorOdds', group: 'Pace', label: "Odds the warden's office is among the morning's doors when in reach, as % of another cell's (the live game: about 37)", type: 'int', min: 0, max: 100 },
     { key: 'tierWeights', group: '機率', label: '門後囚犯的稀有度權重', type: 'list', names: TIERS.slice(0, 5) },
     { key: 'swapWeights', group: '機率', label: '替換帶來的囚犯稀有度權重', type: 'list', names: TIERS.slice(0, 5) },
+    { key: 'swapNewBeast', group: 'Odds', label: 'A Replace brings in a different beast (the Iron Pestle still keeps it)', type: 'bool' },
+    { key: 'startWeights', group: 'Odds', label: 'Rarity weights for the inmates out when a run starts', type: 'list', names: TIERS.slice(0, 5) },
     { key: 'beastWeights', group: '機率', label: '新囚犯的野獸權重', type: 'list', names: ['巨象', '狂獅', '頭狼', '碩鼠'] },
     { key: 'doubleEatTier', group: '機率', label: '從此稀有度起，巨象也吃頭狼、狂獅也吃碩鼠（0 普通、1 魔法、2 稀有、3 傳奇、4 至臻；5：永不）', type: 'int', min: 0, max: 5 },
     { key: 'eventStartChance', group: '獄中事變', label: '開局時隨機一扇上鎖牢門後有獄中事變的機率（%）', type: 'int', min: 0, max: 100 },
+    { key: 'eventFollowChance', group: 'Special events', label: 'Chance a special event the warden sets off, taken or skipped, is followed by a new one on a random cell (%)', type: 'int', min: 0, max: 100 },
     { key: 'eventMorningChance', group: '獄中事變', label: '每天早上隨機一扇上鎖牢門後出現獄中事變的機率（%）', type: 'int', min: 0, max: 100 },
     { key: 'eventWalkChance', group: '獄中事變', label: '巡視行走後出現一個獄中事變的機率（%）', type: 'int', min: 0, max: 100 },
     { key: 'eventActionChance', group: '獄中事變', label: '吞噬、替換、尋獵或獄中事變之後出現一個獄中事變的機率（%）', type: 'int', min: 0, max: 100 },
@@ -651,6 +671,22 @@
     return cell;
   }
 
+  // Each special event the warden sets off, taken or skipped, is followed
+  // by a new one with `chance` %, on a random cell that could hold one (a
+  // locked door, or an inmate's open cell, as an Instigate places them) but
+  // the warden's own. Players' boards (2026-10-22): one new mark, never two,
+  // at any distance from the warden.
+  function followEvent(state, chance) {
+    if (!(chance > 0) || rand(state) * 100 >= chance) return null;
+    const free = instigateCells(state).filter((c) => c.n !== state.position);
+    if (!free.length) return null;
+    const cell = pickOne(state, free);
+    cell.event = rollEvent(state);
+    cell.seen = true;
+    log(state, 'event', `A special event now waits ${cell.sealed ? 'behind' : 'in'} cell ${cellLabel(cell.n)}.`, { type: 'spawn', cell: cell.n });
+    return cell;
+  }
+
   // The run's objective is met: with rewards on, it earns a tool (pick one
   // of three). `state.milestone` records that it's done.
   function meetObjective(state, why) {
@@ -910,6 +946,16 @@
       place(state, 15, 'rat', 0);
       note = `鼠巢練習：牢房 03 的鼠巢會在第 ${1 + state.params.nestDays} 天早上孵出一隻${tierName(state.params.nestTier)}碩鼠。在那之前巡視它會把它摧毀。`;
     }
+    if (s === 'empty') {
+      // A run starts with inmates already out, on random locked cells
+      // without an event. They don't count as cells opened.
+      const p = state.params;
+      const stream = sideStream(state, 'start-inmates');
+      const count = Math.max(0, p.startInmates - (rand(stream) * 100 < p.startInmatesFewer ? 1 : 0));
+      const cells = shuffle(stream, state.cells.filter((c) => c.n !== OFFICE && c.sealed && !c.event)).slice(0, count);
+      for (const c of cells) place(state, c.n, BEASTS[pickIndex(stream, p.beastWeights)], pickIndex(stream, p.startWeights));
+      if (cells.length) note = `The warden starts in the office at cell 01, with ${plural(cells.length, 'inmate')} already out on the block. Pick one of today’s destinations: a locked door to open, or an inmate to visit.`;
+    }
     for (const cell of state.cells) if (!cell.sealed) cell.event = null;
     offerStartTools(state);
     if (marker) state.position = 1;
@@ -952,7 +998,14 @@
     const range = Math.min(state.params.patrolRange, CELL_COUNT - 1);
     const ahead = [];
     for (let i = 1; i <= range; i++) ahead.push(state.cells[(state.position + i) % CELL_COUNT]);
-    let picks = shuffle(state, ahead).slice(0, destinationLimit(state));
+    // The office comes up less often than a cell (officeDoorOdds): drawn
+    // one door at a time, by weight, without repeats.
+    const weight = (c) => (c.n === OFFICE ? state.params.officeDoorOdds / 100 : 1);
+    let picks = [];
+    for (let k = destinationLimit(state); k > 0 && ahead.length; k--) {
+      if (picks.length && !ahead.some((c) => weight(c) > 0)) break;
+      picks.push(ahead.splice(pickIndex(state, ahead.map(weight)), 1)[0]);
+    }
     // A door with an event behind it means a two-door morning.
     const hasEvent = (c) => c.sealed && c.event && c.seen;
     if (state.params.eventTwoDoors && picks.some(hasEvent)) picks = [...picks.filter(hasEvent), ...picks.filter((c) => !hasEvent(c))].slice(0, 2);
@@ -1689,6 +1742,10 @@
     // Legendary.
     const staked = has(state, 'stake') && old.tier < 3 && rand(state) < 0.4 && fresh.tier !== 3;
     if (staked) fresh.tier = 3;
+    if (state.params.swapNewBeast && fresh.beast === old.beast) {
+      const others = BEASTS.filter((b) => b !== old.beast);
+      fresh.beast = others[pickIndex(state, others.map((b) => state.params.beastWeights[BEASTS.indexOf(b)]))];
+    }
     if (has(state, 'pestle')) fresh.beast = old.beast;
     cell.inmate = fresh;
     state.used.swap += 1;
@@ -2214,6 +2271,15 @@
     if (result && result.ok && !state.chaining) spawnEvent(state, state.params.eventActionChance);
     return result;
   };
+  // A special event the warden set off, taken or skipped, may be followed
+  // by a new one (followEvent); a Usurpation taken places its next card
+  // instead.
+  const followed = (fn) => (state, accept, ...args) => {
+    const kind = state.phase === 'event' && state.event ? state.event.kind : null;
+    const result = fn(state, accept, ...args);
+    if (kind && result && result.ok && !(accept && USURP[kind] && USURP[kind].next)) followEvent(state, state.params.eventFollowChance);
+    return result;
+  };
 
   const api = {
     VERSION, CELL_COUNT, OFFICE, SUPREME, RAINBOW, VAULT_SLOTS, TIERS, BEASTS, BEAST_INFO, FOOD_CHAIN, SECOND_MEAL, TOOLS, TOOL_IDS, BEAST_TOOLS, toolWeight, GIFTS, GIFT_IDS,
@@ -2221,7 +2287,7 @@
     SCENARIOS, DEFAULT_PARAMS, PARAM_FIELDS,
     newGame, randomSeed, normalizeParams, serialize, deserialize,
     patrol: bounded(patrol),
-    resolveEvent: bounded(acted(resolveEvent)),
+    resolveEvent: bounded(acted(followed(resolveEvent))),
     devour: bounded(acted(devour)),
     chainBite: bounded(acted(chainBite)),
     stopChain: bounded(acted(stopChain)),

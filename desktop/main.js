@@ -768,7 +768,7 @@ function tunePage(name) {
 // on a client not in English, it warns that doors, decisions, instruments
 // and printed names may need setting by hand, and offers to send a screen
 // it didn't recognize. Kept by the analyzer page; read back for the menu.
-const GAME_LANGS = [['en', '英文 (English)'], ['ru', '俄文 (Русский)'], ['zh', '中文']];
+const GAME_LANGS = [['en', 'English'], ['ru', 'Русский (Russian)'], ['zh', '中文 (Chinese)'], ['ja', '日本語 (Japanese)']];
 let gameLang = 'en';
 function readGameLang() {
   const wc = wins.analyzer && !wins.analyzer.isDestroyed() ? wins.analyzer.webContents : null;

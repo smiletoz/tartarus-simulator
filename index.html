@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;500;600;700&family=Big+Shoulders+Stencil+Display:wght@600;800&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+TC:wght@400;500;700;900&display=swap">
-<link rel="stylesheet" href="css/style.css?v=20261022a">
+<link rel="stylesheet" href="css/style.css?v=20261022c">
 </head>
 <body>
 <div class="app" id="app">
@@ -30,9 +30,9 @@
           <span>繼續這局</span><small id="continue-meta"></small>
         </button>
         <button type="button" class="route" data-route="drill">
-          <span class="route-name">規則練習</span>
-          <span class="route-text">從空監獄開始：第1天，15間牢房全部上鎖。最適合第一次玩。</span>
-          <span class="route-meta">20天 · 練習數值</span>
+          <span class="route-name">Rules drill</span>
+          <span class="route-text">Start a run as the game does: day 1, 4 inmates out and the other cells sealed. Best for a first run.</span>
+          <span class="route-meta">20 days · practice values</span>
         </button>
         <button type="button" class="route" data-route="markers">
           <span class="route-name">專項練習</span>
@@ -264,18 +264,18 @@
       <button type="button" class="x" data-close aria-label="關閉">×</button>
     </header>
     <div class="sheet-body prose">
-      <h3>環形監區</h3>
-      <p>十六個格子圍成一圈，從左上角的01號開始順時針編號：上排01到06，右側往下07到09，下排往回10到14，左側往上15到16。01號是審訊室，每一局都從這裡出發，而且這裡永遠不關任何東西，所以囚犯都關在其他15間牢房裡。提燈標示典獄長目前所在的位置。</p>
+      <h3>The ring</h3>
+      <p>Sixteen cells form a ring, numbered clockwise from 01 in the top-left corner: 01 to 06 across the top, 07 to 09 down the right, 10 to 14 back along the bottom and 15 to 16 up the left. Cell 01 is the warden's office. Every run starts there, and nothing is ever held in it, so the other 15 cells hold the prisoners. A run starts with 4 inmates already out on random cells (3 in about 1 run in 20), and the rest sealed. The lantern marks where the warden stands.</p>
 
       <h3>監區的一天</h3>
       <ol class="steps">
-        <li><strong>巡視。</strong>每天早上，會從典獄長順時針方向往前的六格中提供三個目的地。它們會在環形監區上發光，並以卡片顯示在下方。目的地可能是未開啟的牢房（典獄長抵達時就會打開）、已知囚犯的牢房，或審訊室。未開啟的牢房在打開前看不到裡面。每天一定要先巡視，才能做其他事。</li>
+        <li><strong>Patrol.</strong> Each morning offers three destination cells from the next six clockwise from the warden. They glow on the ring and appear as cards under it. A destination can be a locked cell, which opens when the warden arrives, a cell whose inmate you already know, or the warden's office, which comes up less often than a cell (about 1 morning in 4 when it's in reach). You can't see inside a locked cell until it opens. You must patrol before anything else.</li>
         <li><strong>審訊室。</strong>典獄長走到審訊室時，二選一：<strong>煽動</strong>會在隨機一間牢房放上一個新的獄中事變，可能在未開啟的門後，也可能在囚犯旁邊（盤面上沒有任何事變時放2個）；<strong>賞賜</strong>會讓監區上隨機1隻囚犯升一階。</li>
         <li><strong>吞噬。</strong>每天一次，在巡視之後進行，而且只有典獄長所在牢房的囚犯能發動。連點兩下標亮的目標即可吞噬，或點一下預覽這一口、再點一次確認。之後只要還有合法目標，吞噬者就會繼續吃：每吃完一口，你要選下一個獵物（即使只剩一個也要選），或像遊戲裡的「取消」按鈕一樣停止連鎖。吞噬者會保留已獲得的升階。紀錄和環形監區下方的回顧會用圖示列出每一口。</li>
-        <li><strong>替換。</strong>每天一次，把典獄長所在牢房的囚犯換成一隻全新的隨機囚犯，可能變強也可能變弱。其他牢房的囚犯無法替換。每天只能替換或吞噬其中一項：做了一項，另一項就不能做。</li>
-        <li><strong>結束這天。</strong>隔天早上，獵物標記會成長、到期的鼠巢會孵化，並抽出新的目的地。剛結束那天的回顧會顯示在目的地卡片下方。</li>
+        <li><strong>Replace.</strong> Once a day, replace the inmate in the warden's cell with a brand-new random one, always of another beast. It can come out stronger or weaker. No other cell's inmate can be replaced. A day has a Replace or a consume, not both: either one uses up the other.</li>
+        <li><strong>End the day.</strong> The next morning, prey marks grow, ripe nests hatch, and new destinations are drawn. A recap of the day you just finished appears under the destination cards.</li>
       </ol>
-      <p>囚犯被吞噬或送走後，牢房會重新上鎖。下次那扇門打開時，裡面會是新的囚犯。</p>
+      <p>When an inmate is consumed or sent off, its cell seals again. The next time that door opens, someone new is inside.</p>
 
       <h3>食物鏈</h3>
       <p>雙方必須稀有度相同：巨象吃狂獅、狂獅吃頭狼、頭狼吃碩鼠、碩鼠吃巨象；此外，根據玩家實戰畫面，巨象也吃頭狼，狂獅也吃碩鼠。野獸不會吃同類，除非你持有鼠頭串，能讓碩鼠吃碩鼠。</p>
@@ -286,30 +286,30 @@
       <h3>獄中事變</h3>
       <p>有些上鎖的門帶有事變徽章。巡視打開這種門時，事變會出現，你可以選擇接受或略過。用其他方式打開的門，事變會直接消失、不會觸發。</p>
       <dl class="defs">
-        <dt class="m-event">連鎖反應</dt>
-        <dd>下一次巡視會從典獄長的位置順時針走到選定的目的地，並打開沿途所有上鎖的門。</dd>
-        <dt class="m-event">處刑效率</dt>
-        <dd>被打開牢房裡的囚犯，會移除監區上所有牠能吃、且稀有度比牠低的囚犯，每移除一隻升一階。</dd>
-        <dt class="m-event">暗箱操作</dt>
-        <dd>被打開牢房裡的囚犯，會變成監區上數量最少的野獸（數量為0也算；同數時隨機決定）的至臻囚犯。不會觸發其他效果。</dd>
-        <dt class="m-event">飢腸轆轆</dt>
-        <dd>監區上稀有度最低的隨機一隻囚犯獲得5次升階機會，每次有50%機率+1階。</dd>
-        <dt class="m-event">高危罪犯</dt>
-        <dd>隨機打開一間未開啟的牢房，裡面是傳奇以上的囚犯。不會觸發其他效果。</dd>
-        <dt class="m-event">鴉之低語</dt>
-        <dd>從典獄長順時針往前的4間未開啟牢房，會顯示裡面囚犯的稀有度。野獸種類要等門打開才會揭曉。</dd>
-        <dt class="m-event">自由的滋味</dt>
-        <dd>隨機打開3間未開啟的牢房。不會觸發其他效果。</dd>
-        <dt class="m-event">有福同享</dt>
-        <dd>最多3隻隨機囚犯升一階（監區上不足3隻時，全部升階）。</dd>
-        <dt class="m-event">僭越 I</dt>
-        <dd>隨機1隻囚犯升一階。之後僭越 I 會從獄中事變池中移除，改為加入僭越 II，並立刻在隨機一扇未開啟的門後出現一個。</dd>
-        <dt class="m-event">僭越 II</dt>
-        <dd>隨機2隻囚犯升一階（目前還沒看過它的卡片）。</dd>
-        <dt class="m-event">尋「寶」</dt>
-        <dd>所有關著普通或魔法囚犯的未開啟牢房都會顯示稀有度（「?」頭像），因此沒亮起的上鎖門後都是稀有以上。它的卡片只有「確認」。</dd>
+        <dt class="m-event">Chain reaction</dt>
+        <dd>Your next patrol walks clockwise from the warden to the chosen destination and opens every sealed door on the way.</dd>
+        <dt class="m-event">Execution</dt>
+        <dd>The inmate in the opened cell removes every inmate on the block that it can eat and that has a lower rarity. It gains one tier for each.</dd>
+        <dt class="m-event">Behind Closed Doors</dt>
+        <dd>The inmate in the opened cell becomes a Supreme of the scarcest beast on the block (none counts; a tie is settled at random). It triggers no other effects.</dd>
+        <dt class="m-event">Ravenous Appetite</dt>
+        <dd>A random inmate of the lowest rarity on the block gets 5 tries at +1 tier, each with a 50% chance.</dd>
+        <dt class="m-event">High-Risk Convict</dt>
+        <dd>A random locked cell opens with a Legendary or better inmate inside. It triggers no other effects.</dd>
+        <dt class="m-event">Crow Whispers</dt>
+        <dd>The next 4 locked cells clockwise from the warden show the rarity of the inmate inside. Their beasts stay hidden until the doors open.</dd>
+        <dt class="m-event">Taste of Freedom</dt>
+        <dd>3 random locked cells open. They trigger no other effects.</dd>
+        <dt class="m-event">Extra Portion</dt>
+        <dd>Up to 3 random inmates rise a tier (all of them, with fewer on the block).</dd>
+        <dt class="m-event">Usurpation I</dt>
+        <dd>1 random inmate rises a tier. Usurpation I then leaves the special events and Usurpation II joins them, and one appears behind a random locked door at once.</dd>
+        <dt class="m-event">Usurpation II</dt>
+        <dd>2 random inmates rise a tier (its card hasn't been seen yet).</dd>
+        <dt class="m-event">"Treasure" Hunt</dt>
+        <dd>Every locked cell holding a Normal or Magic inmate shows its rarity (a "?" portrait), so the locked doors left dark hold Rare or better. Its card has only Confirm.</dd>
       </dl>
-      <p>獄中事變會出現在隨機的未開啟門後，事變池中每一種出現機率相同，徽章會立即顯示。大部分的局一開始就有一個，之後也會不斷出現：某些早上、巡視之後，以及吞噬或替換之後。事變也可能出現在已開啟的牢房裡、待在囚犯旁邊，走進去就會觸發。</p>
+      <p>Special events (the game calls them Prison Incidents) turn up on random cells, each kind in the pool equally likely, and their badge shows at once. Most runs start with one behind a locked door. Each event the warden sets off, taken or skipped, is usually followed by a new one (88% of the time, never two): behind a locked door, or in an open cell beside its inmate, where walking in sets it off.</p>
 
       <h3>標記</h3>
       <dl class="defs">
@@ -585,13 +585,13 @@
   </div>
 </dialog>
 
-<script src="js/engine.js?v=20261022a"></script>
-<script src="js/board.js?v=20261022a"></script>
-<script src="js/sound.js?v=20261022a"></script>
-<script src="js/guide-data.js?v=20261022a"></script>
-<script src="js/tool-combos.js?v=20261022a"></script>
-<script src="js/solver.js?v=20261022a"></script>
-<script src="js/ui.js?v=20261022a"></script>
-<script src="js/update.js?v=20261022a"></script>
+<script src="js/engine.js?v=20261022c"></script>
+<script src="js/board.js?v=20261022c"></script>
+<script src="js/sound.js?v=20261022c"></script>
+<script src="js/guide-data.js?v=20261022c"></script>
+<script src="js/tool-combos.js?v=20261022c"></script>
+<script src="js/solver.js?v=20261022c"></script>
+<script src="js/ui.js?v=20261022c"></script>
+<script src="js/update.js?v=20261022c"></script>
 </body>
 </html>

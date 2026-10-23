@@ -1,7 +1,7 @@
 {
   "name": "tartarus-overlay-tw",
   "productName": "Tartarus Overlay TW",
-  "version": "0.2.19",
+  "version": "0.2.20",
   "description": "塔羅斯盤面分析器的自動截圖模式（繁體中文版），建議直接顯示在遊戲畫面上的疊加視窗中。",
   "author": "CoffeeBns",
   "license": "UNLICENSED",

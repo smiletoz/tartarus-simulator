@@ -15,7 +15,7 @@
   // The published single-file build sets this; its viewer cannot download files.
   const EMBEDDED = !!window.TARTARUS_EMBEDDED;
 
-  const KEYS = { save: 'tartarus-sim:save:v2', prefs: 'tartarus-sim:prefs:v1', params: 'tartarus-sim:params:v7' };
+  const KEYS = { save: 'tartarus-sim:save:v2', prefs: 'tartarus-sim:prefs:v1', params: 'tartarus-sim:params:v8' };
   const HISTORY_LIMIT = 40;
   const DEFAULT_PREFS = { advisor: false, quick: false, motion: true, sound: true, volume: 60, immersive: false };
 
@@ -73,11 +73,20 @@
   function loadLabParams() {
     const saved = store.get(KEYS.params);
     if (saved) return T.normalizeParams(saved);
+    // 30,000 runs' boards (2026-10-22): the Replace odds and the special
+    // events' chances give way to the live ones; the rest carries over.
+    const stale = ['swapWeights', 'eventMorningChance', 'eventWalkChance', 'eventActionChance'];
+    const v7 = store.get('tartarus-sim:params:v7');
+    if (v7 && typeof v7 === 'object') {
+      for (const key of stale) delete v7[key];
+      return T.normalizeParams(v7);
+    }
     // Second meals at every rarity, as players' games show (2026-10-17):
     // the saved Legendary-and-up gives way; the rest carries over.
     const v6 = store.get('tartarus-sim:params:v6');
     if (v6 && typeof v6 === 'object') {
       delete v6.doubleEatTier;
+      for (const key of stale) delete v6[key];
       return T.normalizeParams(v6);
     }
     // The live door odds replace the old defaults (2026-10-16); the rest of
@@ -86,12 +95,13 @@
     if (v5 && typeof v5 === 'object') {
       delete v5.tierWeights;
       delete v5.doubleEatTier;
+      for (const key of stale) delete v5[key];
       return T.normalizeParams(v5);
     }
     let old = store.get('tartarus-sim:params:v4') || store.get('tartarus-sim:params:v3');
     const drop = ['destinations', 'fewerDoorsChance', 'eventTwoDoors', 'patrolRange', 'startTools', 'tierWeights', 'doubleEatTier'];
     if (!old) old = store.get('tartarus-sim:params:v2');
-    if (old && typeof old === 'object') for (const key of drop) delete old[key];
+    if (old && typeof old === 'object') for (const key of drop.concat(stale)) delete old[key];
     return T.normalizeParams(old);
   }
 
@@ -753,13 +763,14 @@
         renderDecision();
         return;
       }
-      const parts = [`一隻全新的隨機囚犯會取代${T.describe(cell.inmate)}，可能變強也可能變弱。`];
-      if (st.tools.includes('rope')) parts.push('絞首繩：不會是普通或魔法。');
-      if (st.tools.includes('axe')) parts.push(`獄卒的行刑巨斧：如果新囚犯高於${T.tierName(cell.inmate.tier)}，隨機打開 2 間未開啟的牢房。`);
-      if (cell.ivory) parts.push(`象牙牢房：之後 ${T.plural(st.params.ivoryCount, '隻囚犯')}各升一階。`);
-      if (T.canDevourNow(st)) parts.push('這會用掉今天的吞噬：一天只能替換或吞噬其中一種。');
-      setDecision(`替換 ${L(p.cell)} 號牢房的囚犯？`, parts.join(''), [
-        ['替換', () => run((s) => T.swap(s, p.cell)), 'primary'],
+      const kin = st.tools.includes('pestle') ? ' of the same beast (Iron Pestle)' : st.params.swapNewBeast ? ' of another beast' : '';
+      const parts = [`A brand-new random inmate${kin} replaces the ${T.describe(cell.inmate)}. It can come out stronger or weaker.`];
+      if (st.tools.includes('rope')) parts.push("Hangman's Noose: never Normal or Magic.");
+      if (st.tools.includes('axe')) parts.push(`Gaoler's Execution Axe: if it comes out above ${T.tierName(cell.inmate.tier)}, 2 random sealed cells open.`);
+      if (cell.ivory) parts.push(`Tusk cell: ${T.plural(st.params.ivoryCount, 'inmate')} then gain a tier.`);
+      if (T.canDevourNow(st)) parts.push('It uses up today’s consume: a day has a Replace or a consume, not both.');
+      setDecision(`Replace the inmate in cell ${L(p.cell)}?`, parts.join(' '), [
+        ['Replace', () => run((s) => T.swap(s, p.cell)), 'primary'],
         ['取消', back],
       ], true);
       return;
