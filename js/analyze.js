@@ -2730,6 +2730,16 @@
           else if (!seen) notes.push(`視為你照建議拿了「${T.toolName(take)}」。如果你拿的是別的，請在「刑具」下修改。`);
         } else notes.push(`你的刑具比之前多了一件，來自「${offer.map((id) => T.toolName(id)).join('、')}」的選擇：請在「刑具」下設定你拿了哪個。`);
       }
+      // 面板比已知的多：讀得有把握（≥ TOOL_SURE）且還沒有的圖示直接加入，
+      // 例如巡獄之路完成後的額外刑具，選擇畫面沒被截到。
+      if (slots > out.length) {
+        for (const t of read.slice().sort((a, b) => b.conf - a.conf)) {
+          if (out.length >= slots) break;
+          if (!t.sim || has(t.sim) || !T.TOOLS[t.sim] || t.conf < TOOL_SURE) continue;
+          out.push({ id: t.sim, sim: t.sim, name: T.toolName(t.sim), conf: t.conf, kept: true });
+          notes.push(`從刑具欄讀到新的刑具：${T.toolName(t.sim)}，已加入。如果不對，請在「刑具」修改。`);
+        }
+      }
       if (out.length) m.toolsLocked = true;
       if (slots > Math.max(out.length, base.toolsSeen || 0)) m.toolsToConfirm = `你的面板顯示${T.plural(slots, '件刑具')}，分析器只有 ${out.length} 件：${out.map((t) => t.name).join('、') || '無'}。請設定你持有的刑具，然後按「這些沒錯」。`;
       return out;

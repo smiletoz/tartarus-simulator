@@ -1,0 +1,18 @@
+繁中版：刑具欄多出一件、但沒看到選擇畫面時（例如目標獎勵的額外刑具），
+讀得有把握的新圖示直接加進這一局的刑具，不再只要求玩家確認。
+
+<<<< once
+      if (out.length) m.toolsLocked = true;
+====
+      // 面板比已知的多：讀得有把握（≥ TOOL_SURE）且還沒有的圖示直接加入，
+      // 例如巡獄之路完成後的額外刑具，選擇畫面沒被截到。
+      if (slots > out.length) {
+        for (const t of read.slice().sort((a, b) => b.conf - a.conf)) {
+          if (out.length >= slots) break;
+          if (!t.sim || has(t.sim) || !T.TOOLS[t.sim] || t.conf < TOOL_SURE) continue;
+          out.push({ id: t.sim, sim: t.sim, name: T.toolName(t.sim), conf: t.conf, kept: true });
+          notes.push(`從刑具欄讀到新的刑具：${T.toolName(t.sim)}，已加入。如果不對，請在「刑具」修改。`);
+        }
+      }
+      if (out.length) m.toolsLocked = true;
+>>>>

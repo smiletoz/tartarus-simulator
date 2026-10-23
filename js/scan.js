@@ -1307,6 +1307,27 @@
     if (!got) return null;
     if (got.row !== cards) cards = got.row;
     const { options, read, cells } = got;
+    // 中文客戶端的「去審訊室」卡片沒有數字：審訊室在典獄長可達範圍內、
+    // 而且同一排還有一段約四個字寬、不是其他門卡的文字，就是它。
+    if (CJK && warden && !cards.office && cells.length < 3 && !cells.includes(0) && ((16 - warden.cell) % 16) >= 1 && ((16 - warden.cell) % 16) <= 6) {
+      const h = cards[0].h;
+      const mid = cards.reduce((a, c) => a + c.mid, 0) / cards.length;
+      for (const r of textRadii(img)) {
+        if (cards.office) break;
+        for (const line of textLines(img, 0, mid - 2 * h, img.width - 1, mid + 2 * h, { minH: 6, maxH: 3 * h, r })) {
+          if (Math.abs(line.mid - mid) > 0.6 * h || Math.abs(line.h - h) > 0.35 * h) continue;
+          const hit = line.pieces.find((p) => {
+            const w = p.x1 - p.x0;
+            if (w < 3.4 * line.h || w > 5 * line.h) return false;
+            return cards.every((c) => p.x1 < c.p.x0 - h || p.x0 > c.p.x1 + h);
+          });
+          if (hit) {
+            cards.office = { x0: hit.x0, y0: hit.y0, x1: hit.x1, y1: hit.y1 };
+            break;
+          }
+        }
+      }
+    }
     const score = read.reduce((a, r) => a + r.score, 0) / read.length;
     const boxes = cards.map((c) => [c.p.x0, c.p.y0, c.p.x1, c.p.y1]);
     // The office (cell 01) as a destination.
