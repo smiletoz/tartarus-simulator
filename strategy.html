@@ -1,14 +1,14 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Tartarus Strategy Guide</title>
-<meta name="description" content="A rough Tartarus prison strategy to learn before you play, from millions of simulated runs.">
+<title>塔羅斯策略指南</title>
+<meta name="description" content="開打前先學起來的塔羅斯監獄粗略策略，來自數百萬局模擬。">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 18'%3E%3Crect width='16' height='18' rx='3' fill='%230f1216'/%3E%3Cpath d='M6 1h4v2H6z' fill='%23eadfc5'/%3E%3Cpath d='M4 4h8l-1 10H5z' fill='%23eadfc5'/%3E%3Cpath d='M5 15h6v2H5z' fill='%23eadfc5'/%3E%3Cpath d='M8 6.5c1.4 1.6 1.6 3 0 4.6-1.6-1.6-1.4-3 0-4.6Z' fill='%23f28c36'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;500;600;700&family=Big+Shoulders+Stencil+Display:wght@600;800&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;500;600;700&family=Big+Shoulders+Stencil+Display:wght@600;800&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+TC:wght@400;500;700;900&display=swap">
 <link rel="stylesheet" href="css/style.css?v=20261022a">
 <style>
   /* The strategy guide: a long read in the simulator's own look. */
@@ -422,123 +422,123 @@
 </head>
 <body>
 <main class="guide">
-  <a class="guide-back" href="./">← Back to the simulator</a>
-  <p class="eyebrow">Tartarus Simulator · Strategy guide</p>
-  <h1>How to vault Rainbows</h1>
-  <p class="lede">A rough strategy to learn before your first run. It comes from <span data-g="totalRuns"></span> simulated 20-day drills, played by a rules-based strategy tuned for the season's rules.</p>
+  <a class="guide-back" href="./">← 回到模擬器</a>
+  <p class="eyebrow">塔羅斯模擬器 · 策略指南</p>
+  <h1>如何收容綺彩囚犯</h1>
+  <p class="lede">第一局開打前值得先學的粗略策略。內容來自 <span data-g="totalRuns"></span> 局模擬的 20 天練習，由一套依本賽季規則調校過的規則式策略來玩。</p>
 
   <div class="stats">
-    <div class="stat"><b data-g="rainbows"></b><span>Rainbows per run with this strategy, <span data-g="ratio"></span>× a simple player's <span data-g="simpleRewards"></span></span></div>
-    <div class="stat"><b data-g="withRainbow"></b><span>of runs vault at least one Rainbow</span></div>
-    <div class="stat"><b data-g="chainShare"></b><span>of Rainbows come from consume chains</span></div>
-    <div class="stat"><b>Day <span data-g="firstDay"></span></b><span>when the first Rainbow usually lands</span></div>
+    <div class="stat"><b data-g="rainbows"></b><span>用這套策略每局收容的綺彩數，是簡單玩家（<span data-g="simpleRewards"></span>）的 <span data-g="ratio"></span> 倍</span></div>
+    <div class="stat"><b data-g="withRainbow"></b><span>的局至少收容 1 隻綺彩</span></div>
+    <div class="stat"><b data-g="chainShare"></b><span>的綺彩來自吞噬連鎖</span></div>
+    <div class="stat"><b>第 <span data-g="firstDay"></span> 天</b><span>通常會出現第一隻綺彩</span></div>
   </div>
-  <p class="note basis">Data basis: the default drill, with a pick of 3 random instruments to start (those named for a beast about an eighth as likely as the rest, as in the live game's offers), another pick for meeting the run's objective (King of the Caged or Prison Walk), and a Warden's Treasure gift per Rainbow. The headline numbers come from <span data-g="headlineRuns"></span> runs, with margins under ±<span data-g="ci"></span>. Generated <span data-g="generated"></span>.</p>
+  <p class="note basis">資料基準：預設練習，開局從 3 件隨機刑具中選 1 件（以野獸命名的刑具出現機率約為其他的八分之一，與正式遊戲的提供方式相同），達成該局目標（困獸稱王或巡獄之路）時再選一次，每收容 1 隻綺彩可得 1 件珍藏。上方主要數字來自 <span data-g="headlineRuns"></span> 局，誤差在 ±<span data-g="ci"></span> 以內。產生日期：<span data-g="generated"></span>。</p>
 
   <section class="guide-section">
-    <h2>The short version</h2>
+    <h2>精簡版</h2>
     <ol class="rules">
-      <li><strong>Consume every day you can.</strong><span>Waiting to build a bigger chain cost Rainbows: <span data-g="wait2"></span> per run with a small threshold and <span data-g="wait5"></span> with a large one, against <span data-g="full"></span> when you always consume (no tools).<span class="rule-note"><b>The one exception: don't break a prey mark.</b> When a Lion marks a prey of its own rarity, both rise a tier every morning for free until the mark runs out. Eating the marked prey ends the mark, and so does letting the marked Lion consume, since it usually turns into another beast. Either way you trade several free tiers for one. A consume almost never loses value otherwise: two inmates of one rarity become one a tier higher, which is worth more than the pair.</span></span></li>
-      <li><strong>Replace the warden's low-tier inmate when there's no better consume.</strong><span><span data-g="swapTiers"></span>. A fresh roll is worth more on average. <span data-g="swapNote"></span></span></li>
-      <li><strong>Chain reactions are a close call.</strong><span>Opening every door on the next walk floods the block with new inmates, but it also opens doors you might rather have kept. <span data-g="chainNote"></span> The Trainer's live check compares both each time.</span></li>
-      <li><strong>Accept an Execution only when it gains more than it removes.</strong><span>Count what it would wipe out. Always accepting gave <span data-g="alwaysExec"></span> and never accepting <span data-g="neverExec"></span>, against <span data-g="full"></span> when you check first.</span></li>
-      <li><strong>Accept the events that only give.</strong><span>Behind Closed Doors makes the inmate behind the door a Supreme of the scarcest beast on the block, one step from Rainbow; skip it only when that inmate already is a Supreme. Ravenous Appetite, High-Risk Convict, Crow Whispers and the "Treasure" Hunt never cost anything.</span></li>
-      <li><strong>Stop at the office when it pays.</strong><span>The warden's office can be a destination. Bestow raises 1 random inmate a tier; Instigate puts a special event on a random cell, behind a locked door or beside an inmate (2 when the board has none). Pick by what the block needs, as the Trainer does: <span data-g="full"></span> per run, against <span data-g="alwaysBestow"></span> always taking Bestow and <span data-g="alwaysInstigate"></span> always taking Instigate.</span></li>
-      <li><strong>Keep opening doors, and walk far.</strong><span>New inmates are the raw material for every chain, and a locked door usually beats walking to an inmate with nothing to eat. Walking farther pays: <span data-g="full"></span> per run against <span data-g="shortWalks"></span> for short walks, with six cells in reach, Prison Walk counting tiles and the office on the way around.</span></li>
-      <li><strong>Know what keeps a chain going.</strong><span>Mammoths and Lions eat two kinds, Wolves and Rats one, so a Wolf or a Rat waiting at the next tier feeds two of the four beasts the eater can re-roll into, and a Lion or a Mammoth one. A tier holding a Mammoth, a Rat and a Lion or a Wolf guarantees the next bite. The Trainer's chain odds do this math for you when you pick the first meal.</span></li>
-      <li><strong>Take <span data-g="tool1"></span> or <span data-g="tool2"></span> when offered.</strong><span><span data-g="toolNote"></span></span></li>
-      <li><strong>At the Warden's Treasure, take what fits the board.</strong><span><span data-g="giftNote"></span></span></li>
+      <li><strong>能吞噬的日子就吞噬。</strong><span>為了湊出更長的連鎖而等待，反而會少拿綺彩：門檻低時每局 <span data-g="wait2"></span>、門檻高時 <span data-g="wait5"></span>，一律吞噬則是 <span data-g="full"></span>（無刑具）。<span class="rule-note"><b>唯一的例外：別破壞獵物標記。</b>狂獅對同稀有度的獵物打上標記後，兩者每天早上都會免費升一階，直到標記用完。吃掉被標記的獵物會結束標記，讓被標記的狂獅去吞噬也一樣，因為牠通常會變成別種野獸。不管哪種，都是拿好幾階的免費升級去換一階。除此之外，吞噬幾乎不會虧：兩隻同稀有度的囚犯變成一隻高一階的，價值比兩隻加起來還高。</span></span></li>
+      <li><strong>沒有更好的吞噬時，替換典獄長所在牢房的低階囚犯。</strong><span><span data-g="swapTiers"></span>。重新抽一隻，平均價值更高。<span data-g="swapNote"></span></span></li>
+      <li><strong>連鎖反應是兩難的抉擇。</strong><span>下一次行走會打開沿路所有牢門，讓監區湧進大批新囚犯，但也會打開你可能寧願先留著的門。<span data-g="chainNote"></span>教練的即時檢驗每次都會比較兩種選擇。</span></li>
+      <li><strong>處刑效率只在得大於失時才接受。</strong><span>先算算它會清掉什麼。一律接受是 <span data-g="alwaysExec"></span>、一律拒絕是 <span data-g="neverExec"></span>，先檢查再決定則是 <span data-g="full"></span>。</span></li>
+      <li><strong>只有好處的事變就接受。</strong><span>暗箱操作會把門後的囚犯變成監區上最稀少野獸的至臻，離綺彩只差一步；只有當那隻囚犯已經是至臻時才略過。飢腸轆轆、高危罪犯、鴉之低語和尋「寶」都不會有任何損失。</span></li>
+      <li><strong>划算時就去審訊室。</strong><span>審訊室可以當作目的地。賞賜讓 1 隻隨機囚犯升一階；煽動會在隨機一間牢房放上獄中事變，可能在上鎖的門後，也可能在囚犯身旁（盤面上沒有事變時放 2 個）。像教練一樣依監區的需要來選：每局 <span data-g="full"></span>，一律選賞賜是 <span data-g="alwaysBestow"></span>，一律選煽動是 <span data-g="alwaysInstigate"></span>。</span></li>
+      <li><strong>持續開門，走遠一點。</strong><span>新囚犯是每條連鎖的原料，而上鎖的門通常勝過走到一隻沒東西可吃的囚犯那裡。走遠一點划算：每局 <span data-g="full"></span>，偏好短距離則是 <span data-g="shortWalks"></span>；可達範圍有六間牢房，巡獄之路會計算格數，繞一圈也會經過審訊室。</span></li>
+      <li><strong>搞懂連鎖靠什麼延續。</strong><span>巨象和狂獅各吃兩種，頭狼和碩鼠只吃一種，所以下一階有頭狼或碩鼠在等，就能餵飽吞噬者可能重抽成的四種野獸中的兩種；有狂獅或巨象則只餵得到一種。某一階同時有巨象、碩鼠，再加上狂獅或頭狼，就保證有下一口。挑第一口獵物時，教練的連鎖機率會幫你算好。</span></li>
+      <li><strong>有機會就拿「<span data-g="tool1"></span>」或「<span data-g="tool2"></span>」。</strong><span><span data-g="toolNote"></span></span></li>
+      <li><strong>典獄長的珍藏要選符合盤面的。</strong><span><span data-g="giftNote"></span></span></li>
     </ol>
   </section>
 
   <section class="guide-section">
-    <h2>A day on the block</h2>
-    <p>Every day runs in the same order. Here is what the strategy does at each step.</p>
+    <h2>監區的一天</h2>
+    <p>每天都照同樣的順序進行。以下是這套策略在每個步驟的做法。</p>
     <ol class="steps-day">
-      <li><b>Patrol</b><div><p>Pick one of the three destinations. A locked door usually wins: it adds a new inmate, who may consume today from the warden's cell. Go to a known inmate instead when it has a strong consume waiting. A door with an event badge is a bonus. Prefer the farther destination when they're close: it counts toward Prison Walk, and with the Long-Chained Shackles a walk of 4 or more cells can raise an inmate a tier. Don't open a rat nest before it hatches.</p></div></li>
-      <li><b>Event</b><div><p>Accept Ravenous Appetite, High-Risk Convict, Crow Whispers, Taste of Freedom, Extra Portion and the Usurpations, and Behind Closed Doors unless its inmate is already a Supreme. The "Treasure" Hunt has only Confirm: afterwards, the locked doors it leaves dark hold Rare or better. Chain reactions are the close call above. For an Execution, count the inmates it would remove against the tiers the executioner gains, and accept only if you come out ahead.</p></div></li>
-      <li><b>Consume</b><div><p>If the warden's inmate has a target, consume. Pick the first meal whose chain is worth the most: the Trainer shows each option's chain odds. After that bite, your game asks for each next meal, and its Cancel stops the chain. Going on is almost always right, so stop only when the Trainer says so. When the eater has more than one meal, pick the one whose next tier still has food for the beast it may re-roll into.</p></div></li>
-      <li><b>Replace</b><div><p>If the warden's inmate is low-tier and has nothing worth eating, replace it. A day has a Replace or a consume, not both, so a good consume comes first.</p></div></li>
-      <li><b>End the day</b><div><p>Once nothing in the warden's cell can gain, end the day. The next morning, prey marks grow, nests hatch, and new destinations are drawn.</p></div></li>
+      <li><b>巡視</b><div><p>從三個目的地中選一個。上鎖的門通常最好：它會帶來一隻新囚犯，而且牠今天就可能從典獄長所在的牢房吞噬。如果某隻已知的囚犯有很好的吞噬在等，就改去牠那裡。有事變標示的門是額外獎勵。目的地差不多時選較遠的：可以累積巡獄之路，而持有長鏈腳鐐時，走 4 間以上的牢房還可能讓一隻囚犯升一階。鼠巢孵化前不要打開。</p></div></li>
+      <li><b>事變</b><div><p>飢腸轆轆、高危罪犯、鴉之低語、自由的滋味、有福同享和各階僭越都接受；暗箱操作也接受，除非那隻囚犯已經是至臻。尋「寶」只有確認可按：之後它沒點亮的上鎖牢門，裡面都是稀有以上。連鎖反應就是上面說的兩難抉擇。遇到處刑效率時，比較它會移除的囚犯和行刑者得到的階數，只有划算才接受。</p></div></li>
+      <li><b>吞噬</b><div><p>典獄長所在牢房的囚犯有目標就吞噬。選連鎖價值最高的第一口：教練會顯示每個選項的連鎖機率。吃完這一口後，遊戲會逐一詢問下一口要吃誰，按取消就會停止連鎖。繼續吃幾乎都是對的，所以只有教練說停時才停。吞噬者有不只一個獵物可選時，選下一階還有食物能餵牠可能重抽成的野獸的那個。</p></div></li>
+      <li><b>替換</b><div><p>典獄長所在牢房的囚犯階級低、又沒有值得吃的東西時，就替換牠。一天只能替換或吞噬其中一個，不能兩者都做，所以好的吞噬優先。</p></div></li>
+      <li><b>結束這一天</b><div><p>典獄長所在牢房已經沒有任何可以獲益的動作時，就結束這一天。隔天早上，獵物標記成長、鼠巢孵化，並抽出新的目的地。</p></div></li>
     </ol>
   </section>
 
   <section class="guide-section">
-    <h2>Chains: how many beasts you need</h2>
-    <p>After every bite the eater rises a tier and re-rolls into a random beast. The chain continues if that new beast has something to eat at its new tier. A Mammoth eats Lions and Wolves, a Lion Wolves and Rats, a Wolf Rats, and a Rat Mammoths. So a Wolf or a Rat waiting at a tier feeds two of the four possible re-rolls, a Lion or a Mammoth one, and a Mammoth, a Rat and a Lion or a Wolf together feed all four.</p>
-    <h3>Chance the chain finds its next meal at a tier</h3>
+    <h2>連鎖：需要幾種野獸</h2>
+    <p>每吃一口，吞噬者就升一階並重抽成隨機一種野獸。如果新的野獸在新的階級有東西可吃，連鎖就會繼續。巨象吃狂獅和頭狼，狂獅吃頭狼和碩鼠，頭狼吃碩鼠，碩鼠吃巨象。所以某一階有頭狼或碩鼠在等，可以餵飽四種重抽結果中的兩種；狂獅或巨象只能餵一種；巨象、碩鼠再加上狂獅或頭狼，就能四種全包。</p>
+    <h3>連鎖在某一階找到下一口的機率</h3>
     <div class="sets" id="sets"></div>
 
-    <h3>Chance one chain reaches Rainbow</h3>
-    <p>From the simulated runs, by the eater's tier and how many different beasts wait at each tier above it:</p>
+    <h3>一條連鎖抵達綺彩的機率</h3>
+    <p>取自模擬對局，依吞噬者的階級，以及其上每一階各有幾種不同野獸在等來分類：</p>
     <div class="table-wrap">
       <table>
-        <thead><tr><th>Eater</th><th>Beasts waiting at the tiers above</th><th class="num">Runs</th><th class="num">Reaches Rainbow</th></tr></thead>
+        <thead><tr><th>吞噬者</th><th>上方各階等待的野獸種類</th><th class="num">次數</th><th class="num">抵達綺彩</th></tr></thead>
         <tbody id="stairs"></tbody>
       </table>
     </div>
-    <p>Most Rainbows come from high eaters chaining up a well-stocked staircase, and chains from the bottom rarely make it in one go. Extra copies of a beast don't help a single chain, since each chain eats one inmate per tier, but they keep the staircase ready for the next one.</p>
-    <h3>How long chains run</h3>
+    <p>大部分的綺彩，來自高階吞噬者沿著貨源充足的「階梯」一路吃上去；從底層起步的連鎖很少能一口氣到頂。同一種野獸多幾隻對單條連鎖沒幫助，因為每條連鎖每一階只吃一隻，但能讓階梯為下一條連鎖做好準備。</p>
+    <h3>連鎖能延續多長</h3>
     <div class="bars" id="chain-lengths"></div>
   </section>
 
   <section class="guide-section">
-    <h2>What each habit is worth</h2>
-    <p>Rainbows per run with no tools. Each variant changes one habit of the full strategy and keeps everything else the same.</p>
+    <h2>每個習慣值多少</h2>
+    <p>無刑具時每局收容的綺彩數。每個變體只改動完整策略中的一個習慣，其餘維持不變。</p>
     <div class="bars" id="habits"></div>
-    <p class="note"><span data-g="habitRuns"></span> runs each for the variants (margins about ±<span data-g="habitCi"></span>), and <span data-g="compareRuns"></span> for the simple player and random moves.</p>
+    <p class="note">每個變體各 <span data-g="habitRuns"></span> 局（誤差約 ±<span data-g="habitCi"></span>），簡單玩家與隨機行動各 <span data-g="compareRuns"></span> 局。</p>
   </section>
 
   <section class="guide-section">
-    <h2>Tools</h2>
-    <p>Rainbows per run when one tool is held from day 1, with no other rewards. With no tool the strategy makes <span data-g="toolBase"></span>. <span data-g="sideRuns"></span> runs each.</p>
+    <h2>刑具</h2>
+    <p>從第 1 天起持有單一刑具、沒有其他獎勵時，每局收容的綺彩數。沒有刑具時這套策略是 <span data-g="toolBase"></span>。每項各 <span data-g="sideRuns"></span> 局。</p>
     <div class="bars" id="tools"></div>
     <div class="table-wrap">
       <table>
-        <thead><tr><th>Tool</th><th>What it does</th></tr></thead>
+        <thead><tr><th>刑具</th><th>效果</th></tr></thead>
         <tbody>
-          <tr><td>Iron Crown of the Prison King: Berserk Lion</td><td>Lions can eat any inmate of their own rarity, and each bite a Lion takes gains 2 extra tiers, 3 in all.</td></tr>
-          <tr><td>Blood-Stained Trap: Berserk Lion</td><td>With the warden on a Lion, Hunt joins the day’s choices beside Consume and Replace: the Lion puts a Prey mark on one inmate it can consume, and each morning both rise a tier, for 3 mornings.</td></tr>
-          <tr><td>Filthy Claws: Alpha Wolf</td><td>At the start of each day, Scratch Marks go on 1 random unopened cell. A scratched door shows the rarity inside, and a Wolf of that rarity can consume the inmate through it, whatever its beast, for 3 tiers.</td></tr>
-          <tr><td>Elephant-Foot Maul: Mammoth</td><td>Mammoths can eat the Lions they counter at a higher rarity too, and a Mammoth that eats rises to 2 tiers above its meal: a Normal Mammoth eating a Legendary Lion reaches Rainbow at once.</td></tr>
-          <tr><td>Severed Iron Maiden</td><td>A Replace brings the new inmate in 3 tiers up when the inmate it replaces has as many inmates above its rarity as below it (counted before the Scapegoat's Guillotine removes any), which an inmate alone on the block always does.</td></tr>
-          <tr><td>Kin's Coin of Fate</td><td>Each morning, when two or more inmates share a beast and rarity, a 60% chance that one of them is removed and another gains 2 tiers.</td></tr>
-          <tr><td>Scapegoat's Guillotine</td><td>A Replace with 2 or more others on the block removes 2 random inmates, and the new inmate comes in above the rarity it replaced.</td></tr>
-          <tr><td>Hangman's Noose</td><td>The new inmate is never Normal or Magic, so every Replace is an upgrade.</td></tr>
-          <tr><td>Long-Chained Shackles</td><td>A walk of 4 or more cells has a 40% chance to raise a random inmate a tier. With six cells in reach, most mornings offer a walk that long.</td></tr>
-          <tr><td>Executioner's Blacklist</td><td>Once 5 or fewer cells are still locked, each door a patrol opens raises 2 random inmates a tier.</td></tr>
-          <tr><td>Raging Beast's Agonizing Muzzle</td><td>A consume gains 2 extra tiers when 4 or fewer inmates are on the block before it, its meal included.</td></tr>
-          <tr><td>Avenger's Casket</td><td>A consume can open a fresh meal at the eater's new rarity, which stretches chains.</td></tr>
-          <tr><td>Ferocious Beast's Ravenous Chains</td><td>Each morning the highest-rarity inmate removes both its neighbours on the ring, with a 40% chance of an extra tier for each.</td></tr>
-          <tr><td>Skewered Rat Heads</td><td>Rats can eat Rats, and a Rat's consume gains an extra tier.</td></tr>
-          <tr><td>Sorting Hook</td><td>Doors never hold a Normal, so every new inmate starts at Magic or better.</td></tr>
-          <tr><td>Maddened Beast's Barbed Collar</td><td>Each bite of a chain after the first has an 80% chance of an extra tier, so long chains climb faster.</td></tr>
-          <tr><td>Rusty Saw</td><td>A 25% chance of an extra tier on each bite.</td></tr>
-          <tr><td>Burning Stake</td><td>Each morning offers one destination fewer, and replacing an inmate below Legendary has a 40% chance to bring in a Legendary.</td></tr>
-          <tr><td>Fanged Guillotine</td><td>Wolves can also eat Rats below their own rarity, so a Wolf finds a meal far more often.</td></tr>
-          <tr><td>Barbed Whip</td><td>Each morning offers one destination fewer, and each bite has a 35% chance of an extra tier.</td></tr>
-          <tr><td>Felon's Dog Tag</td><td>The inmate behind each door a patrol opens has a 25% chance to rise a tier.</td></tr>
-          <tr><td>Iron Tongs of Lust</td><td>A Mammoth gets a Tusk mark each morning: replacing it raises other inmates a tier.</td></tr>
-          <tr><td>Crowded Beastcage</td><td>After an inmate is consumed, a 40% chance its cell opens again at once with someone new.</td></tr>
-          <tr><td>Lost Ring of Keys</td><td>Patrols often open the neighboring doors too: more inmates.</td></tr>
-          <tr><td>Warden's Scales</td><td>After a Replace, usually shows the best inmate behind the locked doors. Knowing it changes little.</td></tr>
-          <tr><td>Short-Chained Shackles</td><td>A walk of 3 cells or fewer has a 50% chance to open a random locked cell. That door triggers nothing else, so an event behind it is used up.</td></tr>
-          <tr><td>Iron Pestle</td><td>A Replace keeps the beast and re-rolls only the rarity, which leaves the block less varied.</td></tr>
-          <tr><td>Searing Branding Iron</td><td>A patrol that opens a door has a 35% chance to copy its inmate into another unopened cell, which opens holding the copy.</td></tr>
-          <tr><td>Gaoler's Execution Axe</td><td>When a Replace brings in a higher rarity, 2 random sealed cells open: more inmates, but only on the lucky Replaces.</td></tr>
-          <tr><td>Forged Key</td><td>Each morning offers one destination fewer. A patrol that opens a door has a 50% chance to open one more random sealed cell. The lost choice costs more than the extra doors give.</td></tr>
-          <tr><td>Squirming Iron Box</td><td>Turns a sealed cell into a rat nest every morning, which ties up doors for a Rare Rat at best.</td></tr>
+          <tr><td>牢中王的鐵冠：狂獅</td><td>狂獅可以吃任何同稀有度的囚犯，而且狂獅每吃一口額外升 2 階，共升 3 階。</td></tr>
+          <tr><td>染紅的捕獸夾：狂獅</td><td>典獄長站在狂獅身上時，當天除了吞噬和替換之外多一個尋獵選項：狂獅對一隻牠能吞噬的囚犯打上獵物標記，之後每天早上兩者各升一階，持續 3 個早上。</td></tr>
+          <tr><td>髒污鐵爪：頭狼</td><td>每天開始時，隨機 1 間未開啟的牢房會留下劃痕。有劃痕的門會顯示裡面的稀有度，同稀有度的頭狼可以隔著門吞噬裡面的囚犯，不論牠是哪種野獸，一次升 3 階。</td></tr>
+          <tr><td>象腳重錘：巨象</td><td>巨象也能吃稀有度比自己高、被牠克制的狂獅，而且巨象吃完後會升到比獵物高 2 階：普通巨象吃掉傳奇狂獅就直接成為綺彩。</td></tr>
+          <tr><td>切開的人形棺</td><td>被替換的囚犯若稀有度比牠高和比牠低的囚犯一樣多（在替罪人的斷頭台移除囚犯之前計算），替換進來的新囚犯會高 3 階；監區上只剩牠一隻時一定成立。</td></tr>
+          <tr><td>手足的命運硬幣</td><td>每天早上，若有兩隻以上囚犯野獸和稀有度都相同，有 60% 機率移除其中一隻，讓另一隻升 2 階。</td></tr>
+          <tr><td>替罪人的斷頭台</td><td>監區上另有 2 隻以上囚犯時替換，會隨機移除 2 隻囚犯，新囚犯的稀有度會高於被替換的那隻。</td></tr>
+          <tr><td>絞首繩</td><td>新囚犯不會是普通或魔法，所以每次替換都是升級。</td></tr>
+          <tr><td>長鏈腳鐐</td><td>走 4 間以上的牢房時，有 40% 機率讓隨機一隻囚犯升一階。可達範圍有六間牢房，大多數早上都有這麼遠的路可走。</td></tr>
+          <tr><td>執刑官的黑名冊</td><td>上鎖的牢房剩 5 間以下後，巡視每打開一扇門，就讓隨機 2 隻囚犯升一階。</td></tr>
+          <tr><td>狂獸的劇痛口枷</td><td>吞噬前監區上（含獵物）只有 4 隻以下囚犯時，這次吞噬額外升 2 階。</td></tr>
+          <tr><td>復仇者之匣</td><td>吞噬後，可能在吞噬者的新稀有度開出一隻新的獵物，讓連鎖延長。</td></tr>
+          <tr><td>兇獸的飢餓絞鏈</td><td>每天早上，稀有度最高的囚犯會移除牠在環形監區上左右兩邊的鄰居，每移除一隻有 40% 機率額外升一階。</td></tr>
+          <tr><td>鼠頭串</td><td>碩鼠可以吃碩鼠，而且碩鼠的吞噬額外升一階。</td></tr>
+          <tr><td>挑揀鉤</td><td>門後永遠不會是普通，所以每隻新囚犯至少是魔法。</td></tr>
+          <tr><td>瘋獸的倒刺項圈</td><td>連鎖中第一口之後的每一口，都有 80% 機率額外升一階，長連鎖爬得更快。</td></tr>
+          <tr><td>鏽鋸</td><td>每一口都有 25% 機率額外升一階。</td></tr>
+          <tr><td>火刑柱</td><td>每天早上少一個目的地可選，而替換傳奇以下的囚犯時有 40% 機率換來傳奇。</td></tr>
+          <tr><td>狼牙鍘刀</td><td>頭狼也能吃稀有度比自己低的碩鼠，讓頭狼更容易找到獵物。</td></tr>
+          <tr><td>棘刺鐵鞭</td><td>每天早上少一個目的地可選，而每一口都有 35% 機率額外升一階。</td></tr>
+          <tr><td>重刑銘牌</td><td>巡視每打開一扇門，門後的囚犯有 25% 機率升一階。</td></tr>
+          <tr><td>惡欲鐵鉗</td><td>每天早上會有一隻巨象獲得象牙標記：替換牠會讓其他囚犯升一階。</td></tr>
+          <tr><td>擁擠獸籠</td><td>囚犯被吞噬後，有 40% 機率牠的牢房立刻再次開啟，換上新的囚犯。</td></tr>
+          <tr><td>遺落的鑰匙串</td><td>巡視時常會連旁邊的門一起打開：囚犯更多。</td></tr>
+          <tr><td>典獄官的天平</td><td>替換後，通常會顯示上鎖牢門後最好的囚犯。知道了也沒多大差別。</td></tr>
+          <tr><td>短鏈腳鐐</td><td>走 3 間以內的牢房時，有 50% 機率打開隨機一間上鎖的牢房。那扇門不會觸發其他任何東西，所以門後的事變會白白用掉。</td></tr>
+          <tr><td>鐵杵</td><td>替換時保留野獸、只重抽稀有度，會讓監區的野獸種類變得單調。</td></tr>
+          <tr><td>灼痛的烙鐵</td><td>巡視打開一扇門時，有 35% 機率把裡面的囚犯複製到另一間未開啟的牢房，那間牢房會打開並關著複製品。</td></tr>
+          <tr><td>獄卒的行刑巨斧</td><td>替換換來更高稀有度時，隨機打開 2 間上鎖的牢房：囚犯更多，但只在運氣好的替換時才有。</td></tr>
+          <tr><td>偽造鑰匙</td><td>每天早上少一個目的地可選。巡視打開一扇門時，有 50% 機率再隨機打開一間上鎖的牢房。少一個選擇的損失，比多開的門帶來的好處還大。</td></tr>
+          <tr><td>蠕動鐵盒</td><td>每天早上把一間上鎖的牢房變成鼠巢，佔住牢門，最多也只換來一隻稀有碩鼠。</td></tr>
         </tbody>
       </table>
     </div>
   </section>
 
   <section class="guide-section" id="pairs-section" hidden>
-    <h2>Instrument pairs</h2>
-    <p>A run starts with a pick of three instruments, and meeting the objective offers three more. What the second is worth depends on the first, so take the one that adds the most to what you hold. For each starting instrument, its three best partners: what the partner adds, then Rainbows per run holding both from day 1, with no other rewards.</p>
+    <h2>刑具組合</h2>
+    <p>每局開始時從三件刑具中選一件，達成目標後會再提供三件。第二件值多少取決於第一件，所以要選對你手上的刑具加成最多的那件。下表列出每件開局刑具最好的三個搭檔：先是搭檔帶來的增量，再來是從第 1 天起同時持有兩件、沒有其他獎勵時每局收容的綺彩數。</p>
     <div class="table-wrap">
       <table>
-        <thead><tr><th>You hold</th><th>Best second</th><th>Next</th><th>Then</th></tr></thead>
+        <thead><tr><th>你持有</th><th>最佳第二件</th><th>次佳</th><th>第三</th></tr></thead>
         <tbody id="pairs"></tbody>
       </table>
     </div>
@@ -547,20 +547,20 @@
   </section>
 
   <section class="guide-section">
-    <h2>The Warden's Treasure</h2>
-    <p>Each Rainbow offers one of four gifts. Rainbows per run with tools on, <span data-g="sideRuns"></span> runs each:</p>
+    <h2>典獄長的珍藏</h2>
+    <p>每收容 1 隻綺彩，可從四件珍藏中選一件。開啟刑具時每局收容的綺彩數，每項各 <span data-g="sideRuns"></span> 局：</p>
     <div class="bars" id="gifts"></div>
-    <p>Judge the gift by the board. Crimson Vintage shines with many inmates below Legendary. The Three-Headed Thumb Ring helps when there are plenty of sealed doors. The Brass Horn of Strife pays when lots of inmates already have targets. Brand of Original Sin helps when many inmates have nothing to eat.</p>
+    <p>依盤面判斷要選哪件。傳奇以下的囚犯很多時，赤色佳釀最亮眼。上鎖的門很多時，三首扳指有幫助。很多囚犯已經有目標時，鬥爭銅號最划算。很多囚犯沒東西可吃時，原罪烙印有幫助。</p>
   </section>
 
   <section class="guide-section">
-    <h2>What to expect</h2>
-    <p>Rainbows vaulted per 20-day run with this strategy, in the default drill:</p>
+    <h2>預期表現</h2>
+    <p>在預設練習中，用這套策略每局 20 天收容的綺彩數：</p>
     <div class="bars" id="spread"></div>
-    <p>A typical run opens about <span data-g="doors"></span> doors, replaces <span data-g="swaps"></span> times and consumes <span data-g="devours"></span> times.</p>
+    <p>一局通常會打開約 <span data-g="doors"></span> 扇門、替換 <span data-g="swaps"></span> 次、吞噬 <span data-g="devours"></span> 次。</p>
     <div class="table-wrap">
       <table>
-        <thead><tr><th>Strategy</th><th class="num">No tools</th><th class="num">Tools and Treasure on</th></tr></thead>
+        <thead><tr><th>策略</th><th class="num">無刑具</th><th class="num">開啟刑具與秘藏</th></tr></thead>
         <tbody id="compare"></tbody>
       </table>
     </div>
@@ -568,19 +568,19 @@
 
   <section class="guide-section">
     <div class="cta">
-      <h2>Practice it</h2>
-      <p>Start a Rules drill and press <strong>Trainer</strong> in the top bar. It recommends a move for every decision and marks it on the board. It checks the move with hundreds of live playouts from your exact position, and grades each move you make, so you can see where your play differs from these numbers.</p>
-      <p>Playing live? The board analyzer takes your board as it is in your game, with your tools, and gives the same advice for that exact position.</p>
+      <h2>動手練習</h2>
+      <p>開一場規則練習，按下頂端列的<strong>教練</strong>。它會為每個決定建議一個動作並標在盤面上，從你當下的局面跑數百次即時模擬來檢驗，還會替你的每一步打分數，讓你看出自己的打法和這些數字差在哪裡。</p>
+      <p>正在玩正式遊戲？盤面分析器可以照你遊戲中的盤面和刑具輸入，針對那個局面給出同樣的建議。</p>
       <div class="cta-actions">
-        <a class="btn btn-primary" href="./">Open the simulator</a>
-        <a class="btn" href="analyze.html">Analyze my board</a>
+        <a class="btn btn-primary" href="./">開啟模擬器</a>
+        <a class="btn" href="analyze.html">分析我的盤面</a>
       </div>
     </div>
   </section>
 
   <footer class="method">
-    <p>This English version and guide are made by <strong>CoffeeBns</strong>: <a href="https://twitch.tv/coffeebns" target="_blank" rel="noopener">twitch.tv/coffeebns</a> and <a href="https://youtube.com/@CoffeeBns" target="_blank" rel="noopener">youtube.com/@CoffeeBns</a>.</p>
-    <p><strong>How these numbers were made.</strong> Every run used the simulator's own rules engine. A rules-based strategy played them, making each choice from what a player can see. There's no AI involved: it's a set of scoring rules whose weights were tuned for these rules by trying each value and keeping whichever vaulted more Rainbows. This data set took <span data-g="totalRuns"></span> runs and <span data-g="minutes"></span> minutes. The rules follow the season's video reveal and what players have since seen live. The rarity odds come from players' shared boards: an inmate behind a door is 40% Normal, 38% Magic, 12% Rare, 8% Legendary and 2% Supreme, and a Replace brings in 52%, 32%, 9%, 6% and 1.5%. Other odds and limits are practice values and may differ from the live game: 5% of sealed cells hide an event, every kind equally likely, which shows only once the warden walks past, and each day has one consume or one Replace, not both, over a 20-day drill. The full tables are in the <a href="https://github.com/blahdot3h/tartarus-simulator/tree/main/tools" target="_blank" rel="noopener">strategy lab's notes</a>.</p>
+    <p>英文原版與本攻略由 <strong>CoffeeBns</strong> 製作：<a href="https://twitch.tv/coffeebns" target="_blank" rel="noopener">twitch.tv/coffeebns</a> 與 <a href="https://youtube.com/@CoffeeBns" target="_blank" rel="noopener">youtube.com/@CoffeeBns</a>。（This English version and guide are made by CoffeeBns.）本頁為繁體中文翻譯版。</p>
+    <p><strong>這些數字怎麼來的。</strong>每一局都使用模擬器本身的規則引擎，由一套規則式策略來玩，每個選擇都只根據玩家看得到的資訊。這裡沒有用到 AI：它是一組評分規則，權重是針對這些規則逐一試值、保留收容最多綺彩的那個而調出來的。這份資料共跑了 <span data-g="totalRuns"></span> 局，花了 <span data-g="minutes"></span> 分鐘。規則依據本賽季的影片公開內容，以及玩家之後在正式遊戲中看到的情況。稀有度機率來自玩家分享的盤面：門後的囚犯為普通 40%、魔法 38%、稀有 12%、傳奇 8%、至臻 2%；替換換來的則依序為 52%、32%、9%、6%、1.5%。其他機率與限制是練習用的數值，可能和正式遊戲不同：5% 的上鎖牢房藏有事變，各種事變機率相同，要等典獄長經過才會顯示；每天只能吞噬一次或替換一次，不能兩者都做；練習為期 20 天。完整數據表請見<a href="https://github.com/blahdot3h/tartarus-simulator/tree/main/tools" target="_blank" rel="noopener">策略實驗室的筆記</a>（英文）。</p>
   </footer>
 </main>
 
@@ -595,7 +595,7 @@
     'use strict';
     const G = window.TARTARUS_GUIDE;
     if (!G) {
-      document.querySelector('.lede').textContent = 'The guide data is missing. Run node tools/strategy-sim.js guide to generate js/guide-data.js.';
+      document.querySelector('.lede').textContent = '找不到指南資料。請執行 node tools/strategy-sim.js guide 來產生 js/guide-data.js。';
       return;
     }
     // The simulator's own beast portraits, from js/board.js.
@@ -606,18 +606,19 @@
     const habit = (id) => G.habits.find((h) => h.id === id);
     const H = G.headline;
     const sources = H.rainbowSources.chain + H.rainbowSources.singleDevour + H.rainbowSources.other;
-    const tiers = ['Normal', 'Magic', 'Rare', 'Legendary', 'Supreme'];
-    const tierList = (max) => (max < 0 ? 'none' : tiers.slice(0, max + 1).join(', ').replace(/, ([^,]*)$/, ' and $1'));
+    const tiers = ['普通', '魔法', '稀有', '傳奇', '至臻'];
+    const tierList = (max) => (max < 0 ? '' : tiers.slice(0, max + 1).join('、').replace(/、([^、]*)$/, '和$1'));
+    const swapPart = (max) => (max < 0 ? '不替換任何囚犯' : `替換${tierList(max)}囚犯`);
     const tools = G.tools;
     // Tools that did worse than none, from the worst: a loss inside the
     // measurement's margin says so, and a small one (under 0.02 Rainbows)
     // reads as "slightly".
     const margin = (habit('full') && habit('full').ci) || 0;
     const worse = tools.filter((t) => t.delta < 0).reverse();
-    const named = worse.map((t) => `the ${t.name}${-t.delta < margin ? ' (within the margin)' : -t.delta < 0.02 ? ' (slightly)' : ''}`);
+    const named = worse.map((t) => `「${t.name}」${-t.delta < margin ? '（在誤差範圍內）' : -t.delta < 0.02 ? '（略差）' : ''}`);
     const worseNote = !worse.length ? ''
-      : worse.length === 1 ? ` The ${worse[0].name} was the only tool that made things worse.`
-        : ` Some tools made things worse: ${named.slice(0, -1).join(', ')} and ${named[named.length - 1]}.`;
+      : worse.length === 1 ? `「${worse[0].name}」是唯一讓結果變差的刑具。`
+        : `有些刑具反而讓結果變差：${named.slice(0, -1).join('、')}和${named[named.length - 1]}。`;
     const times = (t) => (t.value / G.toolBase).toFixed(1);
     const bestFixed = G.gifts.slice(1)[0];
 
@@ -643,15 +644,15 @@
         const full = habit('full').value;
         const never = habit('neverSwap').value;
         return full - never < 0.01
-          ? `Without tools, never replacing came out about even: ${two(never)} per run, against ${two(full)}. But Replaces are what the Severed Iron Maiden, the Scapegoat's Guillotine and the Burning Stake work on.`
-          : `Never replacing drops results to ${two(never)} per run, against ${two(full)}.`;
+          ? `沒有刑具時，從不替換的結果差不多：每局 ${two(never)}，對比 ${two(full)}。但切開的人形棺、替罪人的斷頭台和火刑柱都是靠替換發揮作用。`
+          : `從不替換會讓結果掉到每局 ${two(never)}，對比 ${two(full)}。`;
       })(),
       chainNote: (() => {
-        const tooled = G.params.rewards.acceptChain ? 'accepts' : 'skips';
+        const tooled = G.params.rewards.acceptChain ? '接受' : '略過';
         const skip = habit('skipChain');
         const accept = habit('acceptChain');
-        if (skip) return `With no instruments, accepting them made ${two(habit('full').value)} per run against ${two(skip.value)} skipping. With instruments, the Trainer ${tooled} them.`;
-        if (accept) return `With no instruments, skipping them made ${two(habit('full').value)} per run against ${two(accept.value)} accepting. With instruments, the Trainer ${tooled} them.`;
+        if (skip) return `沒有刑具時，接受它每局 ${two(habit('full').value)}，略過則是 ${two(skip.value)}。持有刑具時，教練會${tooled}它。`;
+        if (accept) return `沒有刑具時，略過它每局 ${two(habit('full').value)}，接受則是 ${two(accept.value)}。持有刑具時，教練會${tooled}它。`;
         return '';
       })(),
       alwaysExec: two(habit('alwaysExec').value),
@@ -659,11 +660,11 @@
       shortWalks: two(habit('shortWalks').value),
       alwaysBestow: habit('alwaysBestow') ? two(habit('alwaysBestow').value) : '?',
       alwaysInstigate: habit('alwaysInstigate') ? two(habit('alwaysInstigate').value) : '?',
-      swapTiers: `Replace ${tierList(G.params.notools.swapMaxTier)} inmates with no tools, and ${tierList(G.params.rewards.swapMaxTier)} once you hold tools`,
+      swapTiers: `沒有刑具時${swapPart(G.params.notools.swapMaxTier)}，持有刑具後${swapPart(G.params.rewards.swapMaxTier)}`,
       tool1: tools[0].name,
       tool2: tools[1].name,
-      toolNote: `Held from day 1, ${tools[0].name} made ${times(tools[0])}× the Rainbows of no tool and ${tools[1].name} ${times(tools[1])}×.${worseNote}`,
-      giftNote: G.gifts[0].value >= bestFixed.value ? `Judging each gift on the spot beat always taking the same one (${two(G.gifts[0].value)} against ${two(bestFixed.value)} for always ${bestFixed.name}). If you want a default, ${bestFixed.name}.` : `Always taking ${bestFixed.name} did best here (${two(bestFixed.value)} against ${two(G.gifts[0].value)} for judging on the spot).`,
+      toolNote: `從第 1 天起持有時，「${tools[0].name}」收容的綺彩是無刑具的 ${times(tools[0])} 倍，「${tools[1].name}」則是 ${times(tools[1])} 倍。${worseNote}`,
+      giftNote: G.gifts[0].value >= bestFixed.value ? `每次依盤面當場判斷，勝過一律拿同一件（${two(G.gifts[0].value)}，一律拿「${bestFixed.name}」則是 ${two(bestFixed.value)}）。想要有個預設選擇的話，就拿「${bestFixed.name}」。` : `這裡一律拿「${bestFixed.name}」的效果最好（${two(bestFixed.value)}，當場判斷則是 ${two(G.gifts[0].value)}）。`,
       habitRuns: G.habitRuns.toLocaleString(),
       habitCi: (habit('full').ci || 0).toFixed(3),
       compareRuns: G.compareRuns.toLocaleString(),
@@ -678,17 +679,18 @@
     // Beast sets and the share of re-rolls that find food: the eater
     // re-rolls into one of the four beasts, each with its meals.
     const names = { Mammoth: 'mammoth', Lion: 'lion', Wolf: 'wolf', Rat: 'rat' };
+    const BEAST_ZH = { Mammoth: '巨象', Lion: '狂獅', Wolf: '頭狼', Rat: '碩鼠' };
     const MEALS = { Mammoth: ['Lion', 'Wolf'], Lion: ['Wolf', 'Rat'], Wolf: ['Rat'], Rat: ['Mammoth'] };
     const fed = (set) => Object.keys(MEALS).filter((b) => MEALS[b].some((m) => set.includes(m))).length / 4;
     const card = (beasts, label) => {
       const odds = fed(beasts);
-      return `<div class="set${odds === 1 ? ' is-full' : ''}"><div class="set-icons">${beasts.map((b) => `<span class="tok t2" title="${b}">${PORTRAITS[names[b]]}</span>`).join('')}</div><div class="set-odds">${Math.round(100 * odds)}%</div><div class="set-name">${esc(label)}</div></div>`;
+      return `<div class="set${odds === 1 ? ' is-full' : ''}"><div class="set-icons">${beasts.map((b) => `<span class="tok t2" title="${BEAST_ZH[b]}">${PORTRAITS[names[b]]}</span>`).join('')}</div><div class="set-odds">${Math.round(100 * odds)}%</div><div class="set-name">${esc(label)}</div></div>`;
     };
     const sets = [
-      [['Mammoth', 'Wolf', 'Rat'], 'A Mammoth, a Rat and a Wolf (or a Lion)'],
-      [['Wolf', 'Rat'], 'A Wolf and a Rat'],
-      [['Wolf'], 'A Wolf or a Rat alone'],
-      [['Lion'], 'A Lion or a Mammoth alone'],
+      [['Mammoth', 'Wolf', 'Rat'], '巨象、碩鼠和頭狼（或狂獅）'],
+      [['Wolf', 'Rat'], '頭狼和碩鼠'],
+      [['Wolf'], '只有頭狼或只有碩鼠'],
+      [['Lion'], '只有狂獅或只有巨象'],
     ];
     document.getElementById('sets').innerHTML = sets.map(([beasts, label]) => card(beasts, label)).join('');
 
@@ -700,7 +702,7 @@
       const keep = t === 4 ? rows.slice(0, 1) : t === 3 ? rows : rows.filter((r) => r.n >= G.headlineRuns / 20).slice(0, t === 2 ? 4 : 2);
       for (const r of keep) {
         const fed = r.key.split(':')[1];
-        const above = fed ? fed.split('').map((d, i) => `${d} at ${tiers[t + 1 + i]}`).join(', ') : 'Any meal makes Rainbow';
+        const above = fed ? fed.split('').map((d, i) => `${tiers[t + 1 + i]}有 ${d} 種`).join('、') : '吃任何一口都會成為綺彩';
         stairRows.push(`<tr${r.rainbow >= 0.5 ? ' class="is-key"' : ''}><td>${tiers[t]}</td><td>${esc(above)}</td><td class="num">${r.n.toLocaleString()}</td><td class="num">${pct(r.rainbow)}</td></tr>`);
       }
     }
@@ -715,7 +717,7 @@
     const full = habit('full').value;
     const habits = G.habits.slice().sort((a, b) => b.value - a.value);
     bars('habits', habits.map((h) => ({ label: h.label, value: h.value, key: h.id === 'full', bad: h.value < full * 0.7 })), Math.max(...habits.map((h) => h.value)) * 1.05, two);
-    const toolRows = [...tools.map((t) => ({ label: t.name, value: t.value, sub: `${t.delta >= 0 ? '+' : '−'}${two(Math.abs(t.delta))}`, key: t === tools[0] || t === tools[1], bad: t.delta < 0 })), { label: 'No tool', value: G.toolBase }].sort((a, b) => b.value - a.value);
+    const toolRows = [...tools.map((t) => ({ label: t.name, value: t.value, sub: `${t.delta >= 0 ? '+' : '−'}${two(Math.abs(t.delta))}`, key: t === tools[0] || t === tools[1], bad: t.delta < 0 })), { label: '無刑具', value: G.toolBase }].sort((a, b) => b.value - a.value);
     bars('tools', toolRows, Math.max(...toolRows.map((r) => r.value)) * 1.05, two);
     // Instrument pairs, from node tools/strategy-sim.js combos
     // (js/tool-combos.js).
@@ -728,7 +730,7 @@
       const held = combos.ids.filter((id) => nameOf[id] && value([id]) !== undefined).sort((a, b) => value([b]) - value([a]));
       document.getElementById('pairs').innerHTML = held.map((h) => {
         const partners = held.filter((id) => id !== h && value([h, id]) !== undefined).sort((a, b) => value([h, b]) - value([h, a]));
-        return `<tr><td>${esc(nameOf[h])}<small>${two(value([h]))} alone</small></td>${partners.slice(0, 3).map((id) => `<td>${esc(nameOf[id])}<small>${signed(value([h, id]) - value([h]))} · ${two(value([h, id]))}</small></td>`).join('')}</tr>`;
+        return `<tr><td>${esc(nameOf[h])}<small>單獨 ${two(value([h]))}</small></td>${partners.slice(0, 3).map((id) => `<td>${esc(nameOf[id])}<small>${signed(value([h, id]) - value([h]))} · ${two(value([h, id]))}</small></td>`).join('')}</tr>`;
       }).join('');
       // Pairs worth more, or less, than their parts: both together against
       // each one's gain over no instrument, added up.
@@ -737,27 +739,27 @@
         if (value([a, b]) !== undefined) pairs.push({ a, b, both: value([a, b]), extra: value([a, b]) - value([a]) - value([b]) + combos.base });
       }));
       pairs.sort((x, y) => y.extra - x.extra);
-      const pairName = (p) => `${nameOf[p.a]} with ${nameOf[p.b]} (${two(p.both)}, ${signed(p.extra)})`;
-      const listed = (ps) => ps.map(pairName).join('; ');
+      const pairName = (p) => `「${nameOf[p.a]}」搭配「${nameOf[p.b]}」（${two(p.both)}，${signed(p.extra)}）`;
+      const listed = (ps) => ps.map(pairName).join('；');
       const clash = pairs.slice(-2).reverse().filter((p) => p.extra < -0.05);
-      document.getElementById('pairs-note').textContent = `The pairs worth the most beyond their parts: ${listed(pairs.slice(0, 3))}. The number after each pair's Rainbows is what the pair makes beyond the two instruments' separate gains.${clash.length ? ` The worst clashes: ${listed(clash)}.` : ''}`;
+      document.getElementById('pairs-note').textContent = `合起來比各自相加還要多出最多的組合：${listed(pairs.slice(0, 3))}。每組綺彩數後面的數字，是這組搭配超出兩件刑具各自增量總和的部分。${clash.length ? `最互相衝突的組合：${listed(clash)}。` : ''}`;
       const s1 = combos.sizes[1];
       const s2 = combos.sizes[2];
-      document.getElementById('pairs-runs').textContent = `${s2.sets} pairs and ${s1.sets} single instruments on the same prisons, ${(s1.runs + s2.runs).toLocaleString()} runs, each measured to within ±${Math.max(s1.margin, s2.margin).toFixed(3)} Rainbows per run. Generated ${combos.generated}.`;
+      document.getElementById('pairs-runs').textContent = `在相同的監獄上測了 ${s2.sets} 組兩件組合和 ${s1.sets} 件單一刑具，共 ${(s1.runs + s2.runs).toLocaleString()} 局，每項的誤差都在每局 ±${Math.max(s1.margin, s2.margin).toFixed(3)} 隻綺彩以內。產生日期：${combos.generated}。`;
       document.getElementById('pairs-section').hidden = false;
     }
-    const giftRows = G.gifts.map((g) => ({ label: g.id === 'scored' ? 'Judged on the spot' : `Always ${g.name}`, value: g.value, key: g.id === 'scored' })).sort((a, b) => b.value - a.value);
+    const giftRows = G.gifts.map((g) => ({ label: g.id === 'scored' ? '依盤面當場判斷' : `一律選${g.name}`, value: g.value, key: g.id === 'scored' })).sort((a, b) => b.value - a.value);
     bars('gifts', giftRows, Math.max(...giftRows.map((r) => r.value)) * 1.05, two);
     const counts = H.rainbowCounts;
-    bars('spread', ['No Rainbow', '1 Rainbow', '2 Rainbows', '3 Rainbows', '4 Rainbows', '5 or more'].map((label, i) => ({ label, value: counts[i], key: i > 0 })), Math.max(...counts) * 1.1, pct);
-    bars('chain-lengths', H.chainLengths.slice(0, 5).map((v, i) => ({ label: `${i + 1} bite${i ? 's' : ''}`, value: v })), Math.max(...H.chainLengths) * 1.1, pct);
+    bars('spread', ['沒有綺彩', '1 隻綺彩', '2 隻綺彩', '3 隻綺彩', '4 隻綺彩', '5 隻以上'].map((label, i) => ({ label, value: counts[i], key: i > 0 })), Math.max(...counts) * 1.1, pct);
+    bars('chain-lengths', H.chainLengths.slice(0, 5).map((v, i) => ({ label: `${i + 1} 口`, value: v })), Math.max(...H.chainLengths) * 1.1, pct);
 
     // Strategy comparison.
     const C = G.compare;
     document.getElementById('compare').innerHTML = [
-      ['Random legal moves', C.notools.random, C.rewards.random],
-      ['Simple: consume when possible, else replace Normals, open doors', C.notools.simple, C.rewards.simple],
-      ["This guide's strategy", C.notools.tuned, C.rewards.tuned, true],
+      ['隨機合法行動', C.notools.random, C.rewards.random],
+      ['簡單玩法：能吞噬就吞噬，否則替換普通、開門', C.notools.simple, C.rewards.simple],
+      ['本指南的策略', C.notools.tuned, C.rewards.tuned, true],
     ].map(([label, a, b, key]) => `<tr${key ? ' class="is-key"' : ''}><td>${label}</td><td class="num">${two(a.rainbowsPerRun)}</td><td class="num">${two(b.rainbowsPerRun)}</td></tr>`).join('');
 
   })();

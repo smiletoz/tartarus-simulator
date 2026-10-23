@@ -196,7 +196,7 @@
 
   const $ = (id) => document.getElementById(id);
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-
+  const KIND_NAMES = { board: '盤面', instruments: '刑具選項', brushstroke: '筆觸', objective: '目標', treasure: '典獄長的珍藏', open: '開門', startover: '重新開始', chest: '寶箱', finish: '結束', manual: '手動' }; const kindName = (k) => KIND_NAMES[k] || k;
   // ---------- Settings ----------
 
   function load() {
@@ -269,11 +269,11 @@
 
   function renderAnalyzer() {
     const n = analyzers.size;
-    $('az-auto-analyzer-state').textContent = !channel ? 'This browser can’t pass pictures between tabs.'
-      : n > 1 ? `Open in ${n} tabs. Pictures go to the one you used last.`
-        : n ? 'Open in another tab. Pictures go there.'
-          : 'Not open yet.';
-    $('az-auto-analyzer').textContent = n ? 'Go to the board analyzer' : 'Open the board analyzer';
+    $('az-auto-analyzer-state').textContent = !channel ? '這個瀏覽器無法在分頁之間傳遞圖片。'
+      : n > 1 ? `已在 ${n} 個分頁中開啟。圖片會傳到你最後使用的那一個。`
+        : n ? '已在另一個分頁開啟，圖片會傳到那裡。'
+          : '還沒開啟。';
+    $('az-auto-analyzer').textContent = n ? '前往盤面分析器' : '開啟盤面分析器';
   }
 
   // ---------- The panel ----------
@@ -322,7 +322,7 @@
     const st = C.state;
     channel.postMessage({ type: 'status', from: me, log: st.log, file: st.file, window: st.window, last: lastPicture, triggers: triggerCount, detail: st.detail, hits: st.hits, lang: st.lang });
   }
-  const NO_EVENTS = 'No game events in the log yet. In the game, press Esc and click Enable Log (under Account Related), then log out and back in.';
+  const NO_EVENTS = '紀錄檔裡還沒有遊戲事件。請在遊戲中按 Esc，點「帳號相關」底下的 Enable Log（啟用日誌），然後登出再登入。';
   const seen = []; // newest first: { at, line, kind }
   let nextId = 1;
   let resumable = true; // whether the log from last time may still open
@@ -330,15 +330,15 @@
   function renderStatus(s) {
     const st = s || C.state;
     const log = st.log === 'on'
-      ? `Following ${esc(st.file || 'the log')}: ${st.lines.toLocaleString()} new lines, ${st.hits.toLocaleString()} triggers`
-      : st.log === 'starting' ? 'Opening the log…'
-        : st.log === 'gone' ? `${esc(st.file || 'The log')} isn’t there any more: it was deleted or moved. It’s followed again as soon as the game writes a new one, or drag it here again.`
-          : st.log === 'error' ? `The log can’t be read right now (${esc(st.error)}). Retrying…`
-            : st.file ? `Not following ${esc(st.file)} yet.` : 'Not connected.';
+      ? `正在追蹤 ${esc(st.file || '紀錄檔')}：${st.lines.toLocaleString()} 行新紀錄，觸發 ${st.hits.toLocaleString()} 次。`
+      : st.log === 'starting' ? '正在開啟紀錄檔…'
+        : st.log === 'gone' ? `${esc(st.file || '紀錄檔')} 不見了：可能被刪除或移走了。遊戲一寫出新的紀錄檔就會重新追蹤，你也可以再把它拖進來。`
+          : st.log === 'error' ? `目前無法讀取紀錄檔（${esc(st.error)}）。重試中…`
+            : st.file ? `尚未追蹤 ${esc(st.file)}。` : '尚未連接。';
     // The game's Enable Log is off: the log has none of the lines the
     // triggers are, so pictures come only from Take a picture now.
     const off = st.log === 'on' && st.detail === 'off'
-      ? ' <strong>The game isn’t writing the lines Auto Screenshot Mode needs: its log detail is off.</strong> <a href="#follow-enable-log">Turn on the game’s log</a> (press Esc, then Enable Log), then log out and back in.'
+      ? ' <strong>遊戲沒有寫出自動截圖模式需要的紀錄行：它的日誌細節是關閉的。</strong>請<a href="#follow-enable-log">開啟遊戲的日誌</a>（按 Esc，再按 Enable Log），然後登出再登入。'
       : '';
     // Following, but no trigger has matched yet: yellow, and its title
     // says how to turn on the game's log.
@@ -347,36 +347,36 @@
     logState.innerHTML = log + off;
     logState.classList.toggle('is-quiet', quiet);
     logState.title = quiet ? NO_EVENTS : '';
-    $('az-auto-win-state').textContent = st.window === 'on' ? `Sharing the game window${st.windowSize ? ` (${st.windowSize})` : ''}: ${st.frames} pictures taken.` : 'Not sharing.';
-    $('az-auto-log').textContent = st.log === 'on' || st.log === 'starting' ? 'Stop following'
-      : st.log === 'off' && st.file && resumable ? `Follow ${st.file} again` : 'Or choose the file';
-    $('az-auto-win').textContent = st.window === 'on' ? 'Stop sharing' : 'Share the game window';
+    $('az-auto-win-state').textContent = st.window === 'on' ? `正在分享遊戲視窗${st.windowSize ? `（${st.windowSize}）` : ''}：已截圖 ${st.frames} 張。` : '尚未分享。';
+    $('az-auto-log').textContent = st.log === 'on' || st.log === 'starting' ? '停止追蹤'
+      : st.log === 'off' && st.file && resumable ? `重新追蹤 ${st.file}` : '或選擇檔案';
+    $('az-auto-win').textContent = st.window === 'on' ? '停止分享' : '分享遊戲視窗';
     $('az-auto-note').textContent = st.note || '';
   }
 
   function renderSeen() {
-    $('az-auto-seen').innerHTML = seen.slice(0, 80).map((s) => `<li class="${s.kind ? 'is-hit' : ''}"><span class="az-auto-at">${esc(s.at.slice(-12))}</span>${s.kind ? `<span class="az-auto-kind">${esc(s.kind)}</span>` : ''}<code>${esc(s.line.replace(/^\[[^\]]*\]\[[^\]]*\]/, '').slice(0, 220))}</code></li>`).join('') || '<li class="az-auto-empty">No log lines yet.</li>';
+    $('az-auto-seen').innerHTML = seen.slice(0, 80).map((s) => `<li class="${s.kind ? 'is-hit' : ''}"><span class="az-auto-at">${esc(s.at.slice(-12))}</span>${s.kind ? `<span class="az-auto-kind">${esc(s.kind)}</span>` : ''}<code>${esc(s.line.replace(/^\[[^\]]*\]\[[^\]]*\]/, '').slice(0, 220))}</code></li>`).join('') || '<li class="az-auto-empty">還沒有紀錄行。</li>';
   }
 
   function readText(c) {
-    if (!c.frame) return `No picture: ${c.why || 'share the game window first.'}`;
+    if (!c.frame) return `沒有圖片：${c.why || '請先分享遊戲視窗。'}`;
     if (c.note) return c.note;
-    if (!c.sent) return prefs.read ? 'Sending to the analyzer…' : 'Not read (reading is off).';
-    if (!c.read) return 'Sent to the analyzer, reading…';
-    if (c.read.skipped) return 'Skipped: a newer picture came in.';
-    if (!c.read.ok) return `Not read: ${c.read.reason}`;
-    if (c.read.objective) return `The run’s objective: ${c.read.name}, set on the analyzer.`;
-    if (c.read.treasure) return `The Warden’s Treasure: ${c.asked ? 'which gift to take is on the analyzer.' : 'set on the analyzer.'}`;
-    if (c.read.pick) return `Read the instrument offer: ${c.read.names.join(', ')}${c.read.unsure ? `, ${c.read.unsure} to check` : ''}${c.read.reroll ? ', a re-roll left' : ''}${c.state === 'used' ? ', loaded as a fresh run' : ''}${c.asked ? ', advice given' : ''}.`;
-    const how = c.state === 'used' ? ', loaded' : '';
-    return `Read day ${c.read.day}${c.read.unsure ? `, ${c.read.unsure} to check` : ''} in ${(c.read.ms / 1000).toFixed(1)} s${how}${c.asked ? ', advice given' : ''}.`;
+    if (!c.sent) return prefs.read ? '正在傳給分析器…' : '沒有辨識（辨識已關閉）。';
+    if (!c.read) return '已傳給分析器，辨識中…';
+    if (c.read.skipped) return '已略過：有更新的圖片進來了。';
+    if (!c.read.ok) return `沒有讀出：${c.read.reason}`;
+    if (c.read.objective) return `這一局的目標：${c.read.name}，已在分析器上設定。`;
+    if (c.read.treasure) return `典獄長的珍藏：${c.asked ? '該拿哪個珍品，請看分析器。' : '已在分析器上設定。'}`;
+    if (c.read.pick) return `讀出刑具選項：${c.read.names.join('、')}${c.read.unsure ? `，有 ${c.read.unsure} 件待確認` : ''}${c.read.reroll ? '，還能重骰' : ''}${c.state === 'used' ? '，已載入為新的一局' : ''}${c.asked ? '，已給出建議' : ''}。`;
+    const how = c.state === 'used' ? '，已載入' : '';
+    return `讀出第 ${c.read.day} 天${c.read.unsure ? `，有 ${c.read.unsure} 格待確認` : ''}，耗時 ${(c.read.ms / 1000).toFixed(1)} 秒${how}${c.asked ? '，已給出建議' : ''}。`;
   }
 
   function renderCaptures() {
     $('az-auto-caps').innerHTML = captures.map((c) => {
-      const why = c.hits.length ? c.hits.map((h) => h.text || h.kind).slice(0, 3).join(', ') : c.kind;
-      return `<li>${c.thumb ? `<a href="${c.full || c.thumb}" target="_blank" rel="noopener"><img src="${c.thumb}" alt="The game at ${esc(c.time.toLocaleTimeString())}"></a>` : '<span class="az-auto-nothumb"></span>'}<div><p><b>${esc(c.kind)}</b> · ${esc(c.time.toLocaleTimeString())}</p><p class="field-note">${esc(why)}</p><p class="field-note">${esc(readText(c))}</p></div></li>`;
-    }).join('') || '<li class="az-auto-empty">No pictures yet. They come when the log shows a move, or when you press Take a picture now.</li>';
+      const why = c.hits.length ? c.hits.map((h) => h.text || h.kind).slice(0, 3).join(', ') : kindName(c.kind);
+      return `<li>${c.thumb ? `<a href="${c.full || c.thumb}" target="_blank" rel="noopener"><img src="${c.thumb}" alt="${esc(c.time.toLocaleTimeString())} 的遊戲畫面"></a>` : '<span class="az-auto-nothumb"></span>'}<div><p><b>${esc(kindName(c.kind))}</b> · ${esc(c.time.toLocaleTimeString())}</p><p class="field-note">${esc(why)}</p><p class="field-note">${esc(readText(c))}</p></div></li>`;
+    }).join('') || '<li class="az-auto-empty">還沒有圖片。紀錄檔顯示有動作，或你按下「立即截圖」時，圖片就會出現。</li>';
   }
 
   // ---------- Each picture ----------
@@ -458,11 +458,11 @@
     // The analyzer gets the picture first; the previews here can wait.
     if (prefs.read) {
       const to = target();
-      if (!to) c.note = 'Not read: open the board analyzer first.';
+      if (!to) c.note = '沒有辨識：請先開啟盤面分析器。';
       else {
         const pix = to.pixels ? pixels(f.frame) : null;
         const blob = pix ? null : await png(f.frame);
-        if (!pix && !blob) c.note = 'Not read: the picture couldn’t be prepared.';
+        if (!pix && !blob) c.note = '沒有辨識：無法準備這張圖片。';
         else {
           // fresh: the offer that starts a run comes with the day-0 line;
           // one that comes later (an objective's reward) doesn't.
@@ -591,7 +591,7 @@
   C.on('hit', (h) => {
     if (h.kind !== 'speed') return;
     setSpeed(!prefs.speed);
-    $('az-auto-note').textContent = `Speed-up was pressed in the game: pictures now come ${prefs.speed ? 'sooner' : 'at the usual pace'}. If that's wrong, flip “Speed-up is on in the game”.`;
+    $('az-auto-note').textContent = `遊戲中按下了加速：圖片現在會${prefs.speed ? '比較早來' : '照平常的速度來'}。如果不對，請切換「遊戲中已開啟加速」。`;
   });
   // The built-in triggers always apply, and lines saved here are added to
   // them: a list saved before a trigger was built in can't leave it out.
@@ -601,7 +601,7 @@
     const retired = new Set(RETIRED.flatMap((text) => parseRules(text).map((r) => r.pattern)));
     for (const r of parseRules(prefs.rules)) if (!retired.has(r.pattern) && !rules.some((x) => x.pattern === r.pattern)) rules.push(r);
     triggerCount = C.setRules(rules);
-    $('az-auto-rules-note').textContent = `${triggerCount} ${triggerCount === 1 ? 'trigger' : 'triggers'} in use (the built-in ones, and any added here).`;
+    $('az-auto-rules-note').textContent = `使用中的觸發規則共 ${triggerCount} 條（內建規則，加上這裡新增的）。`;
     tell();
   };
   applyRules();
@@ -621,7 +621,7 @@
   $('az-auto-watch').addEventListener('change', (e) => {
     prefs.watch = e.target.value;
     save();
-    $('az-auto-watch-note').textContent = C.setWatch(prefs.watch) ? '' : 'That pattern isn’t valid.';
+    $('az-auto-watch-note').textContent = C.setWatch(prefs.watch) ? '' : '這個規則的格式不正確。';
   });
   $('az-auto-read').addEventListener('change', (e) => {
     prefs.read = e.target.checked;
@@ -637,13 +637,13 @@
         // and the file picker may not (Program Files).
         resumable = false;
         renderStatus();
-        $('az-auto-note').textContent = `The browser didn’t open ${st.file} again. Drag it onto the box once more.`;
+        $('az-auto-note').textContent = `瀏覽器沒有重新開啟 ${st.file}。請再把它拖到框裡一次。`;
       } else await C.connectLog();
     } catch (e) {
       // The browser doesn't say when it refused a file under Program Files:
       // the picker just ends, as if cancelled.
       $('az-auto-note').textContent = e && e.name === 'AbortError'
-        ? 'No file chosen. If the browser said the folder “contains system files”, drag UE_game.log onto the box instead: that works there too.'
+        ? '沒有選擇檔案。如果瀏覽器說該資料夾「包含系統檔案」，請改把 UE_game.log 拖到框裡：那裡的檔案用拖的也可以。'
         : (e && e.message) || String(e);
     }
   });
@@ -703,7 +703,7 @@
     renderSeen();
   });
 
-  if (!C.supported.log || !C.supported.window) $('az-auto-note').textContent = 'This browser can’t follow the game. Use Chrome or Edge on a PC.';
+  if (!C.supported.log || !C.supported.window) $('az-auto-note').textContent = '這個瀏覽器無法追蹤遊戲。請使用電腦上的 Chrome 或 Edge。';
   renderStatus();
   renderSeen();
   renderCaptures();

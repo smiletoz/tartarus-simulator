@@ -1,0 +1,75 @@
+# 跟上原作者的更新：抓原作者最新版，套用 zh-TW/patches 的繁中翻譯，提交到這個 repo。
+# 每天自動跑一次，也可以在 Actions 分頁手動執行。
+# 不要用 GitHub 的「Sync fork」按鈕：這個 repo 的檔案是翻譯後的版本，直接合併會衝突。
+# 某段翻譯對不上（原作者改了原文）時仍會提交，那幾句暫時顯示英文；詳情看這次執行的摘要。
+name: Sync upstream
+
+on:
+  schedule:
+    - cron: '40 20 * * *' # 台灣時間每天 04:40
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-upstream
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          path: fork
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      - name: 下載原作者最新版
+        run: |
+          git clone --depth 1 https://github.com/blahdot3h/tartarus-simulator.git upstream
+          echo "UPSTREAM_SHA=$(git -C upstream rev-parse HEAD)" >> "$GITHUB_ENV"
+
+      - name: 套用翻譯
+        id: apply
+        run: |
+          set +e
+          node fork/zh-TW/apply.js upstream out > apply.log 2>&1
+          echo "code=$?" >> "$GITHUB_OUTPUT"
+          {
+            echo "## 套用結果（原作者 ${UPSTREAM_SHA:0:7}）"
+            echo '```'
+            cat apply.log
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          test -d out/js || exit 1
+
+      - name: 組合並提交
+        run: |
+          # 本 repo 自己的檔案：翻譯工具與工作流程（原作者的工作流程不帶過來）
+          rm -rf out/.github/workflows
+          mkdir -p out/.github
+          cp -r fork/zh-TW out/zh-TW
+          cp -r fork/.github/workflows out/.github/workflows
+          echo "$UPSTREAM_SHA" > out/zh-TW/UPSTREAM.txt
+          rsync -a --delete --exclude .git out/ fork/
+          cd fork
+          git config user.name "github-actions[bot]"
+          git config user.email "41898299+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "沒有變更" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          MSG="同步原作者 ${UPSTREAM_SHA:0:7}"
+          if [ "${{ steps.apply.outputs.code }}" != "0" ]; then MSG="$MSG（部分翻譯需更新）"; fi
+          git commit -m "$MSG"
+          git push
+          echo "已提交：$MSG" >> "$GITHUB_STEP_SUMMARY"
+          if git diff --name-only HEAD~1 HEAD | grep -q '^desktop/'; then
+            echo "Windows 程式有變更，需要新版時到 Actions 執行 Build desktop app。" >> "$GITHUB_STEP_SUMMARY"
+          fi

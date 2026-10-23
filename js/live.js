@@ -187,7 +187,7 @@
 
   // Everything this browser has shared (or is about to), for the player to see.
   function download() {
-    const data = { about: 'Boards this browser shared with the Tartarus Simulator odds study.', client: state.client, snapshots: state.history };
+    const data = { about: '此瀏覽器分享給塔羅斯模擬器機率研究的盤面。', client: state.client, snapshots: state.history };
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);

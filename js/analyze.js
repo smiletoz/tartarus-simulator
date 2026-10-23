@@ -30,7 +30,7 @@
     const tips = window.TartarusTips;
     if (!box || !tips) return;
     const names = {};
-    for (const id of T.TOOL_IDS) names[id] = T.toolName(id).split(':')[0];
+    for (const id of T.TOOL_IDS) names[id] = T.toolName(id).split(/[:：]/)[0];
     for (const id of Object.keys(T.START_EVENTS || {})) names[id] = T.START_EVENTS[id].name;
     const notes = tips.notesFor(model.tools || [], model.startEvent, names);
     box.hidden = !notes.length;
@@ -69,7 +69,9 @@
   const CLEAR_SE = 3;
   const CHECK_MS = 700;
   const STEPS = ['patrol', 'manage', 'office', 'chain', 'event', 'ratway', 'choice'];
-  const STEP_NAMES = { patrol: 'Which door to patrol', manage: 'After the patrol', office: 'Instigate or Bestow', chain: 'A meal to pick, or Cancel', event: 'A special event', ratway: 'Sewer Ratway: any cell', choice: 'A tool or gift' };
+  const STEP_NAMES = { patrol: '選擇要巡視的門', manage: '巡視之後', office: '煽動或賞賜', chain: '選一個獵物，或取消', event: '獄中事變', ratway: '暗渠鼠道：任選牢房', choice: '刑具或珍藏' };
+  // 目標的英文名稱，給 OCR 比對遊戲英文畫面用（engine 的 name 是中文）。
+  const OBJECTIVE_EN = { king: 'King of the Caged', walk: 'Prison Walk', consume: 'Survival of the Fittest', incident: 'Undercurrents', doors: 'Behind Cell Doors', other: 'Another objective' };
   const BEAST_KEYS = { m: 'mammoth', l: 'lion', w: 'wolf', r: 'rat' };
   const TOP_TIER = T.SUPREME; // Rainbows leave for the vault, so cells hold Normal to Supreme
 
@@ -263,11 +265,11 @@
       const lion = st.cells[n].inmate;
       const target = st.cells[c.prey.cell];
       if (!target || !target.inmate || !T.canEat(st, lion, target.inmate)) {
-        problems.push(`The prey mark from cell ${L(n)} needs a same-rarity meal for the Lion in cell ${L(c.prey.cell)}.`);
+        problems.push(`${L(n)} 號牢房的獵物標記需要指向 ${L(c.prey.cell)} 號牢房中、和這隻狂獅同稀有度的獵物。`);
         return;
       }
       if (st.prey.some((l) => [l.lion, l.prey].includes(target.inmate.id) || [l.lion, l.prey].includes(lion.id))) {
-        problems.push(`Cell ${L(c.prey.cell)} already has a prey mark.`);
+        problems.push(`${L(c.prey.cell)} 號牢房已經有獵物標記了。`);
         return;
       }
       st.prey.push({ lion: lion.id, prey: target.inmate.id, preyBeast: target.inmate.beast, rounds: clamp(toInt(c.prey.rounds, 1), 1, 9), next: st.day + 1 });
@@ -298,7 +300,7 @@
         st.destinations = [...new Set(m.dest)]
           .filter((n) => Number.isInteger(n) && n >= 0 && n < T.CELL_COUNT && n !== st.position)
           .sort((a, b) => T.stepsBetween(st.position, a) - T.stepsBetween(st.position, b));
-        if (!st.destinations.length) problems.push("Mark today's doors: tick them under “Which door to patrol”, or select a cell and press Today's door.");
+        if (!st.destinations.length) problems.push('請標出今天的門：在「選擇目的地」下點亮它們，或選一間牢房後按「今天的門」。');
         // Doors are always among the cells just ahead of the warden, clockwise.
         // One outside them means the warden (or the door) is in the wrong
         // cell, and the advice would send the warden most of the way round.
@@ -313,8 +315,8 @@
         if (outside.length && !tutorial) {
           const fits = [];
           for (let w = 0; w < T.CELL_COUNT; w++) if (doors.every((n) => reach(w, n))) fits.push(L(w));
-          const where = fits.length > 1 ? `${fits.slice(0, -1).join(', ')} or ${fits[fits.length - 1]}` : fits[0];
-          problems.push(`Doors are always among the ${range} cells clockwise ahead of the warden, and ${outside.length === 1 ? `cell ${L(outside[0])} isn't` : `cells ${outside.map(L).join(' and ')} aren't`}: the warden is set in cell ${L(st.position)}. ${fits.length ? `Check the warden's cell: with these doors it's in cell ${where}.` : "No single cell has all these doors in reach, so check the doors too."}`);
+          const where = fits.length > 1 ? `${fits.slice(0, -1).join('、')} 或 ${fits[fits.length - 1]}` : fits[0];
+          problems.push(`門一定在典獄長順時針前方的 ${range} 間牢房之內，但 ${outside.map(L).join('、')} 號牢房不在範圍內：典獄長目前設在 ${L(st.position)} 號牢房。${fits.length ? `請檢查典獄長的位置：照這些門來看，典獄長應該在 ${where} 號牢房。` : '沒有任何一間牢房能同時搆到這些門，所以也請檢查門。'}`);
         }
         break;
       }
@@ -328,7 +330,7 @@
       }
       case 'event': {
         const here = st.cells[st.position];
-        if (!here || here.sealed || !here.inmate) problems.push("An event needs the inmate that came out of the door in the warden's cell: put the warden there and set its inmate.");
+        if (!here || here.sealed || !here.inmate) problems.push('獄中事變需要從門後出來的囚犯在典獄長所在的牢房：把典獄長放在那裡，並設定那名囚犯。');
         st.phase = 'event';
         st.event = { kind: T.EVENTS[m.eventKind] ? m.eventKind : 'chain', cell: st.position };
         break;
@@ -337,7 +339,7 @@
         usedToday();
         const kind = m.choice.kind === 'gift' ? 'gift' : 'tool';
         const options = kind === 'gift' ? T.GIFT_IDS.slice() : [...new Set(m.choice.options)].filter((id) => T.TOOLS[id] && !st.tools.includes(id));
-        if (!options.length) problems.push('Pick the tools on offer.');
+        if (!options.length) problems.push('請選出可選的刑具。');
         st.pending = [{ kind, options, rerolls: kind === 'tool' ? m.choice.rerolls || 0 : 0 }];
         // The Treasure's picks still waiting after this one (Opulence).
         if (kind === 'gift') for (let k = 1; k < clamp(toInt(m.choice.picks, 1), 1, 30); k++) st.pending.push({ kind, options: options.slice(), rerolls: 0 });
@@ -350,12 +352,12 @@
         st.used.devour = 1;
         const here = st.cells[st.position];
         if (!here || here.sealed || !here.inmate) {
-          problems.push("A chain needs its eater in the warden's cell: put the warden there and set the inmate as it is now.");
+          problems.push('連鎖需要吞噬者在典獄長所在的牢房：把典獄長放在那裡，並照現在的樣子設定那名囚犯。');
           break;
         }
         st.chaining = { eater: here.inmate.id, at: 0, bites: [] };
         if (!T.chainOptions(st).length) {
-          problems.push("Your game asks for a meal only when the chaining inmate has one to eat. Check the board: it can't find a meal for it.");
+          problems.push('只有在連鎖中的囚犯有東西可吃時，遊戲才會要你選獵物。請檢查盤面：目前找不到牠能吃的獵物。');
         }
         break;
       }
@@ -364,7 +366,7 @@
         // in the office isn't enough: the run starts there without them, and
         // they're gone once one is taken.
         usedToday();
-        if (st.position !== T.OFFICE) problems.push('Instigate and Bestow come with the warden in the office: put the warden in cell 01.');
+        if (st.position !== T.OFFICE) problems.push('煽動和賞賜只在典獄長位於審訊室時出現：把典獄長放在 01 號牢房。');
         st.phase = 'office';
         break;
       }
@@ -482,7 +484,7 @@
 
   // "the Rusty Saw" or "the Rusty Saw and the Forged Key", for the notes
   // after a screenshot.
-  const unsureTools = () => (shotTools.length ? ` The reader wasn’t sure of ${shotTools.map((n) => `the ${n}`).join(' and ')}: check your instruments too.` : '');
+  const unsureTools = () => (shotTools.length ? `辨識器對${shotTools.map((n) => `「${n}」`).join('和')}沒有把握：也請檢查你的刑具。` : '');
 
   function changed() {
     save();
@@ -732,7 +734,7 @@
     const rec = bestMove();
     const rd = reader.reading;
     if (!rec || !rec.action || rec.action.type !== 'end' || !rd || !rd.chain || model.step !== 'manage') return rec;
-    return Object.assign({}, rec, { label: 'Cancel the consume, then end the day', why: `Your game shows a meal pick, where a meal or Cancel are the choices. ${rec.why || ''}`.trim() });
+    return Object.assign({}, rec, { label: '取消吞噬，然後結束這一天', why: `遊戲正在選獵物，能選的只有獵物或取消。${rec.why || ''}`.trim() });
   }
 
   // The strategy's instant pick, unless the live check finds a clearly better
@@ -746,16 +748,16 @@
     // playouts each; with fewer, the strategy's own pick stands (f5's review).
     const live = r && ranked.length > 1 && ((r.done && !r.early) || r.rounds >= LIVE_MIN) ? ranked[0] : null;
     const mine = pick && ranked.find((o) => S.sameAction(o.action, pick.action));
-    if (!live) return pick ? Object.assign({ live: false }, pick, { option: mine || null }) : ranked.length === 1 ? { action: ranked[0].action, label: ranked[0].label, why: 'It’s the only move here.', live: true, option: ranked[0] } : null;
+    if (!live) return pick ? Object.assign({ live: false }, pick, { option: mine || null }) : ranked.length === 1 ? { action: ranked[0].action, label: ranked[0].label, why: '這是這裡唯一的動作。', live: true, option: ranked[0] } : null;
     // A better move must also win by a margin worth playing for: shared dice
     // make the paired margin narrow, and a near tie flipped the advice from
     // one screen to the next (report 337: End 2.85 against the strategy's
     // consume at 2.82).
     if (mine && (mine === live || live.mean - mine.mean <= Math.max(1.96 * mine.gapSe, SWITCH_MIN))) {
-      const why = mine === live ? pick.why : `${pick.why} The live check rates it about equal to the best.`;
+      const why = mine === live ? pick.why : `${pick.why}即時檢驗認為它和最佳動作差不多。`;
       return Object.assign({ live: true, rounds: r.rounds }, pick, { label: mine.label, why, option: mine });
     }
-    return { action: live.action, label: live.label, why: `The playouts found a better move than the strategy’s pick${pick ? ` (${pick.label})` : ''}.`, live: true, rounds: r.rounds, option: live };
+    return { action: live.action, label: live.label, why: `模擬找到了比策略首選${pick ? `（${pick.label}）` : ''}更好的動作。`, live: true, rounds: r.rounds, option: live };
   }
 
   function fmtOption(goal, o, st) {
@@ -764,7 +766,7 @@
 
   function expectText(goal, o, st) {
     if (!o) return '';
-    return `Expected: ${o.mean.toFixed(2)} Rainbows in the vault by the end of day ${st.maxDays}.`;
+    return `預期：到第 ${st.maxDays} 天結束時，收容區約有 ${o.mean.toFixed(2)} 名綺彩囚犯。`;
   }
 
   // ---------- Playing a move here ----------
@@ -791,10 +793,10 @@
     try {
       result = S.apply(st, action);
     } catch (e) {
-      result = { ok: false, reason: 'That move hit an error and was not played.' };
+      result = { ok: false, reason: '這個動作發生錯誤，沒有執行。' };
     }
     if (!result || !result.ok) {
-      showProblems([result ? result.reason : 'That move could not be played.']);
+      showProblems([result ? result.reason : '這個動作無法執行。']);
       return;
     }
     let more = 0;
@@ -823,13 +825,13 @@
     if (applied.newDay && model.step === 'patrol') filled.push('dest');
     if (model.step === 'event') filled.push('event');
     if (model.step === 'choice' && model.choice.kind !== 'gift') filled.push('choice');
-    via = { action, label: toNextDay ? `${label}, then the rest of day ${startDay} by the strategy`.slice(0, 120) : label, filled, touched: new Set() };
+    via = { action, label: toNextDay ? `${label}，接著依策略玩完第 ${startDay} 天`.slice(0, 120) : label, filled, touched: new Set() };
     solver.st = null;
     solver.id += 1;
     showProblems([]);
     changed();
     $('az-applied').scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-    if (toNextDay && !model.ended) toast(`Day ${model.day}. Paste a screenshot of your new day (Ctrl+V) to load it, or fix the cells marked Check.`, 'ok', [{ id: 'pick', label: 'Choose a screenshot', primary: true }]);
+    if (toNextDay && !model.ended) toast(`第 ${model.day} 天。貼上新一天的截圖（Ctrl+V）來載入，或修正標記「檢查」的牢房。`, 'ok', [{ id: 'pick', label: '選擇截圖', primary: true }]);
   }
 
   function labelFor(action) {
@@ -890,7 +892,7 @@
     pick.className = 'az-pick';
     pick.hidden = true;
     pick.setAttribute('role', 'dialog');
-    pick.setAttribute('aria-label', "What's in this cell");
+    pick.setAttribute('aria-label', '這間牢房裡有什麼');
     pick.innerHTML = pickHTML();
     board.appendChild(pick);
   }
@@ -902,29 +904,29 @@
     const row = (label, cls, items) => `<div class="az-pick-row"><span class="az-pick-label${cls ? ` ${cls}` : ''}">${esc(label)}</span>${items.join('')}</div>`;
     return [
       ...tiers.map((name, t) => row(name, `t${t}`, T.BEASTS.map((b) => btn(`inmate:${b}:${t}`, `${name} ${T.beastName(b)}`, B.PORTRAITS[b], `t${t}`)))),
-      row('Locked', '', [
-        btn('sealed', 'Locked door', B.MARKS.sealed),
-        btn('sealed:unknown', 'Locked door with an event (kind unknown)', B.MARKS.event),
-        btn('sealed:chain', 'Locked door with a Chain reaction', B.MARKS.chain),
-        btn('sealed:execution', 'Locked door with an Execution', B.MARKS.execution),
-        btn('sealed:trickster', 'Locked door with Behind Closed Doors', B.MARKS.trickster),
-        btn('sealed:appetite', 'Locked door with Ravenous Appetite', B.MARKS.appetite),
-        btn('sealed:convict', 'Locked door with High-Risk Convict', B.MARKS.convict),
-        btn('sealed:crow', 'Locked door with Crow Whispers', B.MARKS.crow),
-        btn('sealed:freedom', 'Locked door with Taste of Freedom', B.MARKS.freedom),
-        btn('sealed:portion', 'Locked door with Extra Portion', B.MARKS.portion),
-        btn('sealed:usurp1', 'Locked door with Usurpation I', B.MARKS.usurp1),
-        btn('sealed:usurp2', 'Locked door with Usurpation II', B.MARKS.usurp2),
-        btn('sealed:usurp3', 'Locked door with Usurpation III', B.MARKS.usurp3),
-        btn('sealed:usurp4', 'Locked door with Usurpation IV', B.MARKS.usurp4),
-        btn('sealed:ratway', 'Locked door with the Sewer Ratway', B.MARKS.ratway),
-        btn('sealed:hunt', 'Locked door with the "Treasure" Hunt', B.MARKS.hunt),
-        btn('dark', 'Locked door the "Treasure" Hunt left dark: Rare or better inside', B.MARKS.dark, 't2'),
-        btn('scouted', "Scouted door (Warden's Scales): set its beast and rarity in the panel below", B.MARKS.scouted),
+      row('上鎖', '', [
+        btn('sealed', '上鎖的門', B.MARKS.sealed),
+        btn('sealed:unknown', '門後有獄中事變（種類不明）', B.MARKS.event),
+        btn('sealed:chain', '門後有連鎖反應', B.MARKS.chain),
+        btn('sealed:execution', '門後有處刑效率', B.MARKS.execution),
+        btn('sealed:trickster', '門後有暗箱操作', B.MARKS.trickster),
+        btn('sealed:appetite', '門後有飢腸轆轆', B.MARKS.appetite),
+        btn('sealed:convict', '門後有高危罪犯', B.MARKS.convict),
+        btn('sealed:crow', '門後有鴉之低語', B.MARKS.crow),
+        btn('sealed:freedom', '門後有自由的滋味', B.MARKS.freedom),
+        btn('sealed:portion', '門後有「有福同享」', B.MARKS.portion),
+        btn('sealed:usurp1', '門後有僭越 I', B.MARKS.usurp1),
+        btn('sealed:usurp2', '門後有僭越 II', B.MARKS.usurp2),
+        btn('sealed:usurp3', '門後有僭越 III', B.MARKS.usurp3),
+        btn('sealed:usurp4', '門後有僭越 IV', B.MARKS.usurp4),
+        btn('sealed:ratway', '門後有暗渠鼠道', B.MARKS.ratway),
+        btn('sealed:hunt', '門後有尋「寶」', B.MARKS.hunt),
+        btn('dark', '尋「寶」後仍暗著的門：裡面是稀有或更高', B.MARKS.dark, 't2'),
+        btn('scouted', '已偵察的門（典獄官的天平）：在下方面板設定野獸和稀有度', B.MARKS.scouted),
       ]),
-      row('Other', '', [btn('nest', 'Rat nest', B.MARKS.nest), btn('empty', 'Empty cell', B.MARKS.empty), btn('ivory', 'Tusk mark: toggles on the inmate here', B.MARKS.ivory)]),
-      row('Scratched', '', tiers.map((name, t) => btn(`scratch:${t}`, `Scratched door showing ${name}`, B.MARKS.scratch, `t${t}`))),
-      row('Rarity shown', '', tiers.map((name, t) => btn(`revealed:${t}`, `Locked door showing a ${name} inside, beast unknown (a "?" portrait)`, B.MARKS.revealed, `t${t}`))),
+      row('其他', '', [btn('nest', '鼠巢', B.MARKS.nest), btn('empty', '空牢房', B.MARKS.empty), btn('ivory', '象牙標記：切換這裡囚犯的標記', B.MARKS.ivory)]),
+      row('劃痕', '', tiers.map((name, t) => btn(`scratch:${t}`, `有劃痕的門，顯示${name}`, B.MARKS.scratch, `t${t}`))),
+      row('顯示稀有度', '', tiers.map((name, t) => btn(`revealed:${t}`, `上鎖的門，顯示裡面是${name}，野獸不明（「?」頭像）`, B.MARKS.revealed, `t${t}`))),
     ].join('');
   }
 
@@ -962,17 +964,17 @@
       const mc = model.cells[cell.n];
       // Name the event's kind when the player knows it.
       let badges = p.badges;
-      if (mc.event === 'chain') badges = badges.replace('>Event<', '>Chain<');
-      else if (mc.event === 'execution') badges = badges.replace('>Event<', '>Execution<');
-      else if (mc.event === 'trickster') badges = badges.replace('>Event<', '>Closed Doors<');
-      else if (mc.event === 'appetite') badges = badges.replace('>Event<', '>Appetite<');
-      else if (mc.event === 'convict') badges = badges.replace('>Event<', '>Convict<');
-      else if (mc.event === 'crow') badges = badges.replace('>Event<', '>Crow<');
-      else if (mc.event === 'freedom') badges = badges.replace('>Event<', '>Freedom<');
-      else if (mc.event === 'usurp1') badges = badges.replace('>Event<', '>Usurp. I<');
-      else if (mc.event === 'portion') badges = badges.replace('>Event<', '>Portion<');
-      else if (mc.event === 'usurp2') badges = badges.replace('>Event<', '>Usurp. II<');
-      else if (mc.event === 'hunt') badges = badges.replace('>Event<', '>Hunt<');
+      if (mc.event === 'chain') badges = badges.replace('>事變<', '>連鎖<');
+      else if (mc.event === 'execution') badges = badges.replace('>事變<', '>處刑<');
+      else if (mc.event === 'trickster') badges = badges.replace('>事變<', '>暗箱<');
+      else if (mc.event === 'appetite') badges = badges.replace('>事變<', '>飢腸<');
+      else if (mc.event === 'convict') badges = badges.replace('>事變<', '>罪犯<');
+      else if (mc.event === 'crow') badges = badges.replace('>事變<', '>鴉語<');
+      else if (mc.event === 'freedom') badges = badges.replace('>事變<', '>自由<');
+      else if (mc.event === 'usurp1') badges = badges.replace('>事變<', '>僭越 I<');
+      else if (mc.event === 'portion') badges = badges.replace('>事變<', '>同享<');
+      else if (mc.event === 'usurp2') badges = badges.replace('>事變<', '>僭越 II<');
+      else if (mc.event === 'hunt') badges = badges.replace('>事變<', '>尋寶<');
       if (cell.n === selected) p.cls.push('is-selected');
       if (doors.has(cell.n)) p.cls.push('is-dest');
       if (flags.has(cell.n)) p.cls.push('is-check');
@@ -982,9 +984,9 @@
       setHTML(el.hint, p.hint);
       setHTML(el.badges, badges);
       setHTML(el.warden, p.warden ? B.LANTERN : '');
-      const tag = best.has(cell.n) ? (a.type === 'swap' ? 'Replace' : a.type === 'devour' ? 'Eat' : 'Go') : flags.has(cell.n) ? 'Check' : doors.has(cell.n) ? 'Door' : '';
+      const tag = best.has(cell.n) ? (a.type === 'swap' ? '替換' : a.type === 'devour' ? '吃' : '去') : flags.has(cell.n) ? '檢查' : doors.has(cell.n) ? '門' : '';
       el.tag.textContent = tag;
-      el.btn.setAttribute('aria-label', `${p.label}${doors.has(cell.n) ? ". One of today's doors" : ''}${tag === 'Check' ? '. Changed by the simulator: check it against your game' : ''}`);
+      el.btn.setAttribute('aria-label', `${p.label}${doors.has(cell.n) ? '。今天的門之一' : ''}${tag === '檢查' ? '。模擬器改動過：請和遊戲比對' : ''}`);
       el.btn.setAttribute('aria-pressed', String(cell.n === selected));
     }
   }
@@ -995,25 +997,25 @@
     let title;
     let detail;
     if (model.treasureWait && !reading) {
-      title = 'The Warden’s Treasure: check the board first';
-      detail = 'Press View Prison Status in the game, wait a second on the board, then return. Auto Screenshot Mode reads the board while you look.';
+      title = '典獄長的珍藏：請先確認盤面';
+      detail = '在遊戲中按「查看監獄狀態」，在盤面停留一秒再回來。自動截圖模式會在你查看時讀取盤面。';
     } else if (reading) {
-      title = 'Reading the new picture…';
-      detail = 'The advice follows as soon as it’s read.';
+      title = '正在辨識新畫面…';
+      detail = '辨識完成後馬上給出建議。';
     } else if (working) {
       const c = checking();
-      title = 'Working it out…';
-      detail = `${T.plural(c.moves.length, 'move')}, ${c.each.toLocaleString()} games each: ${c.played.toLocaleString()} of ${c.total.toLocaleString()} played`;
+      title = '計算中…';
+      detail = `${T.plural(c.moves.length, '個動作')}，每個 ${c.each.toLocaleString()} 局：已模擬 ${c.played.toLocaleString()} / ${c.total.toLocaleString()}`;
     } else if (rec) {
       title = rec.label;
-      detail = rec.option ? expectText(solver.result.goal, rec.option, solver.st) : 'Checking with playouts…';
+      detail = rec.option ? expectText(solver.result.goal, rec.option, solver.st) : '正在用模擬檢驗…';
     } else {
-      const day = `Day ${model.day} of ${model.maxDays}`;
-      title = 'Your board';
-      detail = `${day} · ${STEP_NAMES[model.step]} · warden ${model.warden === T.OFFICE ? 'in the office' : `at cell ${L(model.warden)}`}`;
+      const day = `第 ${model.day} / ${model.maxDays} 天`;
+      title = '你的盤面';
+      detail = `${day} · ${STEP_NAMES[model.step]} · 典獄長${model.warden === T.OFFICE ? '在審訊室' : `在 ${L(model.warden)} 號牢房`}`;
     }
     const busy = reading || working;
-    setHTML($('az-court'), `<div class="decision${rec && !busy ? ' az-court-rec' : ''}${busy ? ' az-court-busy' : ''}"><div class="decision-text"><p class="decision-title">${busy ? SPIN : rec ? '<span class="az-court-eyebrow">Do this</span>' : ''}${esc(title)}</p><p class="decision-detail">${esc(detail)}</p></div></div>`);
+    setHTML($('az-court'), `<div class="decision${rec && !busy ? ' az-court-rec' : ''}${busy ? ' az-court-busy' : ''}"><div class="decision-text"><p class="decision-title">${busy ? SPIN : rec ? '<span class="az-court-eyebrow">這樣做</span>' : ''}${esc(title)}</p><p class="decision-detail">${esc(detail)}</p></div></div>`);
   }
 
   function pressGroup(id, value) {
@@ -1024,7 +1026,7 @@
     const n = selected;
     const c = model.cells[n];
     const office = n === T.OFFICE;
-    $('az-cell-title').textContent = office ? 'Cell 01 · the office' : `Cell ${L(n)}`;
+    $('az-cell-title').textContent = office ? '01 號牢房 · 審訊室' : `${L(n)} 號牢房`;
     $('az-warden').setAttribute('aria-pressed', String(model.warden === n));
     $('az-door').hidden = n === model.warden || model.step !== 'patrol';
     $('az-door').setAttribute('aria-pressed', String(model.dest.includes(n)));
@@ -1038,7 +1040,7 @@
     const tiered = inmate || scouted || c.kind === 'scratch' || c.kind === 'revealed';
     $('az-beast-field').hidden = !(inmate || scouted);
     $('az-tier-field').hidden = !tiered;
-    $('az-tier-legend').textContent = inmate ? 'Rarity' : scouted ? 'Rarity the scales showed' : 'Rarity you can see on the door';
+    $('az-tier-legend').textContent = inmate ? '稀有度' : scouted ? '典獄官的天平顯示的稀有度' : '門上看得到的稀有度';
     const tier = tiered ? clamp(toInt(c.tier, 0), 0, TOP_TIER) : 0;
     for (const b of $('az-beasts').querySelectorAll('button')) {
       b.className = `az-beast t${tier}`;
@@ -1054,16 +1056,16 @@
       if (lion) {
         const meals = st.cells.filter((o) => o.n !== n && !o.sealed && o.inmate && T.canEat(st, st.cells[n].inmate, o.inmate));
         const current = c.prey ? c.prey.cell : null;
-        $('az-prey').innerHTML = `<option value="">No prey mark</option>${meals.map((o) => `<option value="${o.n}"${o.n === current ? ' selected' : ''}>Cell ${L(o.n)}: ${esc(T.describe(o.inmate))}</option>`).join('')}`;
+        $('az-prey').innerHTML = `<option value="">無獵物標記</option>${meals.map((o) => `<option value="${o.n}"${o.n === current ? ' selected' : ''}>${L(o.n)} 號牢房：${esc(T.describe(o.inmate))}</option>`).join('')}`;
         $('az-prey-rounds').value = String(c.prey ? c.prey.rounds : T.DEFAULT_PARAMS.preyRounds);
         $('az-prey-rounds').closest('.field').hidden = !c.prey;
       }
       const hunter = model.cells.findIndex((o) => o.kind === 'inmate' && o.beast === 'lion' && o.prey && o.prey.cell === n);
       $('az-prey-of').hidden = hunter < 0;
-      if (hunter >= 0) $('az-prey-of').textContent = `Marked as prey by the Lion in cell ${L(hunter)}: both rise a tier each morning for ${T.plural(model.cells[hunter].prey.rounds, 'more morning')}.`;
+      if (hunter >= 0) $('az-prey-of').textContent = `被 ${L(hunter)} 號牢房的狂獅標記為獵物：接下來${T.plural(model.cells[hunter].prey.rounds, '個早上')}，兩者每天早上各升一階。`;
     }
     $('az-event-field').hidden = !(c.kind === 'sealed' || c.kind === 'scratch' || c.kind === 'revealed' || c.kind === 'inmate' || scouted);
-    $('az-event-field').querySelector('legend').textContent = c.kind === 'inmate' ? 'Event in the cell (a "!" beside the inmate)' : 'Event behind the door';
+    $('az-event-field').querySelector('legend').textContent = c.kind === 'inmate' ? '牢房裡的獄中事變（囚犯旁有「!」）' : '門後的獄中事變';
     pressGroup('az-event', c.event || 'none');
     $('az-nest-field').hidden = c.kind !== 'nest';
     if (c.kind === 'nest') $('az-nest-due').value = String(toInt(c.due, model.day + 2));
@@ -1075,7 +1077,7 @@
     const riot = $('az-riot');
     riot.max = String(maxDays - 1);
     if (document.activeElement !== riot) riot.value = String(maxDays - clamp(toInt(model.day, 1), 1, maxDays));
-    $('az-dayof').textContent = `Day ${model.day} of ${maxDays}`;
+    $('az-dayof').textContent = `第 ${model.day} / ${maxDays} 天`;
     $('az-days').value = String(maxDays);
     pressGroup('az-step', model.step);
     for (const box of document.querySelectorAll('.az-stepbox')) {
@@ -1089,7 +1091,7 @@
     }
     const doors = [...new Set([...ahead, ...model.dest])];
     setHTML($('az-doors'), doors
-      .map((n) => `<button type="button" class="az-doorcard" data-door="${n}" aria-pressed="${model.dest.includes(n)}"><span class="az-doorcard-arch" aria-hidden="true"></span><span class="az-doorcard-go">${n === T.OFFICE ? 'Go to Interrogation Room' : `Go to Cell ${n + 1}`}</span><small>${esc(cellShort(model.cells[n]))}</small></button>`)
+      .map((n) => `<button type="button" class="az-doorcard" data-door="${n}" aria-pressed="${model.dest.includes(n)}"><span class="az-doorcard-arch" aria-hidden="true"></span><span class="az-doorcard-go">${n === T.OFFICE ? '前往審訊室' : `前往 ${n + 1} 號牢房`}</span><small>${esc(cellShort(model.cells[n]))}</small></button>`)
       .join(''));
     $('az-devoured').checked = !!model.devourUsed;
     $('az-swapped').checked = !!model.swapUsed;
@@ -1126,11 +1128,11 @@
     const card = T.START_EVENTS && T.START_EVENTS[model.startEvent];
     $('az-start-event').value = card ? model.startEvent : 'none';
     $('az-start-text').hidden = !card;
-    $('az-start-text').textContent = card ? `${card.text}.` : '';
+    $('az-start-text').textContent = card ? `${card.text}。` : '';
     renderPlayNotes();
     const goalNeed = T.OBJECTIVES[goal].need || 0;
     $('az-walk-wrap').hidden = !goalNeed;
-    $('az-walk-unit').textContent = T.OBJECTIVES[goal].unit || 'Progress';
+    $('az-walk-unit').textContent = T.OBJECTIVES[goal].unit || '進度';
     $('az-walk-need').textContent = `/${goalNeed}`;
     $('az-walk').max = String(goalNeed);
     if (document.activeElement !== $('az-walk')) $('az-walk').value = String(model.walkTiles);
@@ -1140,38 +1142,38 @@
     setHTML($('az-vault'), Array.from({ length: slots }, (_, i) => {
       const beast = model.vault[i];
       return beast
-        ? `<button type="button" class="az-hex is-filled t5" data-unvault="${i}" title="Chromatic ${esc(T.beastName(beast))}: click to remove">${B.PORTRAITS[beast]}</button>`
+        ? `<button type="button" class="az-hex is-filled t5" data-unvault="${i}" title="綺彩${esc(T.beastName(beast))}：點一下移除">${B.PORTRAITS[beast]}</button>`
         : '<span class="az-hex" aria-hidden="true"></span>';
     }).join(''));
   }
 
   function cellShort(c) {
     if (!c) return '';
-    if (c.kind === 'inmate') return `${T.tierName(c.tier).slice(0, 3)} ${T.beastName(c.beast)}`;
-    if (c.kind === 'scratch') return `${T.tierName(c.tier).slice(0, 3)} door`;
-    if (c.kind === 'revealed') return `${T.tierName(c.tier).slice(0, 3)} inside`;
-    if (c.kind === 'scouted') return `Scouted ${T.tierName(c.tier).slice(0, 3)} ${T.beastName(c.beast)}`;
-    if (c.kind === 'nest') return 'Nest';
-    if (c.kind === 'empty') return 'Empty';
-    if (c.kind === 'office') return 'Office';
-    return c.event ? 'Event' : 'Sealed';
+    if (c.kind === 'inmate') return `${T.tierName(c.tier)}${T.beastName(c.beast)}`;
+    if (c.kind === 'scratch') return `${T.tierName(c.tier)}的門`;
+    if (c.kind === 'revealed') return `裡面是${T.tierName(c.tier)}`;
+    if (c.kind === 'scouted') return `已偵察：${T.tierName(c.tier)}${T.beastName(c.beast)}`;
+    if (c.kind === 'nest') return '鼠巢';
+    if (c.kind === 'empty') return '空';
+    if (c.kind === 'office') return '審訊室';
+    return c.event ? '事變' : '未開啟';
   }
 
   function renderOffer() {
     const kind = model.choice.kind;
     if (kind === 'gift') {
-      $('az-offer').innerHTML = `<p class="field-note">The Warden's Treasure always offers all four gifts: ${T.GIFT_IDS.map((id) => esc(T.toolName(id))).join(', ')}.</p>` +
+      $('az-offer').innerHTML = `<p class="field-note">典獄長的珍藏每次都會提供全部四種珍品：${T.GIFT_IDS.map((id) => esc(T.toolName(id))).join('、')}。</p>` +
         // Opulence gives 3 picks a Treasure: the advice weighs them all.
-        `<label class="field"><span class="field-label">Picks left, this one included</span><input type="number" id="az-gift-picks" min="1" max="30" step="1" value="${model.choice.picks || 1}"></label>`;
+        `<label class="field"><span class="field-label">剩餘選擇次數（含這一次）</span><input type="number" id="az-gift-picks" min="1" max="30" step="1" value="${model.choice.picks || 1}"></label>`;
       return;
     }
     const free = T.TOOL_IDS.filter((id) => !model.tools.includes(id));
     const picks = [0, 1, 2].map((i) => model.choice.options[i] || '');
     $('az-offer').innerHTML = picks
-      .map((value, i) => `<label class="field"><span class="field-label">Option ${i + 1}</span><select data-offer="${i}"><option value="">None</option>${free.map((id) => `<option value="${id}"${id === value ? ' selected' : ''}>${esc(T.toolName(id))}</option>`).join('')}</select></label>`)
+      .map((value, i) => `<label class="field"><span class="field-label">選項 ${i + 1}</span><select data-offer="${i}"><option value="">無</option>${free.map((id) => `<option value="${id}"${id === value ? ' selected' : ''}>${esc(T.toolName(id))}</option>`).join('')}</select></label>`)
       .join('') +
       // A pet's re-roll: the game shows "Re-roll" with the attempts left.
-      (kind === 'tool' ? `<label class="field"><span class="field-label">Re-rolls left</span><input type="number" id="az-rerolls" min="0" max="9" step="1" value="${model.choice.rerolls || 0}"></label>` : '');
+      (kind === 'tool' ? `<label class="field"><span class="field-label">剩餘重骰次數</span><input type="number" id="az-rerolls" min="0" max="9" step="1" value="${model.choice.rerolls || 0}"></label>` : '');
   }
 
   // Updates a list in place, keeping rows by key, so a button under the
@@ -1235,7 +1237,7 @@
   }
   function filterTools(q) {
     const t = String(q || '').trim().toLowerCase();
-    for (const b of $('az-tools').querySelectorAll('[data-tool]')) b.hidden = !!t && !T.toolName(b.dataset.tool).toLowerCase().includes(t);
+    for (const b of $('az-tools').querySelectorAll('[data-tool]')) b.hidden = !!t && !`${T.toolName(b.dataset.tool)} ${T.toolNameEn(b.dataset.tool)}`.toLowerCase().includes(t);
     $('az-tools-rest').hidden = !!t || !model.tools.some((id) => T.TOOLS[id]);
   }
 
@@ -1256,14 +1258,14 @@
     // The board changed since this check: its advice was for the board
     // before, so it isn't shown (report 304: a player took the dimmed move
     // for the advice on the new board). Recheck gives the new advice.
-    $('az-res-eyebrow').textContent = stale ? 'The board changed' : 'Recommended';
+    $('az-res-eyebrow').textContent = stale ? '盤面已變更' : '建議動作';
     // Always through setHTML, which skips what it wrote last: a headline
     // written past it left a new check showing the old move.
-    if (stale) setHTML($('az-res-move'), 'Press Recheck for advice on this board');
-    else if (working) setHTML($('az-res-move'), `${SPIN}Working it out…`);
-    else setHTML($('az-res-move'), esc(rec ? rec.label : 'Nothing to decide here.'));
+    if (stale) setHTML($('az-res-move'), '按「重新檢查」取得這個盤面的建議');
+    else if (working) setHTML($('az-res-move'), `${SPIN}計算中…`);
+    else setHTML($('az-res-move'), esc(rec ? rec.label : '這裡沒有需要決定的事。'));
     $('az-do').hidden = !rec || stale;
-    $('az-do').textContent = rec && rec.action.type === 'end' ? 'End the day here' : 'Do it here';
+    $('az-do').textContent = rec && rec.action.type === 'end' ? '在這裡結束這一天' : '在這裡執行';
     $('az-next').hidden = !rec || stale;
     $('az-undo').hidden = !undo.length;
     // After a screenshot, or once the board has changed: fix it and recheck.
@@ -1272,17 +1274,17 @@
     $('az-report-reading').hidden = !(shot && reader.result && reader.image && window.TartarusReport);
     $('az-recheck').classList.toggle('btn-primary', stale);
     $('az-res-shot-text').textContent = stale
-      ? 'The board changed since this check. Recheck for advice on the board as it is now.'
-      : `Read from your screenshot${flags.size ? `, with ${T.plural(flags.size, 'cell')} marked Check` : ''}.${unsureTools()} If anything on the board doesn’t match your game, fix it, then Recheck.`;
+      ? '這次檢驗之後盤面有變動。按「重新檢查」取得目前盤面的建議。'
+      : `已從你的截圖讀取${flags.size ? `，有${T.plural(flags.size, '間牢房')}標記「檢查」` : ''}。${unsureTools()}如果盤面有任何地方和遊戲不符，修正後再按「重新檢查」。`;
     let body = '';
-    if (working && !stale) body += `<p class="trainer-source">Each move below is played out from your board, with everything you can’t see re-rolled each time. The advice shows when they’re all done, so it won’t change.</p>`;
+    if (working && !stale) body += `<p class="trainer-source">下面每個動作都會從你的盤面模擬，看不到的部分每次重新擲骰。全部完成後才會顯示建議，所以建議不會再變。</p>`;
     if (rec && !stale) {
-      body += `<p class="trainer-source">${esc(rec.live ? `Checked by ${rec.rounds.toLocaleString()} playouts per option` : 'Instant pick from training')}</p>`;
+      body += `<p class="trainer-source">${esc(rec.live ? `每個選項以 ${rec.rounds.toLocaleString()} 次模擬檢驗` : '訓練策略的即時首選')}</p>`;
       if (rec.why) body += `<p class="trainer-why">${esc(rec.why)}</p>`;
       if (rec.option) body += `<p class="trainer-why">${esc(expectText(goal, rec.option, st))}</p>`;
       if (rec.action.type === 'devour') {
         const odds = S.chainOdds(st, st.position, rec.action.to);
-        body += `<p class="trainer-lesson">If the chain then goes on with the best meal at each bite: ${odds.bites.toFixed(1)} bites on average, ${(100 * odds.rainbow).toFixed(0)}% to reach Rainbow. Your game's Cancel can stop it at any bite.</p>`;
+        body += `<p class="trainer-lesson">如果之後的連鎖每一口都吃最好的獵物：平均 ${odds.bites.toFixed(1)} 口，有 ${(100 * odds.rainbow).toFixed(0)}% 機率達到綺彩。遊戲裡的「取消」可以在任何一口停下。</p>`;
       }
       body += `<p class="trainer-lesson">${esc(afterText(rec.action))}</p>`;
     }
@@ -1291,10 +1293,10 @@
     const options = working ? c.moves : r ? r.options : [];
     const status = $('az-res-status');
     if (stale) status.textContent = '';
-    else if (working) status.textContent = `Playing out ${T.plural(c.moves.length, 'move')}, ${c.each.toLocaleString()} games each: ${c.played.toLocaleString()} of ${c.total.toLocaleString()} games played`;
-    else if (!r) status.textContent = 'Live check: starting…';
-    else if (options.length <= 1) status.textContent = options.length ? 'Only one move here.' : 'Nothing to decide right now.';
-    else status.textContent = r.done ? `Live check: ${r.rounds.toLocaleString()} playouts per option` : `Live check: ${r.rounds.toLocaleString()} playouts per option so far…`;
+    else if (working) status.textContent = `正在模擬${T.plural(c.moves.length, '個動作')}，每個 ${c.each.toLocaleString()} 局：已模擬 ${c.played.toLocaleString()} / ${c.total.toLocaleString()} 局`;
+    else if (!r) status.textContent = '即時檢驗：開始中…';
+    else if (options.length <= 1) status.textContent = options.length ? '這裡只有一個動作。' : '現在沒有需要決定的事。';
+    else status.textContent = r.done ? `即時檢驗：每個選項 ${r.rounds.toLocaleString()} 次模擬` : `即時檢驗：目前每個選項 ${r.rounds.toLocaleString()} 次模擬…`;
     const max = Math.max(0.01, ...options.map((o) => o.mean || 0));
     const shown = options.length > 1 && !stale ? options : [];
     syncRows(
@@ -1304,11 +1306,11 @@
       () => {
         const li = document.createElement('li');
         li.className = 'solver-row';
-        li.innerHTML = '<span class="solver-label"><span class="solver-text"></span><span class="solver-tag" hidden>strategy</span></span><span class="solver-value"></span><span class="solver-meter"><span></span></span><span class="solver-sub" hidden></span>';
+        li.innerHTML = '<span class="solver-label"><span class="solver-text"></span><span class="solver-tag" hidden>策略</span></span><span class="solver-value"></span><span class="solver-meter"><span></span></span><span class="solver-sub" hidden></span>';
         const btn = document.createElement('button');
         btn.type = 'button';
         btn.className = 'btn';
-        btn.textContent = 'Do this here';
+        btn.textContent = '在這裡執行';
         btn.addEventListener('click', () => li.option && doMove(li.option.action));
         li.appendChild(btn);
         li.btn = btn;
@@ -1323,7 +1325,7 @@
           li.querySelector('.solver-text').textContent = o.label;
           li.querySelector('.solver-tag').hidden = true;
           li.querySelector('.solver-value').textContent = `${c.done.toLocaleString()} / ${c.each.toLocaleString()}`;
-          li.querySelector('.solver-value').title = 'Games played out for this move so far';
+          li.querySelector('.solver-value').title = '這個動作目前已模擬的局數';
           li.querySelector('.solver-meter span').style.width = `${Math.max(2, 100 * (c.each ? c.done / c.each : 0)).toFixed(1)}%`;
           li.querySelector('.solver-sub').hidden = true;
           li.btn.hidden = true;
@@ -1335,14 +1337,14 @@
         li.querySelector('.solver-tag').hidden = !o.policy;
         const value = li.querySelector('.solver-value');
         value.textContent = fmtOption(goal, o, st);
-        value.title = 'Expected Rainbows in the vault by the end of the run, with a 95% margin';
+        value.title = '這一局結束時收容區預期的綺彩囚犯數，附 95% 誤差範圍';
         const width = (100 * o.mean) / max;
         li.querySelector('.solver-meter span').style.width = `${Math.max(2, width).toFixed(1)}%`;
         const sub = li.querySelector('.solver-sub');
         let subText = '';
         if (o.action.type === 'devour') {
           const odds = S.chainOdds(st, st.position, o.action.to);
-          subText = `chain: ${odds.bites.toFixed(1)} bites on average, ${(100 * odds.rainbow).toFixed(0)}% to Rainbow`;
+          subText = `連鎖：平均 ${odds.bites.toFixed(1)} 口，${(100 * odds.rainbow).toFixed(0)}% 達到綺彩`;
         }
         sub.hidden = !subText;
         sub.textContent = subText;
@@ -1355,25 +1357,25 @@
     $('az-res-note').textContent = working || shown.length < 2
       ? ''
       : close
-        ? 'The top moves are within the margin of error: either is fine.'
-        : 'Each option is played out from your board with everything you can’t see re-rolled, and the trained strategy making every later choice. Scores are Rainbows in the vault by the end of the run.';
+        ? '前幾名的動作差距在誤差範圍內：選哪個都可以。'
+        : '每個選項都從你的盤面模擬，看不到的部分重新擲骰，之後的每個決定都由訓練好的策略做出。分數是這一局結束時收容區的綺彩囚犯數。';
   }
 
   // What the player does after following the advice in their game.
   function afterText(action) {
     switch (action.type) {
-      case 'patrol': return 'In your game, walk there. Then set the cell to what the door reveals (or press Do it here and fix it), and ask again.';
-      case 'devour': return 'In your game, start the consume on that target. Then update the cells the chain changed, and ask again.';
-      case 'chain': return 'In your game, pick that meal. Then paste the next screen, or update the cells that changed, and ask again.';
-      case 'stopchain': return 'In your game, press Cancel on the meal screen. Today’s consume is used, so the day ends next.';
-      case 'swap': return 'In your game, replace the warden’s inmate. Then set the warden’s cell to what came in, and ask again.';
-      case 'end': return 'In your game, end the day. Then mark the new day’s doors, and ask again.';
+      case 'patrol': return '在遊戲裡走到那裡。然後把那間牢房設成門後出現的內容（或按「在這裡執行」再修正），再問一次。';
+      case 'devour': return '在遊戲裡對那個目標發動吞噬。然後更新連鎖改變的牢房，再問一次。';
+      case 'chain': return '在遊戲裡選那個獵物。然後貼上下一個畫面，或更新有變化的牢房，再問一次。';
+      case 'stopchain': return '在遊戲的選獵物畫面按「取消」。今天的吞噬已經用掉，接下來這一天就結束了。';
+      case 'swap': return '在遊戲裡替換典獄長所在牢房的囚犯。然後把那間牢房設成換進來的囚犯，再問一次。';
+      case 'end': return '在遊戲裡結束這一天。然後標出新一天的門，再問一次。';
       case 'event': return model.step === 'event' && model.eventKind === 'hunt'
-        ? 'In your game, press Confirm. Then set each door showing a "?" to its rarity (Rarity shown); the doors left dark hold Rare or better (Do it here marks them, with the simulator’s dice for the rest). Ask again.'
-        : 'Then update what changed, and ask again.';
-      case 'office': return 'In your game, press it. Then paste a screenshot of what changed (or set it here under Make Your Decision), and ask again.';
-      case 'choose': return 'Take it in your game, then ask again.';
-      default: return 'Then update the board, and ask again.';
+        ? '在遊戲裡按「確認」。然後把每扇顯示「?」的門設成它的稀有度（顯示稀有度）；仍暗著的門裡是稀有或更高（「在這裡執行」會標出它們，其餘用模擬器的骰子決定）。再問一次。'
+        : '然後更新有變化的地方，再問一次。';
+      case 'office': return '在遊戲裡按下它。然後貼上變化後的截圖（或在這裡的「做出決定」下設定），再問一次。';
+      case 'choose': return '在遊戲裡拿它，然後再問一次。';
+      default: return '然後更新盤面，再問一次。';
     }
   }
 
@@ -1381,20 +1383,20 @@
     const box = $('az-applied');
     box.hidden = !applied;
     if (!applied) return;
-    let html = `<p class="trainer-eyebrow">Played here with the simulator's dice</p><p class="az-applied-move">${esc(applied.label)}</p>`;
-    if (applied.toNextDay && !applied.ended) html += `<p class="trainer-why">${applied.more ? `Then the strategy played the rest of the day (${applied.more} more ${applied.more === 1 ? 'move' : 'moves'}), as if you followed its advice. ` : ''}What really happened in your game will differ: paste a screenshot of your new day (Ctrl+V) to load it, or fix the cells marked Check.</p>`;
-    if (applied.ended) html += '<p class="trainer-why">That ended the run. Load another board, or play a new run in the simulator.</p>';
+    let html = `<p class="trainer-eyebrow">用模擬器的骰子在這裡執行</p><p class="az-applied-move">${esc(applied.label)}</p>`;
+    if (applied.toNextDay && !applied.ended) html += `<p class="trainer-why">${applied.more ? `接著策略玩完了這一天剩下的部分（又走了 ${applied.more} 步），就像你照建議做一樣。` : ''}你遊戲裡實際發生的情況會不一樣：貼上新一天的截圖（Ctrl+V）來載入，或修正標記「檢查」的牢房。</p>`;
+    if (applied.ended) html += '<p class="trainer-why">這一局結束了。載入另一個盤面，或在模擬器裡玩新的一局。</p>';
     else {
-      if (applied.changed.length) html += `<p class="trainer-why">${applied.changed.length === 1 ? 'Cell' : 'Cells'} ${applied.changed.map(L).join(', ')} changed, marked Check. Set ${applied.changed.length === 1 ? 'it' : 'them'} to what your game shows.</p>`;
-      if (applied.newDay && applied.step === 'patrol') html += `<p class="trainer-why">It's now day ${model.day}. The simulator rolled today's doors (${applied.doors.map(L).join(', ') || 'none'}); tick the ones your game offers.</p>`;
-      if (applied.step === 'choice') html += '<p class="trainer-why">A tool or gift is on offer: set the options your game shows.</p>';
-      if (applied.step === 'event') html += "<p class=\"trainer-why\">The door held a special event: check its kind in your game.</p>";
-      if (applied.office) html += '<p class="trainer-why">The warden is in the office. If your game shows the Instigate and Bestow buttons, pick “Instigate or Bestow” above, or paste a screenshot of them. Otherwise carry on with “Make Your Decision”.</p>';
-      html += '<p class="trainer-lesson">Then press “What should I do?” for the next move.</p>';
+      if (applied.changed.length) html += `<p class="trainer-why">${applied.changed.map(L).join('、')} 號牢房有變化，已標記「檢查」。請設成遊戲裡顯示的樣子。</p>`;
+      if (applied.newDay && applied.step === 'patrol') html += `<p class="trainer-why">現在是第 ${model.day} 天。模擬器擲出了今天的門（${applied.doors.map(L).join('、') || '無'}）；請點亮遊戲實際提供的門。</p>`;
+      if (applied.step === 'choice') html += '<p class="trainer-why">有刑具或珍藏可選：請設定遊戲顯示的選項。</p>';
+      if (applied.step === 'event') html += '<p class="trainer-why">門後有獄中事變：請在遊戲裡確認它的種類。</p>';
+      if (applied.office) html += '<p class="trainer-why">典獄長在審訊室。如果遊戲顯示「煽動」和「賞賜」按鈕，請在上方選「煽動或賞賜」，或貼上它們的截圖。否則就繼續「做出決定」。</p>';
+      html += '<p class="trainer-lesson">然後按「我該怎麼做？」取得下一步。</p>';
     }
     const unchecked = via && !applied.ended ? via.filled.filter((k) => !via.touched.has(k)).length : 0;
-    if (via && via.filled.length && !unchecked && !applied.ended) html += '<p class="trainer-why">Checked against your game.</p>';
-    html += `<div class="az-res-actions">${unchecked ? '<button type="button" class="btn" data-match>Everything here matches my game</button>' : ''}<button type="button" class="btn" data-undo>Undo</button></div>`;
+    if (via && via.filled.length && !unchecked && !applied.ended) html += '<p class="trainer-why">已和你的遊戲比對過。</p>';
+    html += `<div class="az-res-actions">${unchecked ? '<button type="button" class="btn" data-match>這裡全部和我的遊戲一致</button>' : ''}<button type="button" class="btn" data-undo>復原</button></div>`;
     setHTML(box, html);
   }
 
@@ -1405,10 +1407,10 @@
       box.hidden = true;
       return;
     }
-    const seen = SHARE.shared ? ' · <button type="button" class="link" data-share="see">See what’s been shared</button>' : '';
+    const seen = SHARE.shared ? ' · <button type="button" class="link" data-share="see">查看已分享的內容</button>' : '';
     setHTML(box, SHARE.sharing
-      ? `Boards you ask about in a row are shared anonymously, to measure the live game's odds. <button type="button" class="link" data-share="off">Turn off</button>${seen}`
-      : `Sharing is off, so nothing leaves this browser. <button type="button" class="link" data-share="on">Share boards to help measure live's odds</button>${seen}`);
+      ? `連續詢問的盤面會匿名分享，用來測量實際遊戲的機率。<button type="button" class="link" data-share="off">關閉</button>${seen}`
+      : `分享已關閉，沒有任何資料會離開這個瀏覽器。<button type="button" class="link" data-share="on">分享盤面，協助測量實際遊戲的機率</button>${seen}`);
   }
 
   function showProblems(problems) {
@@ -1607,7 +1609,7 @@
   function loadRun() {
     const data = store.get(SAVE_KEY);
     if (!data) {
-      notice('No simulator run is saved in this browser yet. Play one first, or set up your board here.');
+      notice('這個瀏覽器還沒有存任何模擬器進度。先玩一局，或在這裡擺好你的盤面。');
       return;
     }
     try {
@@ -1622,7 +1624,7 @@
       undo.length = 0;
       solver.st = null;
       changed();
-      notice(model.ended ? 'Loaded your simulator run. It has ended, so set up a new position.' : `Loaded your simulator run: day ${model.day}.`);
+      notice(model.ended ? '已載入你的模擬器進度。那一局已經結束，請擺一個新的局面。' : `已載入你的模擬器進度：第 ${model.day} 天。`);
     } catch (e) {
       notice(e.message);
     }
@@ -1639,15 +1641,15 @@
     const existing = store.get(SAVE_KEY);
     if (existing && Date.now() > openArmed) {
       openArmed = Date.now() + 6000;
-      $('az-open-sim').textContent = 'This replaces your saved simulator run. Click again to confirm.';
+      $('az-open-sim').textContent = '這會取代你存好的模擬器進度。再按一次確認。';
       setTimeout(() => {
-        $('az-open-sim').textContent = 'Play this position in the simulator';
+        $('az-open-sim').textContent = '在模擬器裡玩這個局面';
       }, 6000);
       return;
     }
-    st.log = [{ d: st.day, k: 'lab', t: 'Board analyzer: this position was set up by hand.' }];
+    st.log = [{ d: st.day, k: 'lab', t: '盤面分析器：這個局面是手動擺設的。' }];
     if (!store.set(SAVE_KEY, { app: 'tartarus-sim', v: T.VERSION, state: st })) {
-      notice('This browser blocked saving, so the position could not be sent to the simulator.');
+      notice('這個瀏覽器封鎖了儲存，所以無法把局面送到模擬器。');
       return;
     }
     window.location.href = './';
@@ -1656,7 +1658,7 @@
   // ---------- Reading a screenshot ----------
 
   const reader = { worker: null, failed: false, id: 0, pending: null, image: null, result: null, reading: null, ms: 0, picks: new Map(), pickId: 0 };
-  const SHORT_TIER = ['Normal', 'Magic', 'Rare', 'Legend.', 'Supreme'];
+  const SHORT_TIER = ['普通', '魔法', '稀有', '傳奇', '至臻'];
 
   // A notice pinned to the window while a screenshot is read, so a paste
   // shows it's working wherever the page is scrolled. kind: busy, ok or bad.
@@ -1680,11 +1682,11 @@
   // told so, sets those by hand, and can send a screen the reader didn't
   // recognize in one click, so it can learn that language (the user,
   // 2026-10-17). Set here, or from the game's log (Auto Screenshot Mode).
-  const GAME_LANGS = { en: 'English', ru: 'Russian', zh: 'Chinese' };
+  const GAME_LANGS = { en: '英文', ru: '俄文', zh: '中文' };
   const LANG_KEY = 'tartarus-sim:game-lang:v1';
   const LANG_NOTES = {
-    ru: 'Игра на русском языке. Анализатор обучен на английском клиенте: клетки, звери и редкость на поле, а также двери дня (по номерам клеток), читаются на любом языке. Кнопки замены и поглощения, ваши инструменты, счётчик хроматических заключённых, предложения инструментов, цели и карты начала забега читаются по английскому тексту. Укажите их вручную, а если экран не распознан, отправьте его кнопкой «Send this screenshot», чтобы анализатор научился читать русский клиент.',
-    zh: '游戏为中文客户端。分析器是基于英文客户端训练的：棋盘上的格子、野兽和稀有度，以及当天的门（按格子编号），在任何语言下都能识别；但替换和吞噬按钮、你的刑具、彩色囚犯数量、刑具选择、本局目标和开局卡牌是按英文文字识别的。请手动设置这些内容；若某个画面未被识别，请点击“Send this screenshot”发送截图，帮助分析器学会识别中文客户端。',
+    ru: 'Игра на русском языке. Анализатор обучен на английском клиенте: клетки, звери и редкость на поле, а также двери дня (по номерам клеток), читаются на любом языке. Кнопки замены и поглощения, ваши инструменты, счётчик хроматических заключённых, предложения инструментов, цели и карты начала забега читаются по английскому тексту. Укажите их вручную, а если экран не распознан, отправьте его кнопкой «傳送這張截圖», чтобы анализатор научился читать русский клиент.',
+    zh: '遊戲為中文用戶端。辨識器是用英文用戶端訓練的：盤面上的牢房、野獸和稀有度，以及今天的門（依牢房編號），在任何語言下都能辨識；但「替換」和「吞噬」按鈕、你的刑具、綺彩囚犯數量、刑具選擇、目標和開局卡是依英文文字辨識的。請手動設定這些內容；若某個畫面沒被辨識出來，請按「傳送這張截圖」把截圖傳給我們，幫助辨識器學會中文用戶端。',
   };
   let gameLang = 'en';
   try {
@@ -1692,7 +1694,7 @@
   } catch (e) {
     // The default, then.
   }
-  const langName = (code) => GAME_LANGS[code] || 'another language';
+  const langName = (code) => GAME_LANGS[code] || '其他語言';
   // Today's doors are read by their cell numbers in any language (since
   // 20261017s), checked on real Chinese, Korean and Russian boards (c2); in
   // others a letter can pass for a digit, so the player checks them.
@@ -1700,9 +1702,9 @@
   function langNote() {
     if (gameLang === 'en') return '';
     const doors = DOORS_READ.includes(gameLang)
-      ? "the board's cells, beasts and rarities, and today's doors (by their cell numbers), read in any language"
-      : "the board's cells, beasts and rarities read in any language, and today's doors are read by their cell numbers, but not yet checked on boards in your language, so check them under “Which door to patrol”";
-    return `Your game is in ${langName(gameLang)}. The reader learned on the English client: ${doors}. The Replace and Consume buttons, your instruments, the Chromatic count, instrument offers, objectives and start-of-run cards are read by their English text. Set those by hand, and when a screen isn't recognized, please send it with the button that comes up, so the reader can learn your language.${LANG_NOTES[gameLang] ? `\n\n${LANG_NOTES[gameLang]}` : ''}`;
+      ? '盤面上的牢房、野獸和稀有度，以及今天的門（依牢房編號），在任何語言下都能辨識'
+      : '盤面上的牢房、野獸和稀有度在任何語言下都能辨識；今天的門會依牢房編號辨識，但還沒在你的語言的盤面上驗證過，所以請在「選擇目的地」下檢查';
+    return `你的遊戲語言是${langName(gameLang)}。辨識器是用英文用戶端訓練的：${doors}。「替換」和「吞噬」按鈕、你的刑具、綺彩囚犯數量、刑具選擇、目標和開局卡是依英文文字辨識的。請手動設定這些內容；遇到沒被辨識出來的畫面時，請用跳出來的按鈕把它傳給我們，讓辨識器學會你的語言。${LANG_NOTES[gameLang] && gameLang !== 'zh' ? `\n\n${LANG_NOTES[gameLang]}` : ''}`;
   }
   function renderLang() {
     const sel = $('az-game-lang');
@@ -1733,7 +1735,8 @@
   function langMissed(what, image, detail) {
     if (gameLang === 'en' || !image) return false;
     langMiss = { what, image, detail: String(detail || ''), at: Date.now() };
-    toast(`The ${what} wasn't recognized: your game is in ${langName(gameLang)}. Set it by hand, and please send us this screenshot so the reader can learn your language.`, 'bad', [{ id: 'lang-report', label: 'Send this screenshot', primary: true }]);
+    const WHAT = { screen: '畫面', board: '盤面', 'objective or start-of-run card': '目標或開局卡', 'instrument offer': '刑具選擇', objective: '目標' };
+    toast(`沒能辨識這個${WHAT[what] || what}：你的遊戲語言是${langName(gameLang)}。請手動設定，並把這張截圖傳給我們，讓辨識器學會你的語言。`, 'bad', [{ id: 'lang-report', label: '傳送這張截圖', primary: true }]);
     return true;
   }
   // On such a client, a board's screenshot is asked for once a session: its
@@ -1743,7 +1746,7 @@
     if (gameLang === 'en' || langBoardAsked || !image) return false;
     langBoardAsked = true;
     langMiss = { what: 'board', image, detail: 'a board, for its door cards and buttons', at: Date.now() };
-    toast(`Your game is in ${langName(gameLang)}: ${DOORS_READ.includes(gameLang) ? '' : 'check today’s doors, and '}the Replace and Consume buttons may not be read, so set them by hand. Sending this board's screenshot once helps the reader learn your language.`, 'ok', [{ id: 'lang-report', label: 'Send this screenshot', primary: true }]);
+    toast(`你的遊戲語言是${langName(gameLang)}：${DOORS_READ.includes(gameLang) ? '' : '請檢查今天的門；另外'}「替換」和「吞噬」按鈕可能讀不到，請手動設定。傳一次這個盤面的截圖給我們，能幫助辨識器學會你的語言。`, 'ok', [{ id: 'lang-report', label: '傳送這張截圖', primary: true }]);
     return true;
   }
   function sendLangMiss() {
@@ -1760,18 +1763,18 @@
 
   async function readImageFile(file) {
     if (!file || !/^image\//.test(file.type)) {
-      scanStatus('That isn’t an image. Paste, drop or choose a screenshot (PNG or JPG).', true);
-      toast('That isn’t an image. Copy a screenshot of the prison screen, then paste it here.', 'bad');
+      scanStatus('這不是圖片。請貼上、拖曳或選擇一張截圖（PNG 或 JPG）。', true);
+      toast('這不是圖片。請複製監獄畫面的截圖，再貼到這裡。', 'bad');
       return;
     }
-    scanStatus('Reading your screenshot…');
-    toast('Reading your screenshot to load the board…', 'busy');
+    scanStatus('正在辨識你的截圖…');
+    toast('正在辨識截圖並載入盤面…', 'busy');
     let source;
     try {
       source = await createImageBitmap(file);
     } catch (e) {
-      scanStatus('This browser couldn’t open that image.', true);
-      toast('This browser couldn’t open that image.', 'bad');
+      scanStatus('這個瀏覽器無法開啟那張圖片。', true);
+      toast('這個瀏覽器無法開啟那張圖片。', 'bad');
       return;
     }
     readBitmap(source);
@@ -1806,14 +1809,14 @@
     const done = (result, error) => {
       if (id === reader.id) setReading(false);
       if (id !== reader.id) {
-        if (o.onRead) o.onRead({ ok: false, skipped: true, reason: 'a newer picture came in' });
+        if (o.onRead) o.onRead({ ok: false, skipped: true, reason: '有更新的畫面進來了' });
         return;
       }
       reader.ms = Math.round(performance.now() - t0);
       if (error || !result) {
         reader.result = null;
-        scanStatus(`The reader hit a problem: ${error || 'no result'}.`, true);
-        if (!o.quiet) toast(`The reader hit a problem: ${error || 'no result'}.`, 'bad');
+        scanStatus(`辨識器出了問題：${error || '沒有結果'}。`, true);
+        if (!o.quiet) toast(`辨識器出了問題：${error || '沒有結果'}。`, 'bad');
         renderScan();
         if (o.onRead) o.onRead({ ok: false, reason: error || 'no result', ms: reader.ms });
         return;
@@ -1822,7 +1825,7 @@
       reader.reading = result.ok ? scanToModel(result, model) : null;
       // The run's objective and its count, from the board's corner.
       if (result.ok && result.objective) cornerObjective(reader.image, result.objective, reader.reading.model.day);
-      scanStatus(result.ok ? `Read in ${(reader.ms / 1000).toFixed(1)} s.` : `${result.reason} Try a screenshot of the prison screen, with the whole board in view.`, !result.ok);
+      scanStatus(result.ok ? `辨識耗時 ${(reader.ms / 1000).toFixed(1)} 秒。` : `${result.reason} 請改用監獄畫面的截圖，並讓整個盤面都在畫面內。`, !result.ok);
       // controls: the board's own door cards or decision row showed, which
       // View Prison Status never does: no Warden's Treasure is open.
       if (o.onRead) o.onRead(result.ok ? { ok: true, day: reader.reading.model.day, unsure: reader.reading.checks.size, ms: reader.ms, controls: !!((result.doors && result.doors.cells && result.doors.cells.length) || result.decision), statusView: !!result.statusView } : { ok: false, reason: result.reason, ms: reader.ms });
@@ -1833,9 +1836,9 @@
       if (!result.ok) {
         // Not a board: maybe the instrument pick or the Warden's Treasure.
         const image = reader.image;
-        toast('No board here: checking for the instrument pick or the Warden’s Treasure…', 'busy');
+        toast('這裡沒有盤面：正在檢查是不是刑具選擇或典獄長的珍藏…', 'busy');
         otherScreen(image).then((found) => {
-          if (!found) toast(`${result.reason} Try a screenshot of the prison screen, with the whole board in view.`, 'bad');
+          if (!found) toast(`${result.reason} 請改用監獄畫面的截圖，並讓整個盤面都在畫面內。`, 'bad');
         });
       }
       else {
@@ -1851,8 +1854,8 @@
           renderScan();
           return;
         }
-        if (ask()) toast(`Loaded day ${model.day} from your screenshot${unsure ? `, with ${T.plural(unsure, 'cell')} marked Check` : ''}.${unsureTools()} The advice is below. If the board doesn’t match your game, fix it and press Recheck.`, 'ok');
-        else toast(`Loaded day ${model.day} from your screenshot, but the board needs fixing before the advice: see the notes under “What should I do?”.`, 'bad');
+        if (ask()) toast(`已從截圖載入第 ${model.day} 天${unsure ? `，有${T.plural(unsure, '間牢房')}標記「檢查」` : ''}。${unsureTools()}建議在下方。如果盤面和遊戲不符，修正後按「重新檢查」。`, 'ok');
+        else toast(`已從截圖載入第 ${model.day} 天，但盤面需要先修正才能給建議：請看「我該怎麼做？」下方的說明。`, 'bad');
       }
       renderScan();
     };
@@ -1936,7 +1939,7 @@
       // A card the reader knows before the simulator does (a new start card)
       // is one the simulator doesn't know yet.
       const known = (result) => !!result && !!result.id && (T.OBJECTIVES[result.id] || (T.START_EVENTS || {})[result.id]);
-      const done = (result, error) => (setReading(false), resolve(error || !known(result) ? { ok: false, objective: true, reason: error || 'the objective wasn’t one the simulator knows' } : { ok: true, objective: true, id: result.id, name: known(result).name }));
+      const done = (result, error) => (setReading(false), resolve(error || !known(result) ? { ok: false, objective: true, reason: error || '這個目標模擬器還不認得' } : { ok: true, objective: true, id: result.id, name: known(result).name }));
       reader.pickId += 1;
       const id = `objective${reader.pickId}`;
       if (readerWorker()) {
@@ -1947,7 +1950,7 @@
       }
       loadReader(false)
         .then(() => done(window.TartarusScan.readObjectiveTitle(imageData)))
-        .catch((e) => done(null, (e && e.message) || 'the screenshot reader could not load'));
+        .catch((e) => done(null, (e && e.message) || '截圖辨識器無法載入'));
     });
   }
 
@@ -1988,7 +1991,7 @@
     let best = null;
     for (const id of Object.keys(T.OBJECTIVES)) {
       if (id === 'other') continue;
-      const n = letters(T.OBJECTIVES[id].name);
+      const n = letters(OBJECTIVE_EN[id] || T.OBJECTIVES[id].name);
       for (const t of tries) {
         const d = editDistance(t, n) / n.length;
         if (!best || d < best.d) best = { id, d };
@@ -2045,8 +2048,8 @@
       if (wasKnown && !counted) return;
       changed();
       if (wasFresh) ask(true);
-      const so = counted ? ` (${read.completed || read.have >= need ? 'met' : `${read.have} of ${need} so far`})` : '';
-      toast(wasKnown ? `${read.name}: ${so.slice(2, -1)}, read from the board’s corner.` : `This run’s objective: ${read.name}${so}, read from the board’s corner. It’s set under Objective.`, 'ok');
+      const so = counted ? `（${read.completed || read.have >= need ? '已達成' : `目前 ${read.have} / ${need}`}）` : '';
+      toast(wasKnown ? `${read.name}：${so.slice(1, -1)}，從盤面角落讀取。` : `這一局的目標：${read.name}${so}，從盤面角落讀取。已設定在「目標」。`, 'ok');
     }, () => {
       corner.busy = false;
     });
@@ -2069,7 +2072,7 @@
     if (read && read.ok && T.START_EVENTS && T.START_EVENTS[read.id]) {
       runStartEvent = read.id;
       setStartEvent(read.id);
-      toast(`This run’s card: ${T.START_EVENTS[read.id].name}. It’s set under Start of run.`, 'ok');
+      toast(`這一局的開局卡：${T.START_EVENTS[read.id].name}。已設定在「開局卡」。`, 'ok');
       return true;
     }
     if (!read || !read.ok || !T.OBJECTIVES[read.id]) return false;
@@ -2078,7 +2081,7 @@
     model.walkTiles = 0;
     model.milestone = false;
     changed();
-    toast(`This run’s objective: ${read.name}. It’s set under Objective.`, 'ok');
+    toast(`這一局的目標：${read.name}。已設定在「目標」。`, 'ok');
     return true;
   }
 
@@ -2100,7 +2103,7 @@
         const sc = document.createElement('script');
         sc.src = 'https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js';
         sc.onload = resolve;
-        sc.onerror = () => reject(new Error('its script didn’t download'));
+        sc.onerror = () => reject(new Error('程式檔沒有下載成功'));
         document.head.appendChild(sc);
       })
         .then(() => window.Tesseract.createWorker('eng'))
@@ -2108,13 +2111,13 @@
           ocrError = '';
           return w;
         }, (e) => {
-          ocrError = String((e && e.message) || e || 'it didn’t load');
+          ocrError = String((e && e.message) || e || '沒有載入');
           ocr = null;
           return null;
         });
     }
     const limit = new Promise((resolve) => setTimeout(() => {
-      if (!ocrError) ocrError = 'it took over 20 s to load';
+      if (!ocrError) ocrError = '載入超過 20 秒';
       resolve(null);
     }, 20000));
     return Promise.race([ocr, limit]);
@@ -2141,7 +2144,7 @@
     const tries = [text, ...lines, ...pairs].map(letters).filter((t) => t.length >= 3);
     const scores = T.TOOL_IDS.map((id) => {
       // The full name, and the part before a colon ("Iron Tongs of Lust").
-      const forms = [...new Set([T.toolName(id), T.toolName(id).split(':')[0]].map(letters))];
+      const forms = [...new Set([T.toolNameEn(id), T.toolNameEn(id).split(':')[0]].map(letters))];
       return { id, score: Math.min(...forms.flatMap((n) => tries.map((t) => editDistance(t, n) / n.length)), 9) };
     }).sort((a, b) => a.score - b.score);
     const [best, next] = scores;
@@ -2156,7 +2159,7 @@
     if (!worker) {
       // No names read: why, for the reading.
       const none = [null, null, null];
-      none.failed = ocrError || 'it didn’t load';
+      none.failed = ocrError || '沒有載入';
       return none;
     }
     const s = ui || canvas.height / 1080;
@@ -2187,7 +2190,7 @@
   // for pasted pictures and Take a picture now.
   async function readTreasure(source) {
     const worker = await ocrWorker();
-    if (!worker) return { ok: false, treasure: true, reason: `the text reader couldn’t load (${ocrError || 'it didn’t load'})` };
+    if (!worker) return { ok: false, treasure: true, reason: `文字辨識器無法載入（${ocrError || '沒有載入'}）` };
     const scale = Math.min(1, 1600 / source.width);
     const canvas = document.createElement('canvas');
     canvas.width = Math.round(source.width * scale);
@@ -2197,13 +2200,13 @@
     try {
       text = (await worker.recognize(canvas)).data.text || '';
     } catch (e) {
-      return { ok: false, treasure: true, reason: 'the text couldn’t be read' };
+      return { ok: false, treasure: true, reason: '無法辨識文字' };
     }
     const letters = (t) => t.toLowerCase().replace(/[^a-z]/g, '');
     const lines = text.split('\n').map(letters).filter((l) => l.length >= 4);
     const header = lines.some((l) => l.includes('treasureobtained') || l.includes('wardenstreasure'));
     const gifts = T.GIFT_IDS.filter((id) => {
-      const n = letters(T.GIFTS[id].name);
+      const n = letters(T.toolNameEn(id));
       return lines.some((l) => l.includes(n) || editDistance(l, n) / n.length <= 0.3);
     });
     return { ok: header || gifts.length >= 2, treasure: true, header, gifts };
@@ -2225,7 +2228,7 @@
       useTreasure();
       return true;
     }
-    langMissed('screen', source, pick.ok ? 'instrument cards not read' : pick.reason);
+    langMissed('screen', source, pick.ok ? '刑具卡沒有讀到' : pick.reason);
     return false;
   }
 
@@ -2245,7 +2248,7 @@
       const done = (result, error) => {
         setReading(false);
         const ms = Math.round(performance.now() - t0);
-        if (error || !result) return resolve({ ok: false, pick: true, reason: error || 'no result', ms });
+        if (error || !result) return resolve({ ok: false, pick: true, reason: error || '沒有結果', ms });
         if (!result.ok) return resolve({ ok: false, pick: true, reason: result.reason, ms });
         const cards = result.cards.map((c) => ({ sim: c.sim, name: T.toolName(c.sim), conf: c.conf, alts: c.alts, by: 'art' }));
         // Each card's printed name, read where it can be, outranks its art.
@@ -2266,7 +2269,7 @@
       }
       loadReader(true)
         .then(() => done(window.TartarusScan.scanPick(imageData, window.TARTARUS_SCAN, window.TARTARUS_PICK)))
-        .catch((e) => done(null, (e && e.message) || 'the screenshot reader could not load'));
+        .catch((e) => done(null, (e && e.message) || '截圖辨識器無法載入'));
     });
   }
 
@@ -2307,16 +2310,16 @@
     scanStatus('');
     changed();
     const unsure = read.cards.filter((c) => c.conf < 0.5);
-    const check = unsure.length ? ` Check ${unsure.map((c) => `the ${['left', 'middle', 'right'][read.cards.indexOf(c)]} one (read as ${c.name})`).join(' and ')}: if it's wrong, change it under “A tool or gift” and press Recheck.` : '';
+    const check = unsure.length ? `請檢查${unsure.map((c) => `${['左邊', '中間', '右邊'][read.cards.indexOf(c)]}那張（讀成「${c.name}」）`).join('和')}：如果不對，在「刑具或珍藏」下修改，然後按「重新檢查」。` : '';
     // No card's name could be read (the text reader didn't load): the art
     // alone can name an instrument that wasn't offered (report 111 advised
     // taking Kin's Coin), so the offer is checked before any advice.
     if (read.ocrFailed && !read.byName) {
-      toast(`The instrument offer read as ${read.names.join(', ')} from the cards' pictures alone: their names couldn't be read (the text reader: ${read.ocrFailed}). Check the three under “A tool or gift”, then press Recheck for the advice.`, 'bad');
+      toast(`刑具選擇僅依卡片圖案讀成：${read.names.join('、')}，卡片名稱沒能讀到（文字辨識器：${read.ocrFailed}）。請在「刑具或珍藏」下檢查這三張，再按「重新檢查」取得建議。`, 'bad');
       return false;
     }
     const asked = ask(true, start);
-    toast(`${start ? 'A fresh run: the instrument offer is' : 'An instrument offer:'} ${read.names.join(', ')}${read.reroll ? ', with a re-roll left' : ''}. ${asked ? 'Which to take is below.' : 'It needs fixing before the advice.'}${check}`, unsure.length ? 'bad' : 'ok');
+    toast(`${start ? '新的一局：刑具選擇是' : '刑具選擇：'}${read.names.join('、')}${read.reroll ? '，還能重骰一次' : ''}。${asked ? '該拿哪個請看下方。' : '需要先修正才能給建議。'}${check}`, unsure.length ? 'bad' : 'ok');
     return asked;
   }
 
@@ -2370,7 +2373,7 @@
       changed();
       renderScan();
       const asked = ask(true);
-      toast(`Board seen behind the Warden’s Treasure. ${asked ? 'Which gift to take is below.' : 'The board needs fixing before the advice.'}`, asked ? 'ok' : 'bad');
+      toast(`已讀到典獄長的珍藏後面的盤面。${asked ? '該拿哪個珍品請看下方。' : '盤面需要先修正才能給建議。'}`, asked ? 'ok' : 'bad');
       return asked;
     }
     // Back at the Treasure after viewing the board: nothing more to wait for,
@@ -2393,10 +2396,10 @@
       model.vault = [...model.vault, w.beast];
       model.swapUsed = true;
       model.consumeOffered = true;
-      how = ` It came from your Replace in cell ${L(model.warden)}: the newcomer was a Rainbow, now in the vault, and the cell locked again.`;
+      how = `它來自你在 ${L(model.warden)} 號牢房的替換：換進來的是綺彩囚犯，現在在收容區，那間牢房又鎖上了。`;
     } else if (after === 'consume') {
       model.devourUsed = true;
-      how = ' It came from your consume: the next picture shows the board after it.';
+      how = '它來自你的吞噬：下一張畫面會顯示吞噬後的盤面。';
     }
     // The Treasure covers the board, which may have changed (a chain, a
     // Rainbow): no gift is advised until the board behind it is seen.
@@ -2405,7 +2408,7 @@
     model.treasureSeen = false;
     changed();
     renderScan();
-    toast(`The Warden’s Treasure is open.${how} To advise a gift on the board as it is now, press View Prison Status in the game, wait a second on the board, then return to the Treasure.`, 'ok');
+    toast(`典獄長的珍藏已開啟。${how}要依目前的盤面建議珍品，請在遊戲中按「查看監獄狀態」，在盤面停留一秒，再回到典獄長的珍藏。`, 'ok');
     return false;
   }
 
@@ -2425,7 +2428,7 @@
           }
         }, 30);
       })
-      .catch(() => done(null, 'the screenshot reader could not load'));
+      .catch(() => done(null, '截圖辨識器無法載入'));
   }
 
   // The reader doesn't see Tusk marks yet. A mark stays on its inmate until
@@ -2464,7 +2467,7 @@
         else m.cells[n] = { kind: 'empty' };
         if (c.kind !== 'locked') checks.add(n);
       });
-      notes.push('A consume’s meal pick darkens the board, so its rarities were guessed: check the marked cells, or load the board from before the consume first.');
+      notes.push('吞噬的選獵物畫面會讓盤面變暗，所以稀有度是猜的：請檢查標記的牢房，或先載入吞噬前的盤面。');
     }
     m.warden = warden;
     const was = base.cells[warden];
@@ -2494,7 +2497,7 @@
     else if (eater && eater.kind === 'inmate') m.cells[warden] = { kind: 'inmate', beast: eater.beast, tier: clamp(eater.tier, 0, TOP_TIER), ivory: !!(was && was.ivory), prey: was && was.kind === 'inmate' ? was.prey : null };
     else {
       checks.add(warden);
-      notes.push('The eater in the warden’s cell wasn’t read: set it as it is now.');
+      notes.push('沒讀到典獄長所在牢房的吞噬者：請照現在的樣子設定。');
     }
     const tier = m.cells[warden].kind === 'inmate' ? m.cells[warden].tier : 0;
     // The meals on offer: the board before keeps its inmate when it fits;
@@ -2580,18 +2583,18 @@
         const take = seen ? seen.sim : alike ? alike.sim : advised;
         if (take) {
           out.push({ id: take, sim: take, name: T.toolName(take), conf: 1, kept: true });
-          if (!seen && alike) notes.push(`An icon read as ${alike.as ? T.toolName(alike.as) : 'another instrument'}, which wasn't offered: taken as ${T.toolName(take)}, the closest of the offer. If you took another, change it under Torture Instrument.`);
-          else if (!seen) notes.push(`Took it you chose ${T.toolName(take)}, as advised. If you took another, change it under Torture Instrument.`);
-        } else notes.push(`Your instruments show one more than before, from the offer of ${offer.map((id) => T.toolName(id)).join(', ')}: set which you took under Torture Instrument.`);
+          if (!seen && alike) notes.push(`有個圖示讀成「${alike.as ? T.toolName(alike.as) : '另一件刑具'}」，但它不在選項中：視為選項中最接近的「${T.toolName(take)}」。如果你拿的是別的，請在「刑具」下修改。`);
+          else if (!seen) notes.push(`視為你照建議拿了「${T.toolName(take)}」。如果你拿的是別的，請在「刑具」下修改。`);
+        } else notes.push(`你的刑具比之前多了一件，來自「${offer.map((id) => T.toolName(id)).join('、')}」的選擇：請在「刑具」下設定你拿了哪個。`);
       }
       if (out.length) m.toolsLocked = true;
-      if (slots > Math.max(out.length, base.toolsSeen || 0)) m.toolsToConfirm = `Your panel shows ${T.plural(slots, 'instrument')}, and the analyzer has ${out.length}: ${out.map((t) => t.name).join(', ') || 'none'}. Set the ones you hold, then press These are right.`;
+      if (slots > Math.max(out.length, base.toolsSeen || 0)) m.toolsToConfirm = `你的面板顯示${T.plural(slots, '件刑具')}，分析器只有 ${out.length} 件：${out.map((t) => t.name).join('、') || '無'}。請設定你持有的刑具，然後按「這些沒錯」。`;
       return out;
     }
     // Nothing known of the run yet: only icons the reader is sure of, and
     // the player is asked to confirm.
     for (const t of read) if (t.sim && !has(t.sim) && t.conf >= TOOL_SURE) out.push(t);
-    if (read.length) m.toolsToConfirm = `The analyzer doesn’t know this run’s instruments yet. It read ${out.length ? out.map((t) => T.toolName(t.sim)).join(', ') : 'none for sure'} from your panel of ${read.length}. Set the ones you hold, then press These are right.`;
+    if (read.length) m.toolsToConfirm = `分析器還不知道這一局的刑具。從你面板上的 ${read.length} 件中讀到：${out.length ? out.map((t) => T.toolName(t.sim)).join('、') : '沒有能確定的'}。請設定你持有的刑具，然後按「這些沒錯」。`;
     return out;
   }
 
@@ -2609,13 +2612,13 @@
         // that many.
         m.maxDays = 30;
         m.day = 30 - left;
-        notes.push(`The riot is ${T.plural(left, 'day')} away, more than this run had, so it's now a 30-day run (Iron Law). Check the day.`);
+        notes.push(`距離暴動還有${T.plural(left, '天')}，比這一局原本的天數還多，所以現在視為 30 天的一局（鐵律）。請檢查天數。`);
       } else {
         // No run is that long: a misread countdown. It mustn't stretch the
         // run for good (one read as 38 made every later day "of 39").
-        notes.push(`The days until the riot read as ${left}, more than any run has: check the day.`);
+        notes.push(`距離暴動的天數讀成 ${left}，比任何一局都長：請檢查天數。`);
       }
-    } else notes.push('The days until the riot weren’t read: check the day.');
+    } else notes.push('沒讀到距離暴動的天數：請檢查天數。');
     r.cells.forEach((c, n) => {
       if (n === T.OFFICE) return;
       if (c.kind === 'locked') {
@@ -2652,30 +2655,30 @@
     // likely placed wrong (a screen shape the reader handled badly, report
     // 144), so the reading is checked before it's trusted.
     const emptyRead = r.cells.filter((c) => c.n !== T.OFFICE && c.kind !== 'locked' && c.kind !== 'inmate').length;
-    if (emptyRead >= 8) notes.push(`${emptyRead} cells read as open and empty, which is unusual: the board may be misread. Check it against your game.`);
+    if (emptyRead >= 8) notes.push(`有 ${emptyRead} 間牢房讀成已開啟且空著，這很少見：盤面可能讀錯了。請和遊戲比對。`);
     if (r.warden) {
       m.warden = r.warden.cell;
       if (r.warden.conf < 0.6) checks.add(r.warden.cell);
-    } else notes.push('The warden’s arrow wasn’t found: set the warden.');
+    } else notes.push('沒找到典獄長的箭頭：請設定典獄長的位置。');
     if (r.doors && r.doors.cells.length) {
       m.step = 'patrol';
       m.dest = r.doors.cells.filter((n) => n !== m.warden);
       // The mouse pointer over a card's number hides its digit (report 318),
       // unless the lit cells settled it (report 360). Unsettled, that door is
       // marked Check: a guess, not a reading.
-      if (r.doors.hidden && r.doors.hidden.length && r.doors.lit) notes.push(`The mouse pointer covers the number on one card: the lit cells show it is cell ${L(r.doors.hidden[0])}.`);
+      if (r.doors.hidden && r.doors.hidden.length && r.doors.lit) notes.push(`滑鼠游標蓋住了一張卡片上的編號：從亮起的牢房看，它是 ${L(r.doors.hidden[0])} 號牢房。`);
       else if (r.doors.hidden && r.doors.hidden.length) {
-        notes.push(`The mouse pointer covers the number on the card read as ${r.doors.hidden.map((n) => `cell ${L(n)}`).join(' and ')}: check that door.`);
+        notes.push(`滑鼠游標蓋住了讀成 ${r.doors.hidden.map((n) => L(n)).join('、')} 號牢房那張卡片的編號：請檢查那扇門。`);
         r.doors.hidden.forEach((n) => checks.add(n));
       }
-      else if (r.doors.conf < 0.6) notes.push('Today’s doors were hard to read: check them.');
+      else if (r.doors.conf < 0.6) notes.push('今天的門不太好辨識：請檢查。');
     } else if (!r.decision && !r.statusView && base.step === 'patrol' && (base.dest || []).length && m.day === base.day && m.warden === base.warden) {
       // No door cards and no buttons, on the same day with the warden where
       // it was: the cards haven't come back yet (report 334: pictured just
       // after a Warden's Treasure closed), so the doors stay as they were.
       m.step = 'patrol';
       m.dest = base.dest.slice();
-      notes.push('No door cards or buttons showed (they may not have come back yet): today’s doors are kept from the board before.');
+      notes.push('畫面上沒有門卡片也沒有按鈕（可能還沒出現）：今天的門沿用上一個盤面。');
     } else {
       m.step = 'manage';
       m.dest = [];
@@ -2713,7 +2716,7 @@
       if (!m.devourUsed && was && now && was.kind === 'inmate' && now.kind === 'inmate' && (was.beast !== now.beast || was.tier !== now.tier)) {
         m.swapUsed = true;
         m.consumeOffered = true;
-        notes.push('The warden’s inmate changed since the board before, so today’s Replace is taken as done.');
+        notes.push('典獄長所在牢房的囚犯和上一個盤面不同，所以視為今天已經替換過。');
         m.cells[m.warden].ivory = false; // a Tusk mark is used by the Replace
       }
     }
@@ -2767,7 +2770,7 @@
     }
     const read = r.tools && r.tools.tools ? r.tools.tools : [];
     const unsim = read.filter((t) => !t.sim);
-    if (unsim.length) notes.push(`Not in the simulator yet, so left out: ${unsim.map((t) => t.name).join(', ')}.`);
+    if (unsim.length) notes.push(`模擬器還沒有這些，所以先略過：${unsim.map((t) => t.name).join('、')}。`);
     const tools = runTools(read, base, m, notes, r.tools && r.tools.sims);
     m.tools = tools.map((t) => t.sim);
     // A door short two mornings of the run, with none of the instruments
@@ -2785,12 +2788,12 @@
       // Held as the Lost Ring of Keys, which takes no door: the Forged Key's
       // icon, two keys on a ring (report 378), passes for it on the panel.
       const hint = m.tools.includes('keys')
-        ? `${T.plural(m.shortDays.length, 'morning')} of this run offered a door short, which the Lost Ring of Keys doesn't do. The Forged Key does, and its icon looks like the Ring's: if you hold the Forged Key, set it under Torture Instrument in place of the Lost Ring of Keys${m.toolsLocked ? '' : ', then press These are right'}.`
-        : `${T.plural(m.shortDays.length, 'morning')} of this run offered a door short, as the Forged Key, Barbed Whip or Burning Stake do. If you hold one, set it under Torture Instrument${m.toolsLocked ? '' : ', then press These are right'}.`;
+        ? `這一局有${T.plural(m.shortDays.length, '個早上')}少了一扇門，遺落的鑰匙串不會這樣，偽造鑰匙才會，而且它的圖示和鑰匙環很像：如果你持有的是偽造鑰匙，請在「刑具」下用它取代遺落的鑰匙串${m.toolsLocked ? '' : '，然後按「這些沒錯」'}。`
+        : `這一局有${T.plural(m.shortDays.length, '個早上')}少了一扇門，偽造鑰匙、棘刺鐵鞭或火刑柱會造成這種情況。如果你持有其中一件，請在「刑具」下設定${m.toolsLocked ? '' : '，然後按「這些沒錯」'}。`;
       if (m.toolsLocked || m.toolsToConfirm) notes.push(hint);
       else m.toolsToConfirm = hint;
     }
-    if (tools.some((t) => t.conf < TOOL_SURE)) notes.push('Some instruments were hard to tell apart: check them under Torture Instrument.');
+    if (tools.some((t) => t.conf < TOOL_SURE)) notes.push('有些刑具不太好分辨：請在「刑具」下檢查。');
     const chromatic = r.chromatic ? r.chromatic.count : 0;
     // Their beasts don't show in the slots, and nothing depends on them.
     m.vault = new Array(chromatic).fill('wolf');
@@ -2801,13 +2804,13 @@
     // Tyranny undid the player's choice on every picture).
     if (r.badge && r.badge.id && T.START_EVENTS && T.START_EVENTS[r.badge.id] && (!m.startEvent || m.startEvent === 'none')) {
       m.startEvent = r.badge.id;
-      notes.push(`Start of run: ${T.START_EVENTS[r.badge.id].name}, from its badge under the instruments.`);
+      notes.push(`開局卡：${T.START_EVENTS[r.badge.id].name}，從刑具下方的徽章讀取。`);
     }
     // A badge that looks like more than one card (Tyranny and Cage Fight):
     // not guessed; the player sets it.
     if (r.badge && r.badge.alike && T.START_EVENTS && (!m.startEvent || m.startEvent === 'none')) {
       const names = r.badge.alike.filter((id) => T.START_EVENTS[id]).map((id) => T.START_EVENTS[id].name);
-      if (names.length) notes.push(`The run's start card looks like ${names.join(' or ')} from its badge, which look alike: set it under Start of run.`);
+      if (names.length) notes.push(`從徽章看，這一局的開局卡可能是${names.join('或')}，它們長得很像：請在「開局卡」下設定。`);
     }
     // King of the Caged is met once a Supreme or Chromatic shows. Prison
     // Walk's tiles aren't read, so they keep what was set.
@@ -2845,10 +2848,10 @@
     const noMeal = !!(r.decision && r.decision.consume) && w != null && m.cells[w] && m.cells[w].kind === 'inmate' && !hasTarget(final, w);
     if (noMeal) {
       checks.add(w);
-      notes.push(`Your game offers Consume, but the board as read has no meal for the ${T.describe(m.cells[w])} in ${L(w)}, so the advice can’t weigh Consume: check it and the inmates it could eat.`);
+      notes.push(`遊戲提供了「吞噬」，但讀到的盤面上，${L(w)} 號牢房的${T.describe(m.cells[w])}沒有東西可吃，所以建議無法評估吞噬：請檢查牠和牠可能吃的囚犯。`);
     }
     const odd = oddCells.filter((n) => !(noMeal && n === w)).length;
-    if (odd) notes.push(odd === 1 ? '1 inmate’s jaws marker doesn’t fit what was read: check it and the inmates around.' : `${odd} inmates’ jaws markers don’t fit what was read: check them and the inmates around.`);
+    if (odd) notes.push(`有 ${odd} 名囚犯的利齒標記和讀到的內容對不上：請檢查牠們和周圍的囚犯。`);
     // Cage Fight set for this run while the game's jaws fit better without
     // it (report 311: a Legendary Wolf showed no jaws over a Rare Rat that
     // Cage Fight would let it eat, and the advice had a Legendary Lion eat
@@ -2861,7 +2864,7 @@
       if (against.length && fits(plain) > fits(final)) {
         const n = against[0];
         const meal = T.devourOptions(final, n)[0].cell;
-        notes.push(`Cage Fight is set for this run, but your game shows no jaws on the ${T.describe(m.cells[n])} in ${L(n)}, which Cage Fight would let eat the ${T.describe(m.cells[meal])} in ${L(meal)}. If this run doesn’t have Cage Fight, set Start of run to No card.`);
+        notes.push(`這一局設了囚徒困鬥，但遊戲裡 ${L(n)} 號牢房的${T.describe(m.cells[n])}沒有顯示利齒標記，而囚徒困鬥會讓牠能吃 ${L(meal)} 號牢房的${T.describe(m.cells[meal])}。如果這一局沒有囚徒困鬥，請把「開局卡」設成「無」。`);
       }
     }
     return { model: m, checks, notes, chromatic, tools, unsim, huntPick };
@@ -2885,13 +2888,13 @@
       const locked = m.cells.filter((c) => c.kind === 'sealed' || c.kind === 'nest').length;
       const events = m.cells.filter((c) => c.event).length;
       const nests = m.cells.filter((c) => c.kind === 'nest').length;
-      list.push(`<li><b>Board</b> ${T.plural(inmates, 'inmate')}, ${T.plural(locked, 'locked cell')}${events ? `, ${T.plural(events, 'event')}` : ''}${nests ? `, ${T.plural(nests, 'rat nest')}` : ''}</li>`);
-      list.push(`<li><b>Warden</b> ${r.warden ? (r.warden.cell === T.OFFICE ? 'in the office' : `cell ${L(r.warden.cell)}`) : 'not found'}</li>`);
-      list.push(`<li><b>Today</b> ${rd.chain ? `${m.step === 'chain' ? 'a consume chain picks its next meal, or Cancel stops it' : 'the day’s consume picks its meal'}: cell ${rd.chain.map(L).join(' or ')}` : m.step === 'patrol' ? `choose a door: ${m.dest.map(L).join(', ')}` : r.decision && r.decision.ratway ? (rd.huntPick ? `the Hunt: pick the Lion’s prey${(r.decision.framed || []).length ? `, cell ${r.decision.framed.map(L).join(', ')}` : ''}` : 'the Sewer Ratway: pick any cell but the office') : r.decision && r.decision.office ? (rd.model.officeOnly ? `the office: ${rd.model.officeOnly === 'bestow' ? 'Bestow' : 'Instigate'} only` : 'the office: Instigate or Bestow') : r.decision ? `your decision: ${[r.decision.replace && 'Replace', r.decision.consume && 'Consume', 'End'].filter(Boolean).join(', ')}` : 'no door cards, so after the patrol'}</li>`);
-      list.push(`<li><b>Riot</b> ${r.days ? `${T.plural(r.days.days, 'day')} away, so day ${m.day} of ${m.maxDays}` : 'not read'}</li>`);
-      list.push(`<li><b>Instruments</b> ${rd.tools.length ? rd.tools.map((t) => esc(t.name || t.id) + (t.sim ? '' : ' (not simulated)')).join(', ') : 'none'}</li>`);
-      list.push(`<li><b>Chromatic</b> ${T.plural(rd.chromatic, 'prisoner')}${r.chromatic ? '' : ' (panel not found)'}</li>`);
-      if (rd.checks.size) list.push(`<li class="is-check"><b>Check</b> ${[...rd.checks].sort((a, b) => a - b).map(L).join(', ')}: unsure, marked Check on the board</li>`);
+      list.push(`<li><b>盤面</b> ${T.plural(inmates, '名囚犯')}、${T.plural(locked, '間上鎖牢房')}${events ? `、${T.plural(events, '個事變')}` : ''}${nests ? `、${T.plural(nests, '個鼠巢')}` : ''}</li>`);
+      list.push(`<li><b>典獄長</b> ${r.warden ? (r.warden.cell === T.OFFICE ? '在審訊室' : `${L(r.warden.cell)} 號牢房`) : '沒找到'}</li>`);
+      list.push(`<li><b>今天</b> ${rd.chain ? `${m.step === 'chain' ? '連鎖吞噬正在選下一個獵物，或按取消停止' : '今天的吞噬正在選獵物'}：${rd.chain.map(L).join(' 或 ')} 號牢房` : m.step === 'patrol' ? `選一扇門：${m.dest.map(L).join('、')}` : r.decision && r.decision.ratway ? (rd.huntPick ? `尋獵：選狂獅的獵物${(r.decision.framed || []).length ? `，${r.decision.framed.map(L).join('、')} 號牢房` : ''}` : '暗渠鼠道：除了審訊室任選一間牢房') : r.decision && r.decision.office ? (rd.model.officeOnly ? `審訊室：只有${rd.model.officeOnly === 'bestow' ? '賞賜' : '煽動'}` : '審訊室：煽動或賞賜') : r.decision ? `做出決定：${[r.decision.replace && '替換', r.decision.consume && '吞噬', '結束'].filter(Boolean).join('、')}` : '沒有門卡片，所以是巡視之後'}</li>`);
+      list.push(`<li><b>暴動</b> ${r.days ? `還有${T.plural(r.days.days, '天')}，所以是第 ${m.day} / ${m.maxDays} 天` : '沒讀到'}</li>`);
+      list.push(`<li><b>刑具</b> ${rd.tools.length ? rd.tools.map((t) => esc(t.name || t.id) + (t.sim ? '' : '（未模擬）')).join('、') : '無'}</li>`);
+      list.push(`<li><b>綺彩囚犯</b> ${T.plural(rd.chromatic, '名')}${r.chromatic ? '' : '（沒找到面板）'}</li>`);
+      if (rd.checks.size) list.push(`<li class="is-check"><b>檢查</b> ${[...rd.checks].sort((a, b) => a - b).map(L).join('、')}：沒把握，已在盤面上標記「檢查」</li>`);
       for (const note of rd.notes) list.push(`<li class="is-note">${esc(note)}</li>`);
     }
     $('az-scan-summary').innerHTML = list.join('');
@@ -3001,7 +3004,7 @@
     if (!r.ok || !reader.reading) return;
     const checks = reader.reading.checks;
     const doors = new Set(reader.reading.model.step === 'patrol' ? reader.reading.model.dest : []);
-    const font = (px) => `600 ${px}px "IBM Plex Mono", ui-monospace, monospace`;
+    const font = (px) => `600 ${px}px "IBM Plex Mono", "Noto Sans TC", ui-monospace, monospace`;
     // The warden: a ring on the arrow's cell, under the labels.
     if (r.warden) {
       const c = r.cells[r.warden.cell];
@@ -3026,7 +3029,7 @@
       ctx.strokeRect(x - w / 2, y - h / 2, w, h);
       // Beast over rarity, shrunk to fit inside the cell's box.
       const cell = reader.reading.model.cells[c.n];
-      const lines = c.kind === 'locked' ? [c.nest ? 'nest' : c.event ? 'locked !' : 'locked'] : c.kind === 'inmate' ? [T.beastName(cell.beast), SHORT_TIER[cell.tier]] : ['empty?'];
+      const lines = c.kind === 'locked' ? [c.nest ? '鼠巢' : c.event ? '上鎖 !' : '上鎖'] : c.kind === 'inmate' ? [T.beastName(cell.beast), SHORT_TIER[cell.tier]] : ['空？'];
       let px = Math.round(11 * dpr);
       ctx.font = font(px);
       const widest = Math.max(...lines.map((t) => ctx.measureText(t).width));
@@ -3067,7 +3070,7 @@
     // The screenshot stays in view, with what was read drawn on it, to
     // compare with the board.
     changed();
-    scanStatus(rd.checks.size ? `Loaded as your board, with ${T.plural(rd.checks.size, 'cell')} marked Check.` : 'Loaded as your board.');
+    scanStatus(rd.checks.size ? `已載入為你的盤面，有${T.plural(rd.checks.size, '間牢房')}標記「檢查」。` : '已載入為你的盤面。');
     renderScan();
   }
 
@@ -3096,8 +3099,8 @@
     $('az-beasts').innerHTML = T.BEASTS.map((b) => `<button type="button" class="az-beast" data-v="${b}">${B.PORTRAITS[b]}<span>${esc(T.beastName(b))}</span></button>`).join('');
     $('az-tiers').innerHTML = T.TIERS.slice(0, TOP_TIER + 1).map((name, t) => `<button type="button" class="az-tier t${t}" data-v="${t}">${esc(name)}</button>`).join('');
     // The instruments: every one the simulator knows, clicked on and off.
-    $('az-tools').innerHTML = T.TOOL_IDS.map((id) => `<button type="button" class="az-instrument" data-tool="${id}" aria-pressed="false" title="${esc(`${T.toolName(id)}: ${T.toolText(id)}`)}">${B.INSTRUMENTS[id] || ''}<span>${esc(T.toolName(id))}</span></button>`).join('') + '<p class="az-tools-rest" id="az-tools-rest" hidden>Others</p>';
-    $('az-vault-add').innerHTML = `<span class="field-label">Add</span>${T.BEASTS.map((b) => `<button type="button" class="az-ico t5" data-vault-add="${b}" title="Add a Chromatic ${esc(T.beastName(b))}" aria-label="Add a Chromatic ${esc(T.beastName(b))}">${B.PORTRAITS[b]}</button>`).join('')}`;
+    $('az-tools').innerHTML = T.TOOL_IDS.map((id) => `<button type="button" class="az-instrument" data-tool="${id}" aria-pressed="false" title="${esc(`${T.toolName(id)}: ${T.toolText(id)}`)}">${B.INSTRUMENTS[id] || ''}<span>${esc(T.toolName(id))}</span></button>`).join('') + '<p class="az-tools-rest" id="az-tools-rest" hidden>其他</p>';
+    $('az-vault-add').innerHTML = `<span class="field-label">新增</span>${T.BEASTS.map((b) => `<button type="button" class="az-ico t5" data-vault-add="${b}" title="新增一隻綺彩${esc(T.beastName(b))}" aria-label="新增一隻綺彩${esc(T.beastName(b))}">${B.PORTRAITS[b]}</button>`).join('')}`;
 
     segment('az-kind', (v) => setKind(v));
     segment('az-beasts', (v) => setCell(selected, { kind: model.cells[selected].kind === 'scouted' ? 'scouted' : 'inmate', beast: v }));
@@ -3321,20 +3324,20 @@
       if (SHARE) SHARE.reset('example');
       solver.st = null;
       changed();
-      notice('Loaded an example: day 6, the warden at cell 05, with three doors to choose from.');
+      notice('已載入範例：第 6 天，典獄長在 05 號牢房，有三扇門可選。');
     });
     let clearArmed = 0;
     $('az-clear').addEventListener('click', () => {
       if (Date.now() > clearArmed) {
         clearArmed = Date.now() + 5000;
-        $('az-clear').textContent = 'Click again to clear';
+        $('az-clear').textContent = '再按一次清空';
         setTimeout(() => {
-          $('az-clear').textContent = 'Clear the board';
+          $('az-clear').textContent = '清空盤面';
         }, 5000);
         return;
       }
       clearArmed = 0;
-      $('az-clear').textContent = 'Clear the board';
+      $('az-clear').textContent = '清空盤面';
       leaveShot();
       model = blankModel();
       selected = 1;
@@ -3344,7 +3347,7 @@
       if (SHARE) SHARE.reset('manual');
       solver.st = null;
       changed();
-      notice('Cleared: day 1, every cell sealed, the warden in the office.');
+      notice('已清空：第 1 天，所有牢房未開啟，典獄長在審訊室。');
     });
     $('az-open-sim').addEventListener('click', openInSimulator);
 
@@ -3470,7 +3473,7 @@
     $('az-scan-back').addEventListener('click', () => {
       undoMove();
       renderScan();
-      scanStatus('Back to the board before that picture. It isn’t shared.');
+      scanStatus('已回到那張畫面之前的盤面。那張畫面不會被分享。');
     });
     $('az-scan-discard').addEventListener('click', () => {
       reader.result = null;

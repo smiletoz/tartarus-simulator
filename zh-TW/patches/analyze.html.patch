@@ -1,0 +1,530 @@
+analyze.html：盤面分析器與截圖辨識頁面。
+data-v、id、class、option 的 value 都是程式用的，不翻。
+
+<<<< once
+<html lang="en">
+====
+<html lang="zh-Hant">
+>>>>
+<<<< once
+<title>Tartarus Board Analyzer</title>
+<meta name="description" content="Enter your Tartarus prison board exactly as it is in your game, and the simulator's trained strategy tells you the best move.">
+====
+<title>塔羅斯盤面分析器</title>
+<meta name="description" content="照遊戲裡的樣子輸入你的塔羅斯監獄盤面，模擬器訓練出來的策略就會告訴你最佳動作。">
+>>>>
+<<<< once
+family=IBM+Plex+Mono:wght@400;500&display=swap
+====
+family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+TC:wght@400;500;700;900&display=swap
+>>>>
+<<<< once
+    <span class="az-beta-tag">Beta</span>
+    <p>This page is in beta. Its game rules follow the season's reveal for now. I'll be updating the exact rules within a few hours of league launch, as we get to experience the mechanic live, so the advice may change.</p>
+====
+    <span class="az-beta-tag">測試版</span>
+    <p>這個頁面還在測試階段，目前的遊戲規則是依照賽季公開影片設定的。賽季開跑後幾個小時內，等實際玩到機制，我會更新成精確的規則，所以建議可能會有變動。</p>
+>>>>
+<<<< once
+      <a href="./">← Back to the simulator</a>
+      <a href="strategy.html">Strategy guide</a>
+    </nav>
+    <p class="eyebrow">Tartarus Simulator · Board analyzer</p>
+    <h1 class="az-title">What should I do?</h1>
+    <p class="az-lede">Set up your board exactly as it is in your game: what's in each cell, where the warden stands, today's doors and your tools. Then ask, and the trained strategy picks your move and checks it with hundreds of playouts.</p>
+====
+      <a href="./">← 回到模擬器</a>
+      <a href="strategy.html">策略指南</a>
+    </nav>
+    <p class="eyebrow">塔羅斯模擬器 · 盤面分析器</p>
+    <h1 class="az-title">我該怎麼做？</h1>
+    <p class="az-lede">照遊戲裡的樣子擺好你的盤面：每間牢房裡有什麼、典獄長站在哪、今天的門和你的刑具。然後按下詢問，訓練好的策略會挑出你的動作，並用數百次模擬驗證。</p>
+>>>>
+<<<< once
+title="Reads your game's log and pictures of its window, so the board and the advice keep up by themselves. Opens its setup in a tab to keep open while you play.">Auto Screenshot Mode (beta)</a>
+====
+title="讀取遊戲的紀錄檔和視窗畫面，讓盤面和建議自動跟上。會在新分頁開啟設定，遊玩時保持開著即可。">自動截圖模式（測試版）</a>
+>>>>
+<<<< once
+title="Tartarus Overlay, for Windows: Auto Screenshot Mode as an app, with the advice in a small card over the game, so one monitor is enough. Opens its download page.">Desktop app (Windows)</a>
+      <button type="button" class="btn" id="az-load-run">Load my simulator run</button>
+      <button type="button" class="btn" id="az-example">Load an example</button>
+      <button type="button" class="btn btn-danger" id="az-clear">Clear the board</button>
+====
+title="Tartarus Overlay（Windows 版）：做成應用程式的自動截圖模式，建議會以小卡片疊在遊戲畫面上，一個螢幕就夠用。會開啟下載頁面。">桌面應用程式（Windows）</a>
+      <button type="button" class="btn" id="az-load-run">載入我的模擬器進度</button>
+      <button type="button" class="btn" id="az-example">載入範例</button>
+      <button type="button" class="btn btn-danger" id="az-clear">清空盤面</button>
+>>>>
+<<<< once
+      <button type="button" class="btn" id="az-follow-now">Take a picture now</button>
+====
+      <button type="button" class="btn" id="az-follow-now">立即擷取畫面</button>
+>>>>
+<<<< once
+        <h2 class="az-h2" id="az-scan-title">Read a screenshot</h2>
+        <p class="az-scan-lede">Paste a screenshot of your prison screen (<kbd>Ctrl</kbd>+<kbd>V</kbd>), drop it here, or choose a file. The reader fills in your board, instruments, Chromatic prisoners, today's doors and the days until the riot, and the advice follows straight away. It's still learning: anything it's unsure of is marked Check. If the board doesn't match your game, fix it and press Recheck.</p>
+      </div>
+      <div class="az-scan-buttons">
+        <label class="btn" for="az-scan-file">Choose a screenshot</label>
+        <button type="button" class="btn btn-report" data-report="other" title="An event, instrument or gift the simulator doesn't have yet? Send a screenshot of it."><span aria-hidden="true">+</span> Report something new</button>
+====
+        <h2 class="az-h2" id="az-scan-title">截圖辨識</h2>
+        <p class="az-scan-lede">貼上監獄畫面的截圖（<kbd>Ctrl</kbd>+<kbd>V</kbd>）、拖曳到這裡，或選擇檔案。辨識器會填入你的盤面、刑具、綺彩囚犯、今天的門和距離暴動的天數，接著馬上給出建議。它還在學習中：沒把握的地方會標記「檢查」。如果盤面和遊戲不符，修正後按「重新檢查」。</p>
+      </div>
+      <div class="az-scan-buttons">
+        <label class="btn" for="az-scan-file">選擇截圖</label>
+        <button type="button" class="btn btn-report" data-report="other" title="模擬器還沒有的獄中事變、刑具或珍藏？傳一張截圖給我們。"><span aria-hidden="true">+</span> 回報新內容</button>
+>>>>
+<<<< once
+    <p class="az-scan-lang"><label>Game language: <select id="az-game-lang">
+          <option value="en">English</option>
+          <option value="ru">Русский</option>
+          <option value="zh">中文</option>
+          <option value="other">Another</option>
+====
+    <p class="az-scan-lang"><label>遊戲語言：<select id="az-game-lang">
+          <option value="en">英文</option>
+          <option value="ru">俄文</option>
+          <option value="zh">中文</option>
+          <option value="other">其他</option>
+>>>>
+<<<< once
+      <button type="button" class="link" id="az-scan-show" hidden>Show the screenshot</button>
+      <button type="button" class="link" id="az-scan-back" hidden>Go back to the board before it</button>
+      <button type="button" class="link" id="az-scan-report" hidden title="The reader got your game wrong, or the advice points at something that isn't there? Send this screenshot with what the analyzer made of it.">Report a wrong reading</button>
+    </div>
+    <label class="toggle az-scan-always"><input type="checkbox" id="az-scan-always"><span><strong>Show screenshots after reading</strong><small>Off: a screenshot is read into the board and stays hidden, from Auto Screenshot Mode or pasted. Show the screenshot opens it when you want it. Remembered in this browser.</small></span></label>
+    <div class="az-scan-result" id="az-scan-result" hidden>
+      <div class="az-scan-preview"><canvas id="az-scan-canvas" aria-label="Your screenshot, with what the reader found drawn on it"></canvas></div>
+====
+      <button type="button" class="link" id="az-scan-show" hidden>顯示截圖</button>
+      <button type="button" class="link" id="az-scan-back" hidden>回到截圖之前的盤面</button>
+      <button type="button" class="link" id="az-scan-report" hidden title="辨識器讀錯了你的遊戲，或建議指向不存在的東西？把這張截圖連同分析器的辨識結果一起傳給我們。">回報辨識錯誤</button>
+    </div>
+    <label class="toggle az-scan-always"><input type="checkbox" id="az-scan-always"><span><strong>辨識後顯示截圖</strong><small>關閉時：截圖（不論來自自動截圖模式或手動貼上）讀進盤面後會保持隱藏，需要時按「顯示截圖」打開。此設定會記在這個瀏覽器。</small></span></label>
+    <div class="az-scan-result" id="az-scan-result" hidden>
+      <div class="az-scan-preview"><canvas id="az-scan-canvas" aria-label="你的截圖，上面畫出辨識器找到的內容"></canvas></div>
+>>>>
+<<<< once
+          <span class="field-label">Objective in your screenshot</span>
+          <canvas id="az-scan-objective-canvas" aria-label="The objective text from your screenshot"></canvas>
+        </div>
+        <div class="az-res-actions">
+          <button type="button" class="btn" id="az-scan-discard">Hide the screenshot</button>
+====
+          <span class="field-label">截圖中的目標</span>
+          <canvas id="az-scan-objective-canvas" aria-label="截圖中的目標文字"></canvas>
+        </div>
+        <div class="az-res-actions">
+          <button type="button" class="btn" id="az-scan-discard">隱藏截圖</button>
+>>>>
+<<<< once
+  <section class="az-screen" aria-label="Your prison">
+====
+  <section class="az-screen" aria-label="你的監獄">
+>>>>
+<<<< once
+        <span class="az-game-title">Tartarus Prison</span>
+        <label class="az-riot"><input type="number" id="az-riot" min="0" max="59" step="1" aria-describedby="az-dayof"><span>day(s) until Riot</span></label>
+====
+        <span class="az-game-title">塔羅斯監獄</span>
+        <label class="az-riot"><input type="number" id="az-riot" min="0" max="59" step="1" aria-describedby="az-dayof"><span>天後暴動</span></label>
+>>>>
+<<<< once
+            <h3 class="az-game-h" id="az-objective-title"><label for="az-objective">Objective:</label>
+              <select id="az-objective" class="az-objective-pick">
+                <option value="other">Another objective</option>
+                <option value="doors">Behind Cell Doors</option>
+                <option value="king">King of the Caged</option>
+                <option value="walk">Prison Walk</option>
+                <option value="consume">Survival of the Fittest</option>
+                <option value="incident">Undercurrents</option>
+              </select>
+            </h3>
+            <p id="az-objective-text">At least 1 inmate's rarity reaches Supreme</p>
+            <label class="az-start"><span>Start of run:</span> <select id="az-start-event" class="az-objective-pick">
+                <option value="none">No card</option>
+                <option value="cagefight">Cage Fight</option>
+                <option value="ironlaw">Iron Law</option>
+                <option value="tyranny">Tyranny</option>
+                <option value="opulence">Opulence</option>
+              </select></label>
+            <p id="az-start-text" hidden></p>
+            <label class="az-walk" id="az-walk-wrap" hidden><span id="az-walk-unit">Tiles moved</span> <input type="number" id="az-walk" min="0" max="18" step="1"> <span id="az-walk-need">/18</span></label>
+            <label class="az-done"><input type="checkbox" id="az-milestone"> <span>Completed</span></label>
+          </section>
+          <section class="az-instruments-panel" aria-labelledby="az-instruments-title">
+            <h3 class="az-game-h" id="az-instruments-title">Torture Instrument</h3>
+            <div class="az-tools-confirm" id="az-tools-confirm" role="alert" hidden><p id="az-tools-confirm-text"></p><button type="button" class="btn btn-primary" id="az-tools-ok">These are right</button></div>
+            <button type="button" class="btn az-tools-open" id="az-tools-open">Choose instruments…</button>
+====
+            <h3 class="az-game-h" id="az-objective-title"><label for="az-objective">目標：</label>
+              <select id="az-objective" class="az-objective-pick">
+                <option value="other">其他目標</option>
+                <option value="doors">牢門之後</option>
+                <option value="king">困獸稱王</option>
+                <option value="walk">巡獄之路</option>
+                <option value="consume">適者生存</option>
+                <option value="incident">暗流湧動</option>
+              </select>
+            </h3>
+            <p id="az-objective-text">至少 1 名囚犯的稀有度達到至臻</p>
+            <label class="az-start"><span>開局卡：</span> <select id="az-start-event" class="az-objective-pick">
+                <option value="none">無</option>
+                <option value="cagefight">囚徒困鬥</option>
+                <option value="ironlaw">鐵律</option>
+                <option value="tyranny">暴政</option>
+                <option value="opulence">奢靡</option>
+              </select></label>
+            <p id="az-start-text" hidden></p>
+            <label class="az-walk" id="az-walk-wrap" hidden><span id="az-walk-unit">已移動格數</span> <input type="number" id="az-walk" min="0" max="18" step="1"> <span id="az-walk-need">/18</span></label>
+            <label class="az-done"><input type="checkbox" id="az-milestone"> <span>已完成</span></label>
+          </section>
+          <section class="az-instruments-panel" aria-labelledby="az-instruments-title">
+            <h3 class="az-game-h" id="az-instruments-title">刑具</h3>
+            <div class="az-tools-confirm" id="az-tools-confirm" role="alert" hidden><p id="az-tools-confirm-text"></p><button type="button" class="btn btn-primary" id="az-tools-ok">這些沒錯</button></div>
+            <button type="button" class="btn az-tools-open" id="az-tools-open">選擇刑具…</button>
+>>>>
+<<<< once
+                <h3 class="az-game-h" id="az-tools-dialog-title">Your instruments</h3>
+                <input type="search" class="az-tools-search" id="az-tools-search" placeholder="Search by name" autocomplete="off" aria-label="Search the instruments by name">
+                <button type="button" class="btn btn-primary" id="az-tools-close">Done</button>
+====
+                <h3 class="az-game-h" id="az-tools-dialog-title">你的刑具</h3>
+                <input type="search" class="az-tools-search" id="az-tools-search" placeholder="依名稱搜尋（中英文皆可）" autocomplete="off" aria-label="依名稱搜尋刑具">
+                <button type="button" class="btn btn-primary" id="az-tools-close">完成</button>
+>>>>
+<<<< once
+              <h4>Playing your instruments</h4>
+====
+              <h4>刑具使用要點</h4>
+>>>>
+<<<< once
+            <button type="button" class="az-report-link" data-report="tool"><span aria-hidden="true">+</span> Instrument not here? Report it</button>
+====
+            <button type="button" class="az-report-link" data-report="tool"><span aria-hidden="true">+</span> 找不到你的刑具？回報給我們</button>
+>>>>
+<<<< once
+          <h3 class="az-game-h" id="az-chromatic-title">Chromatic Prisoner</h3>
+====
+          <h3 class="az-game-h" id="az-chromatic-title">綺彩囚犯</h3>
+>>>>
+<<<< once
+          <div class="az-prompts" id="az-step" role="group" aria-label="What your game is asking">
+            <button type="button" data-v="patrol">Select a Destination</button>
+            <button type="button" data-v="manage">Make Your Decision</button>
+            <button type="button" data-v="office">Instigate or Bestow</button>
+            <button type="button" data-v="chain">Pick a meal</button>
+            <button type="button" data-v="event">Special event</button>
+            <button type="button" data-v="ratway">Sewer Ratway: any cell</button>
+            <button type="button" data-v="choice">Instrument or gift</button>
+          </div>
+          <div class="az-stepbox" data-step="patrol">
+            <div class="az-doorcards" id="az-doors"></div>
+            <p class="field-note">Light up the doors your game offers today. They come from the next six cells clockwise from the warden.</p>
+          </div>
+          <div class="az-stepbox az-used" data-step="manage choice">
+            <label class="toggle"><input type="checkbox" id="az-swapped"><span><strong>Replace used today</strong><small>Only the warden's inmate can be replaced. A day has a Replace or a consume, not both, unless the game offers a consume after the Replace.</small></span></label>
+            <label class="toggle" id="az-consume-offered-wrap" hidden><input type="checkbox" id="az-consume-offered"><span><strong>Consume on offer after the Replace</strong><small>Tick it when your game shows Consume after today's Replace. Only then is a consume advised. Auto Screenshot Mode ticks it when the log shows the offer.</small></span></label>
+            <label class="toggle"><input type="checkbox" id="az-devoured"><span><strong>Consume used today</strong><small>Only the warden's inmate can consume. A day has a Replace or a consume, not both.</small></span></label>
+          </div>
+          <div class="az-stepbox" data-step="office">
+            <p class="field-note">Pick this only while your game shows the Instigate and Bestow buttons. The warden stands in the office (cell 01), and the analyzer ranks the two. Once you've taken one, the buttons are gone: paste your next screenshot, or go back to Make Your Decision.</p>
+          </div>
+          <div class="az-stepbox" data-step="chain">
+            <p class="field-note">The inmate in the warden's cell is chaining and must eat again, and your game asks which meal. Set the board as it is now: the analyzer ranks each meal it can take.</p>
+          </div>
+          <div class="az-stepbox" data-step="event">
+            <span class="field-label">The event in the warden's cell</span>
+====
+          <div class="az-prompts" id="az-step" role="group" aria-label="遊戲正在問你什麼">
+            <button type="button" data-v="patrol">選擇目的地</button>
+            <button type="button" data-v="manage">做出決定</button>
+            <button type="button" data-v="office">煽動或賞賜</button>
+            <button type="button" data-v="chain">選一個獵物</button>
+            <button type="button" data-v="event">獄中事變</button>
+            <button type="button" data-v="ratway">暗渠鼠道：任選牢房</button>
+            <button type="button" data-v="choice">刑具或珍藏</button>
+          </div>
+          <div class="az-stepbox" data-step="patrol">
+            <div class="az-doorcards" id="az-doors"></div>
+            <p class="field-note">點亮遊戲今天提供的門。它們來自典獄長順時針方向的下六間牢房。</p>
+          </div>
+          <div class="az-stepbox az-used" data-step="manage choice">
+            <label class="toggle"><input type="checkbox" id="az-swapped"><span><strong>今天已替換</strong><small>只有典獄長所在牢房的囚犯可以被替換。一天只能替換或吞噬其中一個，除非遊戲在替換後又提供吞噬。</small></span></label>
+            <label class="toggle" id="az-consume-offered-wrap" hidden><input type="checkbox" id="az-consume-offered"><span><strong>替換後仍可吞噬</strong><small>遊戲在今天的替換之後出現「吞噬」時勾選。只有這時才會建議吞噬。自動截圖模式在紀錄檔顯示有提供時會自動勾選。</small></span></label>
+            <label class="toggle"><input type="checkbox" id="az-devoured"><span><strong>今天已吞噬</strong><small>只有典獄長所在牢房的囚犯可以吞噬。一天只能替換或吞噬其中一個。</small></span></label>
+          </div>
+          <div class="az-stepbox" data-step="office">
+            <p class="field-note">只有在遊戲顯示「煽動」和「賞賜」按鈕時才選這個。典獄長站在審訊室（01 號牢房），分析器會比較這兩個選項。選了其中一個之後按鈕就會消失：貼上下一張截圖，或回到「做出決定」。</p>
+          </div>
+          <div class="az-stepbox" data-step="chain">
+            <p class="field-note">典獄長所在牢房的囚犯正在連鎖吞噬，必須再吃一口，遊戲問你要吃哪個獵物。照現在的樣子設定盤面：分析器會比較牠能吃的每個獵物。</p>
+          </div>
+          <div class="az-stepbox" data-step="event">
+            <span class="field-label">典獄長所在牢房的獄中事變</span>
+>>>>
+<<<< 2
+              <button type="button" data-v="chain">Chain reaction</button>
+              <button type="button" data-v="execution">Execution</button>
+              <button type="button" data-v="trickster">Behind Closed Doors</button>
+              <button type="button" data-v="appetite">Ravenous Appetite</button>
+              <button type="button" data-v="convict">High-Risk Convict</button>
+              <button type="button" data-v="crow">Crow Whispers</button>
+              <button type="button" data-v="freedom">Taste of Freedom</button>
+              <button type="button" data-v="portion">Extra Portion</button>
+              <button type="button" data-v="usurp1">Usurpation I</button>
+              <button type="button" data-v="usurp2">Usurpation II</button>
+              <button type="button" data-v="usurp3">Usurpation III</button>
+              <button type="button" data-v="usurp4">Usurpation IV</button>
+              <button type="button" data-v="ratway">Sewer Ratway</button>
+              <button type="button" data-v="hunt">"Treasure" Hunt</button>
+====
+              <button type="button" data-v="chain">連鎖反應</button>
+              <button type="button" data-v="execution">處刑效率</button>
+              <button type="button" data-v="trickster">暗箱操作</button>
+              <button type="button" data-v="appetite">飢腸轆轆</button>
+              <button type="button" data-v="convict">高危罪犯</button>
+              <button type="button" data-v="crow">鴉之低語</button>
+              <button type="button" data-v="freedom">自由的滋味</button>
+              <button type="button" data-v="portion">有福同享</button>
+              <button type="button" data-v="usurp1">僭越 I</button>
+              <button type="button" data-v="usurp2">僭越 II</button>
+              <button type="button" data-v="usurp3">僭越 III</button>
+              <button type="button" data-v="usurp4">僭越 IV</button>
+              <button type="button" data-v="ratway">暗渠鼠道</button>
+              <button type="button" data-v="hunt">尋「寶」</button>
+>>>>
+<<<< once
+            <p class="field-note">The door the warden just opened held it, or the cell the warden walked into had a "!". The inmate there must be in the warden's cell.</p>
+            <p class="field-note">A different event? <button type="button" class="link" data-report="event">Report it with a screenshot</button>.</p>
+          </div>
+          <div class="az-stepbox" data-step="ratway">
+            <p class="field-note">After accepting the Sewer Ratway, your game asks “Select an Objective”, with every cell but the office on offer. Set the board as it is now: the analyzer ranks every cell.</p>
+          </div>
+          <div class="az-stepbox" data-step="choice">
+            <span class="field-label">What's on offer</span>
+            <div class="az-seg" id="az-choice-kind">
+              <button type="button" data-v="tool">Instrument pick</button>
+              <button type="button" data-v="gift">Warden's Treasure gift</button>
+            </div>
+            <div class="az-offer" id="az-offer"></div>
+            <p class="field-note">An instrument or gift that isn't listed? <button type="button" class="link" data-report="tool">Report it with a screenshot</button>.</p>
+          </div>
+        </div>
+        <div class="az-ask">
+          <button type="button" class="btn btn-primary az-go" id="az-go">What should I do?</button>
+====
+            <p class="field-note">事變藏在典獄長剛打開的門後，或是典獄長走進的牢房有「!」。那裡的囚犯必須設在典獄長所在的牢房。</p>
+            <p class="field-note">是別的事變？<button type="button" class="link" data-report="event">附上截圖回報</button>。</p>
+          </div>
+          <div class="az-stepbox" data-step="ratway">
+            <p class="field-note">接受暗渠鼠道後，遊戲會要你「選擇目標」（Select an Objective），除了審訊室之外的每間牢房都能選。照現在的樣子設定盤面：分析器會比較每一間牢房。</p>
+          </div>
+          <div class="az-stepbox" data-step="choice">
+            <span class="field-label">可選的項目</span>
+            <div class="az-seg" id="az-choice-kind">
+              <button type="button" data-v="tool">選擇刑具</button>
+              <button type="button" data-v="gift">珍藏</button>
+            </div>
+            <div class="az-offer" id="az-offer"></div>
+            <p class="field-note">清單裡沒有的刑具或珍藏？<button type="button" class="link" data-report="tool">附上截圖回報</button>。</p>
+          </div>
+        </div>
+        <div class="az-ask">
+          <button type="button" class="btn btn-primary az-go" id="az-go">我該怎麼做？</button>
+>>>>
+<<<< once
+    <p class="az-keys">Click a cell to pick what's in it; the panel below has the details. Keys: <kbd>M</kbd> <kbd>L</kbd> <kbd>W</kbd> <kbd>R</kbd> beast · <kbd>1</kbd>–<kbd>5</kbd> rarity · <kbd>S</kbd> sealed · <kbd>X</kbd> scratched · <kbd>N</kbd> nest · <kbd>E</kbd> empty · <kbd>I</kbd> Tusk · <kbd>D</kbd> today's door · <kbd>H</kbd> warden here · arrows move around the ring.</p>
+====
+    <p class="az-keys">點一下牢房選擇裡面的內容，下方面板有詳細設定。快速鍵：<kbd>M</kbd> <kbd>L</kbd> <kbd>W</kbd> <kbd>R</kbd> 野獸（巨象／狂獅／頭狼／碩鼠）· <kbd>1</kbd>–<kbd>5</kbd> 稀有度 · <kbd>S</kbd> 未開啟 · <kbd>X</kbd> 劃痕 · <kbd>N</kbd> 鼠巢 · <kbd>E</kbd> 空 · <kbd>I</kbd> 象牙 · <kbd>D</kbd> 今天的門 · <kbd>H</kbd> 典獄長在這 · 方向鍵沿著環形監區移動。</p>
+>>>>
+<<<< once
+    <section class="az-main" aria-label="Your board">
+====
+    <section class="az-main" aria-label="你的盤面">
+>>>>
+<<<< once
+        <p class="az-res-move">The Warden’s Treasure is open</p>
+        <p>It covers the board, which may have changed since the last picture. Press <strong>View Prison Status</strong> in the game, wait a second on the board, then return to the Treasure: Auto Screenshot Mode reads the board while you look, and the gift advice uses it. Without Auto Screenshot Mode, paste a screenshot of the board as you see it then.</p>
+        <button type="button" class="btn" id="az-treasure-now">Advise with the board as it is</button>
+      </section>
+      <section class="az-panel az-results" id="az-results" aria-live="polite" hidden>
+        <p class="trainer-eyebrow" id="az-res-eyebrow">Recommended</p>
+        <p class="az-res-move" id="az-res-move"></p>
+        <div class="az-res-actions">
+          <button type="button" class="btn btn-primary" id="az-next" title="Plays this move, then the rest of the day by the strategy, and goes to the next day. Then paste a screenshot of your new day.">OK, on to the next day</button>
+          <button type="button" class="btn" id="az-do">Do it here</button>
+          <button type="button" class="btn" id="az-undo" hidden>Undo</button>
+        </div>
+        <div class="az-res-shot" id="az-res-shot" hidden>
+          <p class="trainer-why" id="az-res-shot-text"></p>
+          <div class="az-res-actions">
+            <button type="button" class="btn" id="az-fix">Fix the board</button>
+            <button type="button" class="btn" id="az-recheck">Recheck</button>
+            <button type="button" class="btn" id="az-report-reading" hidden title="The reader got your game wrong, or the advice points at something that isn't there? Send this screenshot with what the analyzer made of it.">Report a wrong reading</button>
+====
+        <p class="az-res-move">典獄長的珍藏已開啟</p>
+        <p>它蓋住了盤面，而盤面可能在上一張畫面之後有變化。請在遊戲中按<strong>查看監獄狀態</strong>（View Prison Status），在盤面停留一秒，再回到典獄長的珍藏：自動截圖模式會在你查看時讀取盤面，珍品建議就會依據它。沒有用自動截圖模式的話，就貼上當時看到的盤面截圖。</p>
+        <button type="button" class="btn" id="az-treasure-now">以目前盤面給建議</button>
+      </section>
+      <section class="az-panel az-results" id="az-results" aria-live="polite" hidden>
+        <p class="trainer-eyebrow" id="az-res-eyebrow">建議動作</p>
+        <p class="az-res-move" id="az-res-move"></p>
+        <div class="az-res-actions">
+          <button type="button" class="btn btn-primary" id="az-next" title="執行這個動作，再依策略玩完今天剩下的部分，然後進入下一天。接著貼上你新一天的截圖。">好，進入下一天</button>
+          <button type="button" class="btn" id="az-do">在這裡執行</button>
+          <button type="button" class="btn" id="az-undo" hidden>復原</button>
+        </div>
+        <div class="az-res-shot" id="az-res-shot" hidden>
+          <p class="trainer-why" id="az-res-shot-text"></p>
+          <div class="az-res-actions">
+            <button type="button" class="btn" id="az-fix">修正盤面</button>
+            <button type="button" class="btn" id="az-recheck">重新檢查</button>
+            <button type="button" class="btn" id="az-report-reading" hidden title="辨識器讀錯了你的遊戲，或建議指向不存在的東西？把這張截圖連同分析器的辨識結果一起傳給我們。">回報辨識錯誤</button>
+>>>>
+<<<< once
+          <h2 class="az-h2" id="az-cell-title">Cell 02</h2>
+          <div class="az-editor-flags">
+            <button type="button" class="az-flag" id="az-warden" aria-pressed="false">Warden here</button>
+            <button type="button" class="az-flag" id="az-door" aria-pressed="false">Today's door</button>
+            <button type="button" class="az-flag az-match" id="az-match" hidden>Matches my game</button>
+          </div>
+        </div>
+        <p class="field-note" id="az-office-note" hidden>Cell 01 is the warden's office. Nothing is ever held here and it's never a patrol door, but the warden can stand here.</p>
+        <div id="az-cell-fields">
+          <fieldset class="field">
+            <legend>What's in it</legend>
+            <div class="az-seg" id="az-kind">
+              <button type="button" data-v="sealed">Sealed door</button>
+              <button type="button" data-v="inmate">Inmate</button>
+              <button type="button" data-v="empty">Empty</button>
+              <button type="button" data-v="scratch">Scratched door</button>
+              <button type="button" data-v="revealed">Rarity shown</button>
+              <button type="button" data-v="scouted">Scouted door</button>
+              <button type="button" data-v="nest">Rat nest</button>
+            </div>
+          </fieldset>
+          <fieldset class="field" id="az-beast-field">
+            <legend>Beast</legend>
+            <div class="az-beasts" id="az-beasts"></div>
+          </fieldset>
+          <fieldset class="field" id="az-tier-field">
+            <legend id="az-tier-legend">Rarity</legend>
+            <div class="az-tiers" id="az-tiers"></div>
+          </fieldset>
+          <div class="az-inmate-extra" id="az-inmate-extra">
+            <label class="toggle"><input type="checkbox" id="az-ivory"><span><strong>Tusk mark</strong><small>Replacing this inmate raises others on the block a tier.</small></span></label>
+            <div class="az-prey" id="az-prey-field">
+              <label class="field"><span class="field-label">Prey mark</span><select id="az-prey"></select></label>
+              <label class="field"><span class="field-label">Mornings left</span><input type="number" id="az-prey-rounds" min="1" max="9" step="1"></label>
+            </div>
+            <p class="field-note" id="az-prey-of" hidden></p>
+          </div>
+          <fieldset class="field" id="az-event-field">
+            <legend>Event behind the door</legend>
+            <div class="az-seg" id="az-event">
+              <button type="button" data-v="none">None</button>
+              <button type="button" data-v="unknown">Event, kind unknown</button>
+====
+          <h2 class="az-h2" id="az-cell-title">02 號牢房</h2>
+          <div class="az-editor-flags">
+            <button type="button" class="az-flag" id="az-warden" aria-pressed="false">典獄長在這</button>
+            <button type="button" class="az-flag" id="az-door" aria-pressed="false">今天的門</button>
+            <button type="button" class="az-flag az-match" id="az-match" hidden>和遊戲一致</button>
+          </div>
+        </div>
+        <p class="field-note" id="az-office-note" hidden>01 號牢房是審訊室。這裡永遠不會關押任何東西，也不會是巡視的門，但典獄長可以站在這裡。</p>
+        <div id="az-cell-fields">
+          <fieldset class="field">
+            <legend>裡面有什麼</legend>
+            <div class="az-seg" id="az-kind">
+              <button type="button" data-v="sealed">未開啟的門</button>
+              <button type="button" data-v="inmate">囚犯</button>
+              <button type="button" data-v="empty">空</button>
+              <button type="button" data-v="scratch">有劃痕的門</button>
+              <button type="button" data-v="revealed">顯示稀有度</button>
+              <button type="button" data-v="scouted">已偵察的門</button>
+              <button type="button" data-v="nest">鼠巢</button>
+            </div>
+          </fieldset>
+          <fieldset class="field" id="az-beast-field">
+            <legend>野獸</legend>
+            <div class="az-beasts" id="az-beasts"></div>
+          </fieldset>
+          <fieldset class="field" id="az-tier-field">
+            <legend id="az-tier-legend">稀有度</legend>
+            <div class="az-tiers" id="az-tiers"></div>
+          </fieldset>
+          <div class="az-inmate-extra" id="az-inmate-extra">
+            <label class="toggle"><input type="checkbox" id="az-ivory"><span><strong>象牙標記</strong><small>替換這名囚犯時，監區裡的其他囚犯會升一階。</small></span></label>
+            <div class="az-prey" id="az-prey-field">
+              <label class="field"><span class="field-label">獵物標記</span><select id="az-prey"></select></label>
+              <label class="field"><span class="field-label">剩餘早上數</span><input type="number" id="az-prey-rounds" min="1" max="9" step="1"></label>
+            </div>
+            <p class="field-note" id="az-prey-of" hidden></p>
+          </div>
+          <fieldset class="field" id="az-event-field">
+            <legend>門後的獄中事變</legend>
+            <div class="az-seg" id="az-event">
+              <button type="button" data-v="none">無</button>
+              <button type="button" data-v="unknown">有事變，種類不明</button>
+>>>>
+<<<< once
+          <label class="field az-nest" id="az-nest-field"><span class="field-label">Hatches on day</span><input type="number" id="az-nest-due" min="1" max="60" step="1"></label>
+====
+          <label class="field az-nest" id="az-nest-field"><span class="field-label">孵化日（第幾天）</span><input type="number" id="az-nest-due" min="1" max="60" step="1"></label>
+>>>>
+<<<< once
+    <aside class="az-side" aria-label="The run">
+      <section class="az-panel">
+        <h2 class="az-h2">The run</h2>
+        <div class="az-row">
+          <label class="field" id="az-days-wrap"><span class="field-label">Run length (days)</span><input type="number" id="az-days" min="5" max="60" step="1"></label>
+        </div>
+        <label class="toggle az-armed"><input type="checkbox" id="az-armed"><span><strong>Chain reaction armed</strong><small>Your next patrol opens every sealed door on the walk.</small></span></label>
+      </section>
+
+      <section class="az-panel">
+        <h2 class="az-h2">Rewards</h2>
+        <div class="toggles az-reward-toggles">
+          <label class="toggle" id="az-rewards-wrap"><input type="checkbox" id="az-rewards"><span><strong>Rewards on</strong><small>Meeting the objective earns an instrument, and each Chromatic prisoner opens the Warden's Treasure.</small></span></label>
+====
+    <aside class="az-side" aria-label="這一局">
+      <section class="az-panel">
+        <h2 class="az-h2">這一局</h2>
+        <div class="az-row">
+          <label class="field" id="az-days-wrap"><span class="field-label">一局長度（天）</span><input type="number" id="az-days" min="5" max="60" step="1"></label>
+        </div>
+        <label class="toggle az-armed"><input type="checkbox" id="az-armed"><span><strong>連鎖反應已觸發</strong><small>下一次巡視會打開路上所有未開啟的門。</small></span></label>
+      </section>
+
+      <section class="az-panel">
+        <h2 class="az-h2">獎勵</h2>
+        <div class="toggles az-reward-toggles">
+          <label class="toggle" id="az-rewards-wrap"><input type="checkbox" id="az-rewards"><span><strong>開啟獎勵</strong><small>達成目標可獲得一件刑具，每名綺彩囚犯會開啟一次典獄長的珍藏。</small></span></label>
+>>>>
+<<<< once
+    <p>Made by <strong>CoffeeBns</strong>: <a href="https://twitch.tv/coffeebns" target="_blank" rel="noopener">twitch.tv/coffeebns</a> and <a href="https://youtube.com/@CoffeeBns" target="_blank" rel="noopener">youtube.com/@CoffeeBns</a>.</p>
+    <p>The advice comes from the simulator's rules-based strategy, tuned over millions of simulated runs, with no AI involved. Each option is played out from your position many times, with everything you can't see re-rolled. The rules follow the season's video reveal, and odds are practice values, so live results may differ. Your board is saved in this browser. Boards you ask about in a row are also shared, with no account or address attached, so the simulator's odds can be measured against live. You can turn that off under the ask button.</p>
+    <p class="az-foot-links"><button type="button" class="link" id="az-open-sim">Play this position in the simulator</button> · <button type="button" class="link" data-report="other">Report something the simulator doesn't have</button></p>
+====
+    <p>製作：<strong>CoffeeBns</strong>：<a href="https://twitch.tv/coffeebns" target="_blank" rel="noopener">twitch.tv/coffeebns</a> 和 <a href="https://youtube.com/@CoffeeBns" target="_blank" rel="noopener">youtube.com/@CoffeeBns</a>。（繁體中文翻譯版）</p>
+    <p>建議來自模擬器以規則為基礎的策略，經過數百萬局模擬調校，沒有使用 AI。每個選項都會從你的局面模擬許多次，看不到的部分每次重新擲骰。規則依照賽季公開影片設定，機率是練習用的數值，實際遊戲結果可能不同。你的盤面存在這個瀏覽器裡。連續詢問的盤面也會被分享（不附帶任何帳號或位址），用來比對模擬器的機率和實際遊戲。你可以在詢問按鈕下方關閉分享。</p>
+    <p class="az-foot-links"><button type="button" class="link" id="az-open-sim">在模擬器裡玩這個局面</button> · <button type="button" class="link" data-report="other">回報模擬器還沒有的內容</button></p>
+>>>>
+
+導覽列的無障礙名稱
+<<<< once
+    <nav class="az-nav" aria-label="Tartarus Simulator">
+====
+    <nav class="az-nav" aria-label="塔羅斯模擬器">
+>>>>
+
+（fork 版）桌面程式下載連結指向繁中版的 Releases
+<<<< once
+      <a class="btn" id="az-desktop-app" href="https://github.com/blahdot3h/tartarus-simulator/releases/latest"
+====
+      <a class="btn" id="az-desktop-app" href="https://github.com/10840130/tartarus-simulator/releases/latest"
+>>>>

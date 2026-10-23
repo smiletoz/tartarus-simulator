@@ -558,20 +558,20 @@
 
   // Why a door with a known event is worth opening.
   const EVENT_WHY = {
-    execution: 'an Execution waits behind the door',
-    chain: 'a Chain reaction waits behind the door',
-    trickster: 'Behind Closed Doors waits there: whoever is inside becomes a Supreme',
-    appetite: 'Ravenous Appetite waits there: the lowest-rarity inmate gets 5 tries at +1 tier',
-    convict: 'High-Risk Convict waits there: another cell opens on a Legendary',
-    crow: 'Crow Whispers waits there: it shows the rarity behind the next 4 locked doors',
-    freedom: 'Taste of Freedom waits there: 3 more locked cells open',
-    usurp1: 'Usurpation I waits there: a random inmate rises a tier, and Usurpation II appears',
-    usurp2: 'Usurpation II waits there: 2 random inmates rise a tier, and Usurpation III appears',
-    usurp3: 'Usurpation III waits there: 2 random inmates rise 2 tiers, and Usurpation IV appears',
-    usurp4: 'Usurpation IV waits there: every inmate rises 2 tiers',
-    portion: 'Extra Portion waits there: up to 3 random inmates rise a tier',
-    ratway: 'the Sewer Ratway waits there: a free move to any cell but the office',
-    hunt: '"Treasure" Hunt waits there: every locked door holding a Normal or Magic shows its rarity, so the rest hold Rare or better',
+    execution: '門後有處刑效率在等',
+    chain: '門後有連鎖反應在等',
+    trickster: '那裡有暗箱操作在等：裡面的囚犯會變成至臻',
+    appetite: '那裡有飢腸轆轆在等：稀有度最低的囚犯有 5 次機會各升一階',
+    convict: '那裡有高危罪犯在等：另一間牢房會打開，裡面是傳奇',
+    crow: '那裡有鴉之低語在等：會顯示接下來 4 扇上鎖牢門裡的稀有度',
+    freedom: '那裡有自由的滋味在等：再打開 3 間上鎖的牢房',
+    usurp1: '那裡有僭越 I 在等：隨機 1 隻囚犯升一階，並出現僭越 II',
+    usurp2: '那裡有僭越 II 在等：隨機 2 隻囚犯升一階，並出現僭越 III',
+    usurp3: '那裡有僭越 III 在等：隨機 2 隻囚犯升 2 階，並出現僭越 IV',
+    usurp4: '那裡有僭越 IV 在等：每隻囚犯升 2 階',
+    portion: '那裡有「有福同享」在等：最多 3 隻隨機囚犯升一階',
+    ratway: '那裡有暗渠鼠道在等：免費移動到審訊室以外的任一間牢房',
+    hunt: '那裡有尋「寶」在等：每扇關著普通或魔法的上鎖牢門都會顯示稀有度，所以其餘的都是稀有以上',
   };
 
   // What each event behind a door is worth, given the block's composition.
@@ -670,10 +670,10 @@
         const path = steps ? T.clockwisePath(st, n) : [n];
         const sealed = path.filter((k) => st.cells[k].sealed).length;
         score += P.wOpen * (sealed - (c.sealed ? 1 : 0)) * ctx.openValue + (c.sealed ? freshNow() : c.inmate ? P.wWalk * known(c) : 0);
-        why = `the chain opens ${T.plural(sealed, 'door')} on the way`;
+        why = `連鎖反應會沿路打開 ${T.plural(sealed, '扇門')}`;
       } else if (c.sealed && c.nest) {
         score += P.wNest;
-        why = `it destroys the rat nest due on day ${c.nest.due}`;
+        why = `會摧毀第 ${c.nest.due} 天要孵化的鼠巢`;
       } else if (c.sealed) {
         // A door whose rarity shows (Crow Whispers, a scratch, the Scales)
         // is worth that rarity, and one a "Treasure" Hunt left dark is worth
@@ -693,8 +693,8 @@
         if (ctx.forged && P.wForged && ctx.sealed > 1) score += P.wForged * 0.5 * P.wOpen * ctx.openValue;
         // Searing Branding Iron: a copy of whoever comes out may fill a locked cell.
         if (ctx.fire && P.wFire && ctx.sealed > 1) score += P.wFire * 0.35 * P.wOpen * ctx.openValue;
-        const who = !shown && c.atLeast ? `a ${T.tierName(c.atLeast)} or better inmate (the "Treasure" Hunt left this door dark)` : 'a new inmate';
-        why = `${who}, who may consume today`;
+        const who = !shown && c.atLeast ? `一隻${T.tierName(c.atLeast)}以上的囚犯（尋「寶」沒點亮這扇門）` : '一隻新囚犯';
+        why = `${who}，今天就可能吞噬`;
         const worth = eventWorth(ctx, board.comp);
         const pool = st.eventPool || T.EVENT_POOL;
         const anyEvent = () => pool.reduce((sum, id) => sum + worth[id](), 0) / pool.length;
@@ -702,7 +702,7 @@
         // kind the player can't see is any of them, evenly.
         if (c.event && c.eventKnown === false) {
           score += anyEvent();
-          why = 'a special event waits behind the door';
+          why = '門後有獄中事變在等';
         } else if (c.event && worth[c.event]) {
           score += worth[c.event]();
           why = EVENT_WHY[c.event];
@@ -710,15 +710,15 @@
       } else if (n === T.OFFICE) {
         const office = officeValues(st, ctx, board.comp);
         score += Math.max(office.bestow, office.instigate) + office.tyranny;
-        why = office.bestow >= office.instigate ? 'the office: Bestow raises 1 random inmate a tier' : `the office: Instigate brings ${(T.instigateCount ? T.instigateCount(st) : T.INSTIGATE_EVENTS) === 1 ? 'a new special event' : `${T.instigateCount ? T.instigateCount(st) : T.INSTIGATE_EVENTS} new special events`}`;
-        if (office.tyranny) why += `, and Tyranny adds ${T.START_EVENTS.tyranny.extra} of each`;
+        why = office.bestow >= office.instigate ? '審訊室：賞賜讓 1 隻隨機囚犯升一階' : `審訊室：煽動帶來 ${T.instigateCount ? T.instigateCount(st) : T.INSTIGATE_EVENTS} 個新的獄中事變`;
+        if (office.tyranny) why += `，而且暴政讓兩者各多 ${T.START_EVENTS.tyranny.extra} 次`;
       } else if (c.inmate) {
         score += P.wWalk * known(c);
-        why = `its ${T.describe(c.inmate)} can act today`;
+        why = `那裡的${T.describe(c.inmate)}今天就能行動`;
         // Survival of the Fittest: a consume today counts toward its tool.
         if (ctx.consumesLeft && P.wConsumeWalk && T.devourOptions(st, n).length) {
           score += P.wConsumeWalk / ctx.consumesLeft;
-          why += ', and its consume counts for Survival of the Fittest';
+          why += '，而且牠的吞噬能計入適者生存';
         }
         // An event waiting in an open cell goes off when the warden walks in.
         if (c.event) {
@@ -726,14 +726,14 @@
           const pool = st.eventPool || T.EVENT_POOL;
           if (c.eventKnown === false || !worth[c.event]) {
             score += pool.reduce((sum, id) => sum + worth[id](), 0) / pool.length;
-            why = `a special event waits in the cell with its ${T.describe(c.inmate)}`;
+            why = `牢房裡有獄中事變，和那裡的${T.describe(c.inmate)}在一起`;
           } else {
             score += worth[c.event]();
-            why = EVENT_WHY[c.event].replace('behind the door', 'in the cell');
+            why = EVENT_WHY[c.event].replace('門後', '牢房裡');
           }
         }
       } else {
-        why = 'an empty cell';
+        why = '空牢房';
       }
       // Long-Chained Shackles: a walk of 4 or more may raise someone a tier.
       if (ctx.shacklesLift && steps >= 4) score += 0.4 * ctx.shacklesLift;
@@ -746,12 +746,12 @@
       if (ctx.incidentsLeft) {
         if (incidentAt(c)) {
           score += P.wIncident / ctx.incidentsLeft;
-          if (P.wIncident) why = `${why}, and it counts for Undercurrents`;
+          if (P.wIncident) why = `${why}，而且能計入暗流湧動`;
         }
         if (steps > 1 && P.wPass) score -= (P.wPass * T.clockwisePath(st, n).filter((k) => k !== n && incidentAt(st.cells[k])).length) / ctx.incidentsLeft;
         // An event further ahead, within tomorrow's reach, stays ahead.
         const next = P.wPass ? [...Array(range).keys()].map((i) => (n + 1 + i) % T.CELL_COUNT).find((k) => k !== st.position && T.stepsBetween(st.position, k) > steps && incidentAt(st.cells[k])) : undefined;
-        if (next !== undefined) why = `${why}, and it stops short of the event in cell ${T.cellLabel(next)}, for Undercurrents`;
+        if (next !== undefined) why = `${why}，而且會停在 ${T.cellLabel(next)} 號牢房的事變之前，留給暗流湧動`;
       }
       out.push({ cell: n, score, why });
     }
@@ -925,28 +925,28 @@
   // "nothing consumable", missing the one Lion with a meal).
   function giftEffect(st, id) {
     const board = st.cells.filter((c) => !c.sealed && c.inmate);
-    const who = (c) => `the ${T.describe(c.inmate)} in ${T.cellLabel(c.n)}`;
-    const list = (cs) => (cs.length > 1 ? `${cs.slice(0, -1).map(who).join(', ')} and ${who(cs[cs.length - 1])}` : who(cs[0]));
+    const who = (c) => `${T.cellLabel(c.n)} 號的${T.describe(c.inmate)}`;
+    const list = (cs) => (cs.length > 1 ? `${cs.slice(0, -1).map(who).join('、')}和${who(cs[cs.length - 1])}` : who(cs[0]));
     if (id === 'horn') {
       const eaters = board.filter((c) => T.devourOptions(st, c.n).length);
-      if (!eaters.length) return 'No inmate has a meal now, so the Horn would do nothing.';
+      if (!eaters.length) return '現在沒有囚犯有獵物可吃，所以銅號不會有任何效果。';
       if (eaters.length === 1) {
         const meals = T.devourOptions(st, eaters[0].n).map((o) => st.cells[o.cell]).filter((c) => c.inmate);
-        return `Every inmate with a meal consumes one: here ${who(eaters[0])}${meals.length ? `, whose meal${meals.length > 1 ? 's are' : ' is'} ${list(meals)}` : ''}.`;
+        return `每隻有獵物的囚犯各吞噬一隻：這裡是${who(eaters[0])}${meals.length ? `，牠的獵物是${list(meals)}` : ''}。`;
       }
-      return `Every inmate with a meal consumes one: here ${eaters.length > 3 ? `${eaters.length} inmates` : list(eaters)}.`;
+      return `每隻有獵物的囚犯各吞噬一隻：這裡是${eaters.length > 3 ? ` ${eaters.length} 隻囚犯` : list(eaters)}。`;
     }
     if (id === 'wine') {
       const low = board.filter((c) => c.inmate.tier < T.SUPREME - 1);
-      return low.length ? `Every inmate below Legendary rises a tier: here ${low.length > 3 ? `${low.length} inmates` : list(low)}.` : 'No inmate is below Legendary, so nobody would rise.';
+      return low.length ? `每隻傳奇以下的囚犯升一階：這裡是${low.length > 3 ? ` ${low.length} 隻囚犯` : list(low)}。` : '沒有傳奇以下的囚犯，所以沒有人會升階。';
     }
     if (id === 'ring') {
       const locked = st.cells.filter((c) => c.sealed && c.n !== T.OFFICE).length;
-      return locked ? `Up to 3 random locked cells open (${locked} are locked).` : 'No cell is locked, so nothing would open.';
+      return locked ? `最多隨機打開 3 間上鎖的牢房（目前有 ${locked} 間上鎖）。` : '沒有上鎖的牢房，所以什麼都不會打開。';
     }
     if (id === 'brand') {
       const hungry = board.filter((c) => !T.devourOptions(st, c.n).length).length;
-      return hungry ? `Up to 4 inmates with no meal change beast to have one (${hungry} have none now).` : 'Every inmate has a meal already, so nobody would change.';
+      return hungry ? `最多 4 隻沒有獵物的囚犯會換成有獵物可吃的野獸（目前有 ${hungry} 隻沒有）。` : '每隻囚犯都已經有獵物，所以沒有人會改變。';
     }
     return '';
   }
@@ -1116,7 +1116,7 @@
       case 'swap': return T.swap(st, st.position);
       case 'hunt': return T.hunt(st, action.to);
       case 'end': return T.endDay(st);
-      default: return { ok: false, reason: 'Unknown move.' };
+      default: return { ok: false, reason: '未知的動作。' };
     }
   }
 
@@ -1168,62 +1168,62 @@
     const out = [];
     if (st.phase === 'ended') return out;
     if (st.pending.length) {
-      for (const id of st.pending[0].options) out.push({ action: { type: 'choose', id }, label: `Take ${T.toolName(id)}` });
-      if (T.canReroll && T.canReroll(st)) out.push({ action: { type: 'reroll' }, label: 'Re-roll the offer' });
+      for (const id of st.pending[0].options) out.push({ action: { type: 'choose', id }, label: `選擇${T.toolName(id)}` });
+      if (T.canReroll && T.canReroll(st)) out.push({ action: { type: 'reroll' }, label: '重抽這批選項' });
       return out;
     }
     if (st.chaining) {
       for (const o of T.chainOptions(st)) {
         const target = st.cells[o.cell];
-        const meal = o.scratch ? 'the scratched door' : `the ${T.describe(target.inmate)}`;
-        out.push({ action: { type: 'chain', to: o.cell }, label: `Chain on: eat ${meal} in ${T.cellLabel(o.cell)}` });
+        const meal = o.scratch ? '有劃痕的門' : T.describe(target.inmate);
+        out.push({ action: { type: 'chain', to: o.cell }, label: `繼續連鎖：吃掉 ${T.cellLabel(o.cell)} 號的${meal}` });
       }
-      if (T.canStopChain && T.canStopChain(st)) out.push({ action: { type: 'stopchain' }, label: 'Stop the chain (Cancel)' });
+      if (T.canStopChain && T.canStopChain(st)) out.push({ action: { type: 'stopchain' }, label: '停止連鎖（取消）' });
       return out;
     }
     if (st.phase === 'office') {
       const only = st.used && st.used.officeOnly;
-      if (!only || only === 'bestow') out.push({ action: { type: 'office', choice: 'bestow' }, label: 'Bestow: 1 random inmate rises a tier' });
-      if (!only || only === 'instigate') out.push({ action: { type: 'office', choice: 'instigate' }, label: `Instigate: ${(T.instigateCount ? T.instigateCount(st) : T.INSTIGATE_EVENTS) === 1 ? 'a new special event' : `${T.instigateCount ? T.instigateCount(st) : T.INSTIGATE_EVENTS} new special events`}` });
+      if (!only || only === 'bestow') out.push({ action: { type: 'office', choice: 'bestow' }, label: '賞賜：1 隻隨機囚犯升一階' });
+      if (!only || only === 'instigate') out.push({ action: { type: 'office', choice: 'instigate' }, label: `煽動：${T.instigateCount ? T.instigateCount(st) : T.INSTIGATE_EVENTS} 個新的獄中事變` });
       return out;
     }
     if (st.phase === 'event' && st.event) {
       // Event names that read as names (Behind Closed Doors) take no "the".
-      const name = `${['chain', 'execution'].includes(st.event.kind) ? 'the ' : ''}${T.eventName(st.event.kind)}`;
+      const name = T.eventName(st.event.kind);
       // The "Treasure" Hunt's card has only Confirm.
       if (st.event.kind === 'hunt') {
-        out.push({ action: { type: 'event', accept: true }, label: `Confirm ${name}` });
+        out.push({ action: { type: 'event', accept: true }, label: `確認${name}` });
         return out;
       }
-      out.push({ action: { type: 'event', accept: true }, label: `Accept ${name}` });
-      out.push({ action: { type: 'event', accept: false }, label: `Skip ${name}` });
+      out.push({ action: { type: 'event', accept: true }, label: `接受${name}` });
+      out.push({ action: { type: 'event', accept: false }, label: `略過${name}` });
       return out;
     }
     if (st.phase === 'patrol') {
       for (const n of T.patrolOptions(st)) {
         const c = st.cells[n];
         const opens = st.chain ? T.clockwisePath(st, n).filter((k) => st.cells[k].sealed).length : 0;
-        const what = st.chain ? `the chain opens ${T.plural(opens, 'door')}` : n === T.OFFICE ? 'Instigate or Bestow' : c.sealed ? (c.nest ? 'the rat nest' : c.event ? 'a locked door with an event' : 'a locked door') : c.inmate ? `the ${T.describe(c.inmate)}` : 'an empty cell';
+        const what = st.chain ? `連鎖反應打開 ${T.plural(opens, '扇門')}` : n === T.OFFICE ? '煽動或賞賜' : c.sealed ? (c.nest ? '鼠巢' : c.event ? '有事變的上鎖牢門' : '上鎖的牢門') : c.inmate ? T.describe(c.inmate) : '空牢房';
         // The office's card in the game reads "Go to Interrogation Room".
-        const where = n === T.OFFICE ? 'Interrogation Room' : `cell ${T.cellLabel(n)}`;
-        out.push({ action: { type: 'patrol', cell: n }, label: `Go to ${where} (${what})` });
+        const where = n === T.OFFICE ? '審訊室' : ` ${T.cellLabel(n)} 號牢房`;
+        out.push({ action: { type: 'patrol', cell: n }, label: `前往${where}（${what}）` });
       }
       return out;
     }
     const here = st.cells[st.position];
     for (const o of T.startOptions(st)) {
       const target = st.cells[o.cell];
-      const meal = o.scratch ? `the scratched door` : `the ${T.describe(target.inmate)}`;
-      out.push({ action: { type: 'devour', to: o.cell }, label: `Consume ${meal} in ${T.cellLabel(o.cell)}` });
+      const meal = o.scratch ? '有劃痕的門' : T.describe(target.inmate);
+      out.push({ action: { type: 'devour', to: o.cell }, label: `吞噬 ${T.cellLabel(o.cell)} 號的${meal}` });
     }
     if (canSwapNow(st) && here && !here.sealed && here.inmate) {
-      out.push({ action: { type: 'swap' }, label: `Replace the ${T.describe(here.inmate)} in ${T.cellLabel(here.n)}` });
+      out.push({ action: { type: 'swap' }, label: `替換 ${T.cellLabel(here.n)} 號的${T.describe(here.inmate)}` });
     }
     // The Blood-Stained Trap's Hunt: a Prey mark on an inmate the Lion here can consume.
     if (T.canHuntNow && T.canHuntNow(st)) {
-      for (const n of T.huntTargets(st)) out.push({ action: { type: 'hunt', to: n }, label: `Hunt: a Prey mark on the ${T.describe(st.cells[n].inmate)} in ${T.cellLabel(n)}` });
+      for (const n of T.huntTargets(st)) out.push({ action: { type: 'hunt', to: n }, label: `尋獵：對 ${T.cellLabel(n)} 號的${T.describe(st.cells[n].inmate)}打上獵物標記` });
     }
-    out.push({ action: { type: 'end' }, label: st.day >= st.maxDays ? 'Finish the run' : 'End the day' });
+    out.push({ action: { type: 'end' }, label: st.day >= st.maxDays ? '結束這一局' : '結束這一天' });
     return out;
   }
 
@@ -1344,93 +1344,93 @@
     switch (action.type) {
       case 'patrol': {
         const s = patrolScores(st, ctx).find((x) => x.cell === action.cell);
-        return s ? `${s.why[0].toUpperCase()}${s.why.slice(1)}.` : '';
+        return s ? `${s.why[0].toUpperCase()}${s.why.slice(1)}。` : '';
       }
       case 'devour': {
         const odds = chainOdds(st, st.position, action.to);
         // A day has a devour or a swap, not both.
-        const over = swapGainHere(st, ctx) > 0 ? ' It beats a Replace here, and a day has one or the other.' : '';
-        return `The best first meal: picking its later meals well, its chain averages ${odds.bites.toFixed(1)} bites, with ${(100 * odds.rainbow).toFixed(0)}% to reach Rainbow.${over}`;
+        const over = swapGainHere(st, ctx) > 0 ? '這比在這裡替換更好，而一天只能二選一。' : '';
+        return `最佳的第一口：之後每一口都挑得好的話，這條連鎖平均吃 ${odds.bites.toFixed(1)} 口，有 ${(100 * odds.rainbow).toFixed(0)}% 機率抵達綺彩。${over}`;
       }
       case 'chain': {
         const odds = chainOdds(st, st.position, action.to);
-        return `The best next meal: going on with the best meal each time, the chain averages ${odds.bites.toFixed(1)} more bites, with ${(100 * odds.rainbow).toFixed(0)}% to reach Rainbow.`;
+        return `最佳的下一口：每次都挑最好的繼續吃，這條連鎖平均還能再吃 ${odds.bites.toFixed(1)} 口，有 ${(100 * odds.rainbow).toFixed(0)}% 機率抵達綺彩。`;
       }
       case 'stopchain':
-        return 'No meal left is worth eating: each would cost more than it gains, so press Cancel and keep them on the block.';
+        return '剩下的獵物都不值得吃：每一口的損失都比收穫大，所以按取消，把牠們留在監區上。';
       case 'office':
-        return action.choice === 'bestow' ? 'A random inmate rises a tier now, which beats a couple of new event doors.' : 'The block is thin, so new event doors are worth more than raising it.';
+        return action.choice === 'bestow' ? '現在就讓一隻隨機囚犯升一階，勝過多幾扇有事變的門。' : '監區上囚犯稀少，所以多幾扇有事變的門比升階更有價值。';
       case 'swap': {
         // A day has a swap or a devour, not both.
-        const over = T.startOptions(st).length ? ' That beats today’s best consume, and a day has one or the other.' : '';
+        const over = T.startOptions(st).length ? '這比今天最好的吞噬更好，而一天只能二選一。' : '';
         const maiden = maidenBonus(ctx, here.inmate.tier);
-        const level = `as many inmates stand above this ${T.tierName(here.inmate.tier)} as below it`;
-        if (here.ivory) return `A Tusk cell: replacing its inmate raises other inmates a tier${maiden.chance > 0 ? `, and the Severed Iron Maiden adds 3 tiers to the new inmate: ${level}` : ''}.${over}`;
-        if (ctx.scapegoat) return `The Scapegoat's Guillotine brings the new inmate in above ${T.tierName(here.inmate.tier)}${here.inmate.tier >= T.SUPREME ? ', a Chromatic' : ''}, worth more than the 2 random inmates it removes.${over}`;
-        if (maiden.chance > 0) return `The Severed Iron Maiden adds 3 tiers to the new inmate: ${level}.${over}`;
-        if (ctx.axeDoors) return `A ${T.tierName(here.inmate.tier)} inmate is worth less than a fresh roll on average, and a higher roll makes the Gaoler's Execution Axe open ${T.plural(ctx.axeDoors, 'door')}.${over}`;
-        return `A ${T.tierName(here.inmate.tier)} inmate is worth less than a fresh roll on average.${over}`;
+        const level = `比這隻${T.tierName(here.inmate.tier)}高和低的囚犯一樣多`;
+        if (here.ivory) return `象牙牢房：替換這裡的囚犯會讓其他囚犯升一階${maiden.chance > 0 ? `，而且切開的人形棺讓新囚犯多升 3 階：${level}` : ''}。${over}`;
+        if (ctx.scapegoat) return `替罪人的斷頭台讓新囚犯高於${T.tierName(here.inmate.tier)}${here.inmate.tier >= T.SUPREME ? '，也就是綺彩' : ''}，價值超過它隨機移除的 2 隻囚犯。${over}`;
+        if (maiden.chance > 0) return `切開的人形棺讓新囚犯多升 3 階：${level}。${over}`;
+        if (ctx.axeDoors) return `${T.tierName(here.inmate.tier)}囚犯的平均價值低於重新抽一隻，而且抽到更高稀有度時，獄卒的行刑巨斧會打開 ${T.plural(ctx.axeDoors, '扇門')}。${over}`;
+        return `${T.tierName(here.inmate.tier)}囚犯的平均價值低於重新抽一隻。${over}`;
       }
       case 'hunt': {
         const prey = st.cells[action.to].inmate;
-        const over = T.startOptions(st).length || swapGainHere(st, ctx) > 0 ? ' That beats today’s consume or Replace, and a day has one of them.' : '';
-        return `A Prey mark: this Lion and the ${T.describe(prey)} each rise a tier every morning for ${T.plural(st.params.preyRounds, 'morning')}, as long as both stay on the block and keep their beasts.${over}`;
+        const over = T.startOptions(st).length || swapGainHere(st, ctx) > 0 ? '這比今天的吞噬或替換更好，而一天只能三選一。' : '';
+        return `獵物標記：只要兩者都留在監區上、野獸種類不變，這隻狂獅和那隻${T.describe(prey)}每天早上各升一階，持續 ${T.plural(st.params.preyRounds, '個早上')}。${over}`;
       }
       case 'end': {
-        if (!T.canDevourNow(st) || !T.startOptions(st).length) return 'Nothing left today is worth doing.';
+        if (!T.canDevourNow(st) || !T.startOptions(st).length) return '今天已經沒有值得做的事了。';
         // A devour is skipped only when it costs more than it gains: nearly
         // always because it would end a prey mark.
         const marked = here && here.inmate && T.linkOf(st, here.inmate.id) ? here.inmate : T.startOptions(st).map((o) => st.cells[o.cell].inmate).find((m) => m && T.linkOf(st, m.id));
-        if (marked) return 'Skip today’s consume: it would end a prey mark, and the free tier each morning is worth more than one bite.';
-        return 'Every consume here would cost more than it gains today.';
+        if (marked) return '跳過今天的吞噬：它會結束獵物標記，而每天早上免費升的那一階比這一口更有價值。';
+        return '今天這裡的每個吞噬都是損失大於收穫。';
       }
       case 'event': {
-        if (st.event.kind === 'chain') return action.accept ? 'Your next walk opens every sealed door on the way.' : 'More inmates would hurt this block today.';
+        if (st.event.kind === 'chain') return action.accept ? '你下一次行走會打開沿路所有上鎖的牢門。' : '今天監區上多了囚犯反而有害。';
         if (st.event.kind === 'trickster') {
           const who = st.cells[st.event.cell].inmate;
-          return action.accept ? `The ${T.describe(who)} becomes a Supreme, one step from Rainbow.` : 'It is already a Supreme; accepting would only change its beast.';
+          return action.accept ? `這隻${T.describe(who)}會變成至臻，離綺彩只差一步。` : '牠已經是至臻了；接受只會改變牠的野獸種類。';
         }
-        if (st.event.kind === 'appetite') return `The lowest-rarity inmate gets ${T.APPETITE_TRIES} tries at +1 tier, for ${(T.APPETITE_TRIES * T.APPETITE_ODDS).toFixed(1)} tiers on average.`;
-        if (st.event.kind === 'convict') return 'Another cell opens on a Legendary inmate, with no patrol needed.';
-        if (st.event.kind === 'crow') return `Free information: the rarity behind the next ${T.CROW_CELLS} locked doors.`;
-        if (st.event.kind === 'portion') return `Free tiers: up to ${T.PORTION_INMATES} random inmates rise a tier.`;
-        if (st.event.kind === 'freedom') return `Free inmates: ${T.FREEDOM_CELLS} more locked cells open.`;
-        if (st.event.kind === 'usurp1') return 'A random inmate rises a tier, and Usurpation II joins the events.';
-        if (st.event.kind === 'usurp2') return 'Two random inmates rise a tier, and Usurpation III joins the events.';
-        if (st.event.kind === 'usurp3') return 'Two random inmates rise 2 tiers each, and Usurpation IV joins the events.';
-        if (st.event.kind === 'usurp4') return 'Every inmate on the block rises 2 tiers.';
-        if (st.event.kind === 'ratway') return 'A free move to any cell but the office: the best door or inmate on the whole block, not just the next six cells.';
-        if (st.event.kind === 'hunt') return 'Free information, and its card has only Confirm: every locked door holding a Normal or Magic shows its rarity, so the doors left dark hold Rare or better.';
+        if (st.event.kind === 'appetite') return `稀有度最低的囚犯有 ${T.APPETITE_TRIES} 次機會各升一階，平均升 ${(T.APPETITE_TRIES * T.APPETITE_ODDS).toFixed(1)} 階。`;
+        if (st.event.kind === 'convict') return '另一間牢房會打開，裡面是傳奇囚犯，不需要巡視。';
+        if (st.event.kind === 'crow') return `免費情報：接下來 ${T.CROW_CELLS} 扇上鎖牢門裡的稀有度。`;
+        if (st.event.kind === 'portion') return `免費升階：最多 ${T.PORTION_INMATES} 隻隨機囚犯升一階。`;
+        if (st.event.kind === 'freedom') return `免費囚犯：再打開 ${T.FREEDOM_CELLS} 間上鎖的牢房。`;
+        if (st.event.kind === 'usurp1') return '隨機 1 隻囚犯升一階，並把僭越 II 加入事變。';
+        if (st.event.kind === 'usurp2') return '隨機 2 隻囚犯升一階，並把僭越 III 加入事變。';
+        if (st.event.kind === 'usurp3') return '隨機 2 隻囚犯各升 2 階，並把僭越 IV 加入事變。';
+        if (st.event.kind === 'usurp4') return '監區上每隻囚犯都升 2 階。';
+        if (st.event.kind === 'ratway') return '免費移動到審訊室以外的任一間牢房：整個監區最好的門或囚犯，不只是接下來的六間牢房。';
+        if (st.event.kind === 'hunt') return '免費情報，而且它的卡片只有確認可按：每扇關著普通或魔法的上鎖牢門都會顯示稀有度，所以沒被點亮的門裡都是稀有以上。';
         const exec = st.cells[st.event.cell].inmate;
         const victims = T.executionVictims(st, st.event.cell).length;
-        return action.accept ? `The ${T.describe(exec)} removes ${T.plural(victims, 'inmate')} and rises as many tiers: it gains more than it removes.` : 'It would remove more than it gains.';
+        return action.accept ? `這隻${T.describe(exec)}會移除 ${T.plural(victims, '隻囚犯')}並升同樣多階：得大於失。` : '它移除的比得到的還多。';
       }
       case 'choose': {
         if (st.pending[0].kind === 'gift') {
           // Opulence: more picks wait at this Treasure, and the advice
           // weighs them.
           const picks = st.pending.filter((p) => p.kind === 'gift').length;
-          if (lastMoveMade(st) && action.id === 'ring') return 'Today’s move is made, so no gift adds a Rainbow before the run ends. The Thumb Ring opens up to 3 more cells, for more chests at the end.';
-          const worth = picks > 1 ? `Worth the most on this board with the picks to come: ${picks} picks wait at this Treasure, this one included.` : 'Worth the most on this board right now.';
+          if (lastMoveMade(st) && action.id === 'ring') return '今天的動作已經做完，所以在這局結束前，沒有任何珍藏能再多收容一隻綺彩。三首扳指最多再打開 3 間牢房，結算時能多開幾個寶箱。';
+          const worth = picks > 1 ? `考慮到之後的選擇，在這個盤面上最有價值：這次典獄長的珍藏共有 ${picks} 次選擇，包括這一次。` : '在目前的盤面上最有價值。';
           const what = giftEffect(st, action.id);
           return what ? `${what} ${worth}` : worth;
         }
         const gains = ctx.P.toolSets !== false && toolGains(st, st.pending[0].options);
         if (gains && gains[action.id] !== undefined) {
           const add = gains[action.id];
-          const held = st.tools.length === 1 ? `With the ${T.toolName(st.tools[0])}, it` : st.tools.length ? 'With the instruments you hold, it' : 'It';
+          const held = st.tools.length === 1 ? `搭配${T.toolName(st.tools[0])}，它` : st.tools.length ? '搭配你持有的刑具，它' : '它';
           const odds = T.canReroll && T.canReroll(st) ? rerollOdds(st, st.pending[0].options) : null;
-          const vs = odds ? ` A re-roll's best would add about ${signed(odds.next)} on average.` : '';
-          return `${held} adds about ${signed(add)} Rainbows per run in simulated runs.${vs}`;
+          const vs = odds ? `重抽後最好的一件平均約 ${signed(odds.next)}。` : '';
+          return `${held}在模擬中每局約多收容 ${signed(add)} 隻綺彩。${vs}`;
         }
         const rank = ctx.P.toolRank.indexOf(action.id);
-        return rank >= 0 ? `Ranked #${rank + 1} of ${ctx.P.toolRank.length} tools in training.` : '';
+        return rank >= 0 ? `訓練排名：${ctx.P.toolRank.length} 件刑具中的第 ${rank + 1} 名。` : '';
       }
       case 'reroll': {
         const odds = rerollOdds(st, st.pending[0].options);
         return odds
-          ? `The best instrument on offer adds about ${signed(odds.now)} Rainbows per run; a new offer's best adds about ${signed(odds.next)} on average.`
-          : 'A new offer is likely to hold a better instrument.';
+          ? `目前選項中最好的刑具每局約多 ${signed(odds.now)} 隻綺彩；重抽一批後，最好的一件平均約多 ${signed(odds.next)}。`
+          : '重抽一批很可能會出現更好的刑具。';
       }
       default: return '';
     }

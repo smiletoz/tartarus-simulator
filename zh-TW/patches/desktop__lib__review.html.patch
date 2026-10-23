@@ -1,0 +1,43 @@
+desktop/lib/review.html：回顧測試紀錄視窗。語言、字型、標題列文字；id 不翻。
+
+<<<< once
+<html lang="en">
+====
+<html lang="zh-Hant">
+>>>>
+
+<<<< once
+<title>Review the record</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;500;600;700&family=Big+Shoulders+Stencil+Display:wght@800&family=IBM+Plex+Mono:wght@400;500&display=swap">
+====
+<title>回顧測試紀錄</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;500;600;700&family=Big+Shoulders+Stencil+Display:wght@800&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+TC:wght@400;500;700;900&display=swap">
+>>>>
+
+<<<< once
+    --font-display: "Big Shoulders Stencil Display", "Arial Narrow", Impact, sans-serif;
+    --font-body: "Barlow Semi Condensed", "Segoe UI", system-ui, sans-serif;
+    --font-mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+====
+    --font-display: "Big Shoulders Stencil Display", "Arial Narrow", Impact, "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+    --font-body: "Barlow Semi Condensed", "Segoe UI", "Noto Sans TC", "Microsoft JhengHei", system-ui, sans-serif;
+    --font-mono: "IBM Plex Mono", ui-monospace, Consolas, "Noto Sans TC", "Microsoft JhengHei", monospace;
+>>>>
+
+<<<< once
+  <h1>Review the record</h1>
+  <select id="session" aria-label="Session"></select>
+  <button type="button" id="reload">Reload</button>
+  <button type="button" id="folder">Open the folder</button>
+  <label class="opt"><input type="checkbox" id="show-boards" checked> Boards</label>
+  <label class="opt"><input type="checkbox" id="show-other" checked> Commands and game events</label>
+  <label class="opt"><input type="checkbox" id="only-fixes"> Only steps with fixes</label>
+====
+  <h1>回顧測試紀錄</h1>
+  <select id="session" aria-label="紀錄場次"></select>
+  <button type="button" id="reload">重新載入</button>
+  <button type="button" id="folder">開啟資料夾</button>
+  <label class="opt"><input type="checkbox" id="show-boards" checked> 盤面</label>
+  <label class="opt"><input type="checkbox" id="show-other" checked> 指令與遊戲事件</label>
+  <label class="opt"><input type="checkbox" id="only-fixes"> 只顯示有手動修正的步驟</label>
+>>>>

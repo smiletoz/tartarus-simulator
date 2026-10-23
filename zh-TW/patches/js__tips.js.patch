@@ -1,0 +1,397 @@
+js/tips.js：教練／分析器的刑具玩法提示、刑具組合、開局卡提示。
+物件的 key（revenge、'maiden|rope'、cagefight…）一律不動，只翻字串內容。
+
+== 單一刑具 ==
+
+<<<< once
+    revenge: 'Consume whenever you can: 30% of consumes open a locked cell holding a meal at the eater\'s new rarity, which keeps chains going.',
+====
+    revenge: '能吞噬就吞噬：30%的吞噬會打開一間未開啟的牢房，裡面是吞噬者新稀有度的獵物，讓連鎖能繼續下去。',
+>>>>
+
+<<<< once
+    muzzle: 'Keep the block thin: a consume with 4 or fewer inmates on the block, its meal included, gains +2 tiers. Let consumes thin the block before you open many doors.',
+====
+    muzzle: '讓監區保持稀疏：監區上的囚犯（含被吃的獵物）在4隻以下時吞噬，額外+2階。先靠吞噬把監區吃空，再大量開門。',
+>>>>
+
+<<<< once
+    saw: 'Consume every day you can: 25% of consumes gain an extra tier.',
+====
+    saw: '每天能吞噬就吞噬：25%的吞噬會多升一階。',
+>>>>
+
+<<<< once
+    keys: 'Patrol to doors with locked cells on both sides: 80% of the time those open too, for free.',
+====
+    keys: '巡視到兩側都是未開啟牢房的門：有80%機率兩側也會免費打開。',
+>>>>
+
+<<<< once
+    rope: 'Replace freely: a Replace never brings a Normal or Magic, so replacing a Normal or Magic is always an upgrade.',
+====
+    rope: '放心替換：替換絕不會出普通或魔法，所以替換掉普通或魔法囚犯一定是升級。',
+>>>>
+
+<<<< once
+    fire: 'Open doors: 35% of the time the inmate behind it is copied into another locked cell, so a door can bring two inmates.',
+====
+    fire: '多開門：有35%機率門後的囚犯會複製到另一間未開啟的牢房，一扇門可能帶來兩隻囚犯。',
+>>>>
+
+<<<< once
+    ironbox: 'Nests take a locked cell each morning and hatch Rare Rats 2 days later. Rats eat Mammoths, so keep Rare Mammoths for them. Alone it measured below no instrument: open doors early, before nests fill them.',
+====
+    ironbox: '每天早上鼠巢會佔走一間未開啟的牢房，2天後孵出稀有碩鼠。碩鼠吃巨象，所以留著稀有巨象給牠們吃。單獨持有時，實測表現比沒有刑具還差：趁鼠巢還沒佔滿前早點開門。',
+>>>>
+
+<<<< once
+    skewer: 'Rats can eat Rats of their rarity, +1 extra tier a bite: send the warden to a Rat when another Rat shares its rarity.',
+====
+    skewer: '碩鼠可以吃同稀有度的碩鼠，每一口額外+1階：有另一隻同稀有度的碩鼠時，讓典獄長走到碩鼠的牢房。',
+>>>>
+
+<<<< once
+    hook: 'Open doors freely: no door ever holds a Normal.',
+====
+    hook: '放心開門：門後絕不會是普通囚犯。',
+>>>>
+
+<<<< once
+    pestle: 'A Replace keeps the beast and re-rolls only the rarity: replace low inmates whose beast you want to keep.',
+====
+    pestle: '替換會保留野獸種類，只重骰稀有度：替換那些你想保留野獸種類的低階囚犯。',
+>>>>
+
+<<<< once
+    scales: 'After a Replace, 80% of the time the best inmate behind a locked door shows: Replace early, then patrol toward what it reveals.',
+====
+    scales: '替換後有80%機率顯示未開啟牢房中最好的囚犯：早點替換，再朝顯示出的牢房巡視。',
+>>>>
+
+<<<< once
+    tongs: 'Each morning a Mammoth gets a Tusk mark, and replacing the inmate in a Tusk cell raises 4 inmates a tier: keep Mammoths, and Replace the marked one when the block is full of inmates worth raising.',
+====
+    tongs: '每天早上會有一隻巨象獲得象牙標記，替換象牙牢房裡的囚犯會讓4隻囚犯升一階：留著巨象，等監區上滿是值得升階的囚犯時再替換被標記的那隻。',
+>>>>
+
+<<<< once
+    guillotine: 'Wolves can also eat Rats below their rarity: a high Wolf can climb on the low Rats around it.',
+====
+    guillotine: '頭狼也能吃稀有度比自己低的碩鼠：高階的頭狼可以靠周圍的低階碩鼠往上爬。',
+>>>>
+
+<<<< once
+    axe: 'A Replace that comes in higher opens 2 locked cells: Replace Normals early for free doors. Alone it measured below no instrument.',
+====
+    axe: '替換後稀有度變高時會打開2間未開啟的牢房：早點替換普通囚犯換免費開門。單獨持有時，實測表現比沒有刑具還差。',
+>>>>
+
+<<<< once
+    shackles: 'Walk far: a patrol of 4 or more cells has 40% to raise a random inmate a tier, so take the far door when the choice is close.',
+====
+    shackles: '走遠一點：巡視4格以上時，有40%機率讓隨機一隻囚犯升一階，選項差不多時選遠的門。',
+>>>>
+
+<<<< once
+    collar: 'Chains pay: every bite after the first has 80% for +1 tier. Consume when meals wait at the next rarities, so the chain goes on.',
+====
+    collar: '連鎖划算：第一口之後的每一口都有80%機率+1階。等下一個稀有度都有獵物等著時再吞噬，讓連鎖接得下去。',
+>>>>
+
+<<<< once
+    forged: 'One door fewer each morning, but 50% of opened doors open another locked cell: pick doors to open over inmates to visit. Alone it measured below no instrument.',
+====
+    forged: '每天早上少一個目的地，但打開的門有50%機率再打開另一間未開啟的牢房：優先選擇開門，而不是去找已知的囚犯。單獨持有時，實測表現比沒有刑具還差。',
+>>>>
+
+<<<< once
+    dogtag: 'Open doors: 25% of the time the inmate behind the door comes out a tier higher.',
+====
+    dogtag: '多開門：有25%機率門後的囚犯出來時高一階。',
+>>>>
+
+<<<< once
+    cage: 'Consume often: 40% of the time the eaten inmate\'s cell refills at once, so consumes don\'t thin the block.',
+====
+    cage: '多吞噬：有40%機率被吃掉的囚犯牢房立刻補上新囚犯，吞噬不會讓監區變空。',
+>>>>
+
+<<<< once
+    blacklist: 'Once 5 or fewer cells are still locked, every door a patrol opens raises 2 random inmates: open doors early to get there, then keep opening.',
+====
+    blacklist: '當未開啟的牢房剩5間以下時，巡視每打開一扇門就會讓隨機2隻囚犯升階：早點開門達到這個條件，之後繼續開。',
+>>>>
+
+<<<< once
+    shortchain: 'Walk short: a patrol of 3 cells or fewer has 50% to open a random locked cell, so take the near door when the choice is close. Alone it measured below no instrument.',
+====
+    shortchain: '走近一點：巡視3格以內時，有50%機率隨機打開一間未開啟的牢房，選項差不多時選近的門。單獨持有時，實測表現比沒有刑具還差。',
+>>>>
+
+<<<< once
+    maiden: 'Replace an inmate that stands level (as many inmates above its rarity as below it, an inmate alone always is): the new one comes in 3 tiers up. The advice says when a Replace gets the +3.',
+====
+    maiden: '替換一隻「居中」的囚犯（稀有度比牠高和比牠低的囚犯數量相同；監區只剩一隻時必定居中）：新囚犯會高3階。建議會告訴你哪次替換能拿到+3。',
+>>>>
+
+<<<< once
+    whip: 'One door fewer each morning, and every bite of a consume has 35% for +1 tier: consume every day and make chains.',
+====
+    whip: '每天早上少一個目的地，但吞噬的每一口都有35%機率+1階：每天吞噬，多做連鎖。',
+>>>>
+
+<<<< once
+    ravenous: 'Each morning your highest inmate removes the inmates on both sides of it, with 40% for +1 tier each: keep cheap inmates or empty cells beside your best one.',
+====
+    ravenous: '每天早上，你最高階的囚犯會移除兩側的囚犯，每移除一隻有40%機率+1階：在最好的囚犯旁邊放便宜的囚犯或空牢房。',
+>>>>
+
+<<<< once
+    scapegoat: 'A Replace with 2 or more others on the block removes 2 random ones and brings the new inmate in above the rarity replaced. Replace only when the others are cheap: with exactly 2 others, both go.',
+====
+    scapegoat: '監區上還有2隻以上其他囚犯時替換，會隨機移除其中2隻，新囚犯的稀有度高於被替換者。只在其他囚犯都不值錢時替換：剛好只有2隻時，兩隻都會被移除。',
+>>>>
+
+<<<< once
+    stake: 'One door fewer each morning, and replacing an inmate below Legendary has 40% to bring a Legendary: Replace Normals and Magics often.',
+====
+    stake: '每天早上少一個目的地，但替換傳奇以下的囚犯有40%機率換出傳奇：多替換普通和魔法囚犯。',
+>>>>
+
+<<<< once
+    coin: 'Each morning two inmates sharing a beast and rarity have 60% to merge: one goes and another like it gains +2 tiers. Keep matching pairs on the block.',
+====
+    coin: '每天早上，野獸種類和稀有度都相同的兩隻囚犯有60%機率合併：一隻消失，另一隻+2階。在監區上保留成對的囚犯。',
+>>>>
+
+<<<< once
+    crown: 'Lions eat any inmate of their rarity, +2 extra tiers a bite: send the warden to Lions that have same-rarity inmates around.',
+====
+    crown: '狂獅可以吃任何同稀有度的囚犯，每一口額外+2階：讓典獄長走到周圍有同稀有度囚犯的狂獅那裡。',
+>>>>
+
+<<<< once
+    maul: 'Mammoths can eat Lions and Wolves of a higher rarity too, landing 2 tiers above the meal: a Mammoth eating up is the big jump.',
+====
+    maul: '巨象也能吃稀有度更高的狂獅和頭狼，吃完會比獵物高2階：巨象越級吞噬是大幅跳階的機會。',
+>>>>
+
+<<<< once
+    claws: 'Each day a locked cell gets Scratch Marks showing its rarity, and a Wolf of that rarity can eat through the door for +3: keep Wolves at the rarities the scratched doors show.',
+====
+    claws: '每天會有一間未開啟的牢房出現劃痕並顯示稀有度，同稀有度的頭狼可以隔著門吃掉裡面的囚犯，+3階：讓頭狼維持在劃痕門顯示的稀有度。',
+>>>>
+
+<<<< once
+    trap: 'With the warden on a Lion, Hunt marks one of its meals and both rise a tier each morning for 3 mornings. Hunt early on pairs that can climb; the last 3 days pay less, the last day nothing. A day has a Consume, a Replace or a Hunt.',
+====
+    trap: '典獄長站在狂獅的牢房時，尋獵會標記牠的一個獵物，之後3個早上兩者每天各升一階。早點對能往上爬的組合尋獵；最後3天效益遞減，最後一天毫無效果。每天只能在吞噬、替換、尋獵中擇一。',
+>>>>
+
+== 刑具組合 ==
+
+<<<< once
+    'maiden|rope': 'Every Replace brings Rare or better, and an inmate alone on the block stands level: replace your only inmate and it comes back 3 tiers up. Keep the block thin. The best pair measured (8.93 Rainbows a run).',
+====
+    'maiden|rope': '每次替換都至少是稀有，而監區上唯一的囚犯必定居中：替換你唯一的囚犯，牠會高3階回來。讓監區保持稀疏。實測最強組合（每局8.93隻綺彩）。',
+>>>>
+
+<<<< once
+    'ironbox|skewer': 'The nests hatch Rare Rats, and Rats eat Rats of their rarity: hatched Rats feed each other (4.50, +2.83 beyond the two apart).',
+====
+    'ironbox|skewer': '鼠巢孵出稀有碩鼠，而碩鼠能吃同稀有度的碩鼠：孵出的碩鼠可以互相餵養（4.50，比兩者分開多+2.83）。',
+>>>>
+
+<<<< once
+    'coin|ironbox': 'Hatched Rare Rats come in matching pairs for the Coin to merge: leave them be (4.50, +2.42 beyond the two apart).',
+====
+    'coin|ironbox': '孵出的稀有碩鼠剛好成對，可讓命運幣合併：放著別動（4.50，比兩者分開多+2.42）。',
+>>>>
+
+<<<< once
+    'maiden|scapegoat': 'Replace only an inmate that stands level, counted before the Scapegoat removes 2: the new one gets +3. A Replace that isn\'t level just throws inmates away (4.98, +1.26 beyond the two apart).',
+====
+    'maiden|scapegoat': '只替換居中的囚犯（以替罪羊移除2隻之前計算）：新囚犯+3階。不居中的替換只是白白丟掉囚犯（4.98，比兩者分開多+1.26）。',
+>>>>
+
+<<<< once
+    'crown|keys': 'The Keys\' extra doors fill the block with same-rarity meals for your Lions (4.65, +1.17 beyond the two apart).',
+====
+    'crown|keys': '鑰匙環多開的門會讓監區充滿同稀有度的獵物給狂獅吃（4.65，比兩者分開多+1.17）。',
+>>>>
+
+<<<< once
+    'blacklist|keys': 'The Keys take you down to 5 locked cells fast, where every opened door raises 2 inmates (3.29, +0.98 beyond the two apart).',
+====
+    'blacklist|keys': '鑰匙環能快速把未開啟的牢房降到5間，之後每開一扇門就讓2隻囚犯升階（3.29，比兩者分開多+0.98）。',
+>>>>
+
+<<<< once
+    'coin|keys': 'More open doors bring more matching pairs for the Coin (3.65, +0.81 beyond the two apart).',
+====
+    'coin|keys': '開更多門，就有更多成對的囚犯給命運幣合併（3.65，比兩者分開多+0.81）。',
+>>>>
+
+<<<< once
+    'keys|trap': 'More open doors bring more meals for a Hunt (4.49, +0.74 beyond the two apart).',
+====
+    'keys|trap': '開更多門，就有更多獵物可以尋獵（4.49，比兩者分開多+0.74）。',
+>>>>
+
+<<<< once
+    'keys|maul': 'More open doors bring more Lions and Wolves for Mammoths to eat up (4.38, +0.74 beyond the two apart).',
+====
+    'keys|maul': '開更多門，就有更多狂獅和頭狼讓巨象越級吞噬（4.38，比兩者分開多+0.74）。',
+>>>>
+
+<<<< once
+    'maiden|stake': 'Replace low inmates that stand level: 40% come in Legendary, and +3 on top (3.81, +0.68 beyond the two apart).',
+====
+    'maiden|stake': '替換居中的低階囚犯：40%會換出傳奇，再額外+3階（3.81，比兩者分開多+0.68）。',
+>>>>
+
+<<<< once
+    'claws|muzzle': 'Eating through scratched doors keeps the block thin, where consumes get the Muzzle\'s +2 (4.37, +0.62 beyond the two apart).',
+====
+    'claws|muzzle': '隔著劃痕門吞噬能讓監區保持稀疏，吞噬就能拿到口籠的+2（4.37，比兩者分開多+0.62）。',
+>>>>
+
+<<<< once
+    'scapegoat|trap': 'Clash: the Scapegoat\'s removals take Prey marks and Lions\' meals. Hunt, and avoid a Replace with 2 or more others on the block (-1.15 against the two apart).',
+====
+    'scapegoat|trap': '衝突：替罪羊的移除會帶走獵物標記和狂獅的獵物。專心尋獵，監區上有2隻以上其他囚犯時避免替換（比兩者分開少-1.15）。',
+>>>>
+
+<<<< once
+    'rope|scapegoat': 'Clash: Noose Replaces are already Rare or better, and the Scapegoat throws 2 inmates away for them. Replace with fewer than 2 others on the block (-1.08 against the two apart).',
+====
+    'rope|scapegoat': '衝突：絞首繩的替換本來就至少是稀有，替罪羊還要為此丟掉2隻囚犯。在監區上其他囚犯少於2隻時才替換（比兩者分開少-1.08）。',
+>>>>
+
+<<<< once
+    'maul|trap': 'Clash: Mammoths eat Lions, and Hunts want Lions alive. Pick one plan for the run (-0.94 against the two apart).',
+====
+    'maul|trap': '衝突：巨象吃狂獅，而尋獵需要狂獅活著。整局只選一種打法（比兩者分開少-0.94）。',
+>>>>
+
+<<<< once
+    'ironbox|maul': 'Clash: hatched Rats eat Mammoths. Keep Mammoths away from Rat rarities, or let the Rats have the low ones (-0.89 against the two apart).',
+====
+    'ironbox|maul': '衝突：孵出的碩鼠會吃巨象。讓巨象避開碩鼠的稀有度，或把低階巨象讓給碩鼠吃（比兩者分開少-0.89）。',
+>>>>
+
+<<<< once
+    'revenge|trap': 'Clash: consumes and Hunts compete for the day\'s action, and a consume can break a Prey mark (-0.83 against the two apart).',
+====
+    'revenge|trap': '衝突：吞噬和尋獵搶同一天的行動，吞噬還可能破壞獵物標記（比兩者分開少-0.83）。',
+>>>>
+
+<<<< once
+    'crown|scapegoat': 'Clash: the Scapegoat\'s removals take your Lions\' meals. Replace with fewer than 2 others on the block (-0.77 against the two apart).',
+====
+    'crown|scapegoat': '衝突：替罪羊的移除會帶走狂獅的獵物。在監區上其他囚犯少於2隻時才替換（比兩者分開少-0.77）。',
+>>>>
+
+<<<< once
+    'claws|ironbox': 'Clash: nests use up the locked cells the Claws scratch (-0.75 against the two apart).',
+====
+    'claws|ironbox': '衝突：鼠巢會佔用利爪要留劃痕的未開啟牢房（比兩者分開少-0.75）。',
+>>>>
+
+<<<< once
+    'crown|maul': 'Clash: Mammoths eat Lions. Decide which beast your run climbs with (-0.64 against the two apart).',
+====
+    'crown|maul': '衝突：巨象吃狂獅。決定這局要靠哪種野獸往上爬（比兩者分開少-0.64）。',
+>>>>
+
+== 開局卡 ==
+提示文字開頭的「名稱：」會被 notesFor 用正規表示式去掉，所以下面一併把該正規表示式改成也認全形冒號。
+
+<<<< once
+    cagefight: 'Cage Fight: inmates eat the beasts they counter at their own rarity or lower, and eating never changes their beast. A high eater can clean up every lower meal of its prey and keeps its beast, so consume a lot and keep low meals around your best eaters.',
+====
+    cagefight: '囚徒困鬥：囚犯可以吃稀有度不高於自己、且被自己克制的野獸，吞噬後野獸種類也不會改變。高階吞噬者能把所有較低階的獵物吃光，還保留原本的野獸，所以多吞噬，並在最強的吞噬者周圍留些低階獵物。',
+>>>>
+
+<<<< once
+    ironlaw: 'Iron Law: the run lasts 30 days. Long plans pay more: Hunts, nests, Coin merges, building a big chain.',
+====
+    ironlaw: '鐵律：這局持續30天。長線規劃更划算：尋獵、鼠巢、命運幣合併、累積一條長連鎖。',
+>>>>
+
+<<<< once
+    tyranny: 'Tyranny: each stop at the Interrogation Room also triggers Instigate and Bestow 3 more times each. Route the warden through the office often.',
+====
+    tyranny: '暴政：每次走到審訊室，煽動和賞賜還會各額外觸發3次。讓典獄長的路線常常經過審訊室。',
+>>>>
+
+<<<< once
+    opulence: 'Opulence: each Warden\'s Treasure gives 3 picks, and a Rainbow made by a pick brings 3 more. Rainbows are worth more: the gift order matters (the Horn first if it makes a Rainbow).',
+====
+    opulence: '奢靡：每次典獄長的珍藏可以選3次，而靠選取做出的綺彩會再帶來3次。綺彩價值更高：珍藏的選取順序很重要（若銅號能做出綺彩就先選它）。',
+>>>>
+
+== 開局卡對刑具的影響 ==
+
+<<<< once
+    'cagefight|guillotine': 'With Cage Fight, every eater already eats lower meals, so the Guillotine adds nothing.',
+====
+    'cagefight|guillotine': '有囚徒困鬥時，每個吞噬者本來就能吃較低階的獵物，所以斷頭台毫無作用。',
+>>>>
+
+<<<< once
+    'cagefight|maul': 'With Cage Fight, a Mammoth eats Lions and Wolves at any rarity: lower ones, and higher ones through the Maul.',
+====
+    'cagefight|maul': '有囚徒困鬥時，巨象能吃任何稀有度的狂獅和頭狼：較低的靠囚徒困鬥，較高的靠重錘。',
+>>>>
+
+<<<< once
+    'cagefight|crown': 'With Cage Fight, a Lion eats Wolves and Rats at or below its rarity, and any inmate of its rarity through the Crown.',
+====
+    'cagefight|crown': '有囚徒困鬥時，狂獅能吃稀有度不高於自己的頭狼和碩鼠，再靠鐵冠吃任何同稀有度的囚犯。',
+>>>>
+
+<<<< once
+    'cagefight|skewer': 'With Cage Fight, Rats eat Mammoths and Rats at or below their rarity, and stay Rats.',
+====
+    'cagefight|skewer': '有囚徒困鬥時，碩鼠能吃稀有度不高於自己的巨象和碩鼠，而且吃完仍然是碩鼠。',
+>>>>
+
+<<<< once
+    'ironlaw|trap': 'With Iron Law\'s 30 days, a Prey mark pays its 3 mornings until day 27.',
+====
+    'ironlaw|trap': '有鐵律的30天，獵物標記到第27天為止都能拿滿3個早上的收益。',
+>>>>
+
+<<<< once
+    'ironbox|ironlaw': 'With Iron Law\'s 30 days, more nests hatch: more Rare Rats to use.',
+====
+    'ironbox|ironlaw': '有鐵律的30天，會孵出更多鼠巢：有更多稀有碩鼠可用。',
+>>>>
+
+<<<< once
+    'coin|ironlaw': 'With Iron Law\'s 30 days, matching pairs get more mornings to merge.',
+====
+    'coin|ironlaw': '有鐵律的30天，成對的囚犯有更多早上可以合併。',
+>>>>
+
+== notesFor：去掉名稱前綴的正規表示式改成也接受全形冒號；標題的 "with" 改中文 ==
+
+<<<< once
+      const text = CONTRACT_NOTES[startEvent].replace(/^[^:]+: /, '');
+====
+      const text = CONTRACT_NOTES[startEvent].replace(/^[^:：]+(?:: |：)/, '');
+>>>>
+
+<<<< once
+        if (note) out.push({ kind: 'pair', title: `${name(held[i])} with ${name(held[j])}`, text: note });
+====
+        if (note) out.push({ kind: 'pair', title: `${name(held[i])} ＋ ${name(held[j])}`, text: note });
+>>>>
+
+<<<< once
+        if (note) out.push({ kind: 'contract-tool', title: `${name(id)} with ${name(startEvent)}`, text: note });
+====
+        if (note) out.push({ kind: 'contract-tool', title: `${name(id)} ＋ ${name(startEvent)}`, text: note });
+>>>>

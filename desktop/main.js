@@ -36,12 +36,12 @@ const arg = (name) => {
 };
 const flag = (name) => process.argv.includes(`--${name}`);
 
-const LIVE_SITE = 'https://blahdot3h.github.io/tartarus-simulator/';
+const LIVE_SITE = 'https://10840130.github.io/tartarus-simulator/';
 let SITE = arg('site') || process.env.TARTARUS_SITE || LIVE_SITE;
 if (!SITE.endsWith('/')) SITE += '/';
 const SITE_URL = new URL(SITE);
 // #region game-title
-const GAME_TITLE = new RegExp(arg('game-title') || '^Torchlight: Infinite\\s*$');
+const GAME_TITLE = new RegExp(arg('game-title') || '^(Torchlight: Infinite|火炬之光：無限|火炬之光：无限|火炬之光:無限|火炬之光:无限)\\s*$');
 // #endregion
 const LOG_OVERRIDE = arg('log');
 const TEST = flag('test');
@@ -64,7 +64,7 @@ app.commandLine.appendSwitch('disable-backgrounding-occluded-windows');
 // The app never plays sound: no page it loads, now or after a site change,
 // can make any (the user heard sounds in the background while gaming).
 app.commandLine.appendSwitch('mute-audio');
-app.setAppUserModelId('io.github.blahdot3h.tartarus-overlay');
+app.setAppUserModelId('io.github.10840130.tartarus-overlay-tw');
 
 // ---------- Settings ----------
 
@@ -295,10 +295,10 @@ async function refreshLog() {
 
 async function pickLog() {
   const res = await dialog.showOpenDialog({
-    title: 'Choose UE_game.log',
+    title: '選擇 UE_game.log',
     defaultPath: logPath || undefined,
     properties: ['openFile'],
-    filters: [{ name: 'Torchlight: Infinite log', extensions: ['log'] }],
+    filters: [{ name: '《火炬之光：無限》遊戲紀錄檔', extensions: ['log'] }],
   });
   if (res.canceled || !res.filePaths[0]) return;
   settings.logPath = res.filePaths[0];
@@ -705,7 +705,7 @@ function showReview() {
   const win = new BrowserWindow({
     width: 1400,
     height: 950,
-    title: 'Review the record · Tartarus Overlay',
+    title: '回顧測試紀錄 · Tartarus Overlay 繁中版',
     show: !TEST,
     icon: ICON,
     backgroundColor: '#0f1216',
@@ -733,10 +733,10 @@ function showReview() {
 // their page's process, so they're below normal too.
 const CORES = require('os').availableParallelism();
 const CPU_USE = {
-  most: { label: 'Fastest: every core but one', workers: Math.max(1, CORES - 1) },
-  half: { label: 'Balanced: half the cores', workers: Math.max(1, Math.round(CORES / 2)) },
-  quarter: { label: 'Light: a quarter of the cores', workers: Math.max(1, Math.round(CORES / 4)) },
-  one: { label: 'Lightest: one core', workers: 1 },
+  most: { label: 'Fastest: every core but one', zh: '最快：保留一個核心，其餘全用', workers: Math.max(1, CORES - 1) },
+  half: { label: 'Balanced: half the cores', zh: '平衡：用一半的核心', workers: Math.max(1, Math.round(CORES / 2)) },
+  quarter: { label: 'Light: a quarter of the cores', zh: '輕量：用四分之一的核心', workers: Math.max(1, Math.round(CORES / 4)) },
+  one: { label: 'Lightest: one core', zh: '最輕量：只用一個核心', workers: 1 },
 };
 const cpuUse = () => CPU_USE[settings.cpu] || CPU_USE.half;
 function tunePage(name) {
@@ -765,7 +765,7 @@ function tunePage(name) {
 // on a client not in English, it warns that doors, decisions, instruments
 // and printed names may need setting by hand, and offers to send a screen
 // it didn't recognize. Kept by the analyzer page; read back for the menu.
-const GAME_LANGS = [['en', 'English'], ['ru', 'Русский (Russian)'], ['zh', '中文 (Chinese)']];
+const GAME_LANGS = [['en', '英文 (English)'], ['ru', '俄文 (Русский)'], ['zh', '中文']];
 let gameLang = 'en';
 function readGameLang() {
   const wc = wins.analyzer && !wins.analyzer.isDestroyed() ? wins.analyzer.webContents : null;
@@ -970,7 +970,7 @@ function toggle(name) {
 
 function makeAnalyzer() {
   const b = settings.analyzer && onScreen(settings.analyzer) ? settings.analyzer : null;
-  const win = makeSiteWindow('analyzer', Object.assign({ width: 1280, height: 900, title: 'Board analyzer · Tartarus Overlay' }, b || {}));
+  const win = makeSiteWindow('analyzer', Object.assign({ width: 1280, height: 900, title: '盤面分析器 · Tartarus Overlay 繁中版' }, b || {}));
   const keep = () => {
     if (win.isMaximized() || win.isMinimized()) return;
     settings.analyzer = win.getBounds();
@@ -1384,7 +1384,7 @@ async function debugReport() {
   }
   note('debug report opened');
   show('analyzer');
-  send('analyzer', 'debug-report', { name: `Desktop debug report ${app.getVersion()}`, text: text.slice(0, 2000), outcome: 'Pictures don’t come, or something else isn’t working. (Say what you saw.)' });
+  send('analyzer', 'debug-report', { name: `[繁中版] Desktop debug report ${app.getVersion()}`, text: text.slice(0, 2000), outcome: '沒有截圖，或其他功能不正常。（請描述你看到的情況。）' });
 }
 
 ipcMain.on('site:advice', (e, data) => {
@@ -1452,7 +1452,7 @@ function command(cmd) {
       return send('analyzer', 'command', cmd);
     case 'hide':
       setOverlayOn(false);
-      if (tray && !TEST) tray.displayBalloon({ title: 'Overlay hidden', content: `Press ${HOTKEYS.overlay.replace(/Control/, 'Ctrl')} to show it again, or use the tray icon.`, iconType: 'info' });
+      if (tray && !TEST) tray.displayBalloon({ title: '疊加視窗已隱藏', content: `按 ${HOTKEYS.overlay.replace(/Control/, 'Ctrl')} 可以再次顯示，或使用系統匣圖示。`, iconType: 'info' });
       return undefined;
     case 'collapse':
       riotFolded = false;
@@ -1649,50 +1649,50 @@ const keyName = (k) => k.replace('Control', 'Ctrl');
 function rebuildMenu() {
   if (!tray) return;
   const login = app.getLoginItemSettings().openAtLogin;
-  tray.setToolTip(`Tartarus Overlay${game.running ? '' : ': waiting for Torchlight: Infinite'}`);
+  tray.setToolTip(`Tartarus Overlay 繁中版${game.running ? '' : '：等待《火炬之光：無限》'}`);
   tray.setContextMenu(Menu.buildFromTemplate([
-    { label: game.running ? 'Torchlight: Infinite is running' : 'Waiting for Torchlight: Infinite', enabled: false },
-    { label: logPath ? `Log: ${logPath}` : 'Log: not found', enabled: false },
+    { label: game.running ? '《火炬之光：無限》執行中' : '等待《火炬之光：無限》啟動', enabled: false },
+    { label: logPath ? `遊戲紀錄檔：${logPath}` : '遊戲紀錄檔：找不到', enabled: false },
     { type: 'separator' },
-    { label: 'Show the overlay', type: 'checkbox', checked: settings.overlayOn, accelerator: HOTKEYS.overlay, click: (i) => setOverlayOn(i.checked) },
-    { label: 'Hide it while another window is in front', type: 'checkbox', checked: settings.hideBehind, enabled: !!win32, click: (i) => { settings.hideBehind = i.checked; saveSettings(); updateOverlay(); } },
-    { label: 'Share the game’s screen when Windows won’t share its window', type: 'checkbox', checked: screenAllowed(), enabled: agreed && !!win32, click: (i) => setScreenShare(i.checked) },
-    { label: 'Hide it from screenshots and streams', type: 'checkbox', checked: settings.hideFromCaptures, click: (i) => { settings.hideFromCaptures = i.checked; saveSettings(); if (wins.overlay) wins.overlay.setContentProtection(i.checked); } },
-    { label: 'Put the overlay back in the corner', click: () => { settings.overlay = null; overlayPlaced = false; saveSettings(); placeOverlay(); } },
+    { label: '顯示疊加視窗', type: 'checkbox', checked: settings.overlayOn, accelerator: HOTKEYS.overlay, click: (i) => setOverlayOn(i.checked) },
+    { label: '其他視窗在前面時隱藏疊加視窗', type: 'checkbox', checked: settings.hideBehind, enabled: !!win32, click: (i) => { settings.hideBehind = i.checked; saveSettings(); updateOverlay(); } },
+    { label: 'Windows 不讓分享遊戲視窗時，改為分享遊戲所在的螢幕', type: 'checkbox', checked: screenAllowed(), enabled: agreed && !!win32, click: (i) => setScreenShare(i.checked) },
+    { label: '不讓疊加視窗出現在截圖與直播中', type: 'checkbox', checked: settings.hideFromCaptures, click: (i) => { settings.hideFromCaptures = i.checked; saveSettings(); if (wins.overlay) wins.overlay.setContentProtection(i.checked); } },
+    { label: '把疊加視窗放回角落', click: () => { settings.overlay = null; overlayPlaced = false; saveSettings(); placeOverlay(); } },
     { type: 'separator' },
-    { label: 'Board analyzer', accelerator: HOTKEYS.analyzer, click: () => show('analyzer') },
-    { label: 'Take a picture now', accelerator: HOTKEYS.capture, click: () => command('capture') },
-    { label: 'Auto Screenshot Mode (status and agreement)', click: () => show('follow') },
-    { label: 'Choose the game log…', click: () => pickLog() },
+    { label: '盤面分析器', accelerator: HOTKEYS.analyzer, click: () => show('analyzer') },
+    { label: '立即截圖', accelerator: HOTKEYS.capture, click: () => command('capture') },
+    { label: '自動截圖模式（狀態與同意事項）', click: () => show('follow') },
+    { label: '選擇遊戲紀錄檔…', click: () => pickLog() },
     {
-      label: 'Game language',
+      label: '遊戲語言',
       submenu: GAME_LANGS.map(([code, label]) => ({ label, type: 'radio', checked: gameLang === code, click: () => setGameLang(code) })),
     },
     {
-      label: 'Processor use',
+      label: '處理器用量',
       submenu: [
-        ...Object.entries(CPU_USE).map(([key, c]) => ({ label: `${c.label} (${c.workers} of ${CORES})`, type: 'radio', checked: cpuUse() === c, click: () => setCpu(key) })),
+        ...Object.entries(CPU_USE).map(([key, c]) => ({ label: `${c.zh}（${c.workers} / ${CORES} 核心）`, type: 'radio', checked: cpuUse() === c, click: () => setCpu(key) })),
         { type: 'separator' },
-        { label: 'Let the game go first (lower priority)', type: 'checkbox', checked: settings.gameFirst, click: (i) => setGameFirst(i.checked) },
+        { label: '讓遊戲優先（降低本程式的優先順序）', type: 'checkbox', checked: settings.gameFirst, click: (i) => setGameFirst(i.checked) },
       ],
     },
     { type: 'separator' },
-    { label: 'Start with Windows', type: 'checkbox', checked: login, click: (i) => app.setLoginItemSettings({ openAtLogin: i.checked }) },
-    { label: siteUpdate ? 'Reload the site (an update is ready)' : 'Reload the site', click: () => reloadSite() },
-    appUpdate ? { label: `Restart to update the app (${appUpdate})`, click: () => command('restart') } : { label: `Version ${app.getVersion()}${DEV ? ' (debug)' : ''}`, enabled: false },
-    { label: 'Record every board and advice (testing)', type: 'checkbox', checked: settings.record, click: (i) => { settings.record = i.checked; saveSettings(); } },
-    { label: `Review the record… (${BIG_RECORD ? `${Math.round(recordBytes / 1048576)} MB of ${Math.round(recordLimit() / 1048576)} MB` : `the last ${keepRuns()} runs`})`, click: () => showReview() },
-    { label: 'Send a debug report…', click: () => debugReport() },
-    { label: 'Open the debug log', click: () => shell.openPath(LOG_FILE) },
+    { label: '隨 Windows 啟動', type: 'checkbox', checked: login, click: (i) => app.setLoginItemSettings({ openAtLogin: i.checked }) },
+    { label: siteUpdate ? '重新載入網站（有更新可用）' : '重新載入網站', click: () => reloadSite() },
+    appUpdate ? { label: `重新啟動以更新程式（${appUpdate}）`, click: () => command('restart') } : { label: `版本 ${app.getVersion()}${DEV ? '（除錯版）' : ''}`, enabled: false },
+    { label: '記錄每個盤面與建議（測試用）', type: 'checkbox', checked: settings.record, click: (i) => { settings.record = i.checked; saveSettings(); } },
+    { label: `回顧測試紀錄…（${BIG_RECORD ? `${Math.round(recordBytes / 1048576)} MB / ${Math.round(recordLimit() / 1048576)} MB` : `最近 ${keepRuns()} 局`}）`, click: () => showReview() },
+    { label: '傳送除錯報告…', click: () => debugReport() },
+    { label: '開啟除錯紀錄檔', click: () => shell.openPath(LOG_FILE) },
     ...(DEV ? [{
-      label: 'Developer tools',
-      submenu: [['follow', 'Auto Screenshot Mode page'], ['analyzer', 'Board analyzer'], ['overlay', 'Overlay']].map(([name, label]) => ({
+      label: '開發者工具',
+      submenu: [['follow', '自動截圖模式頁面'], ['analyzer', '盤面分析器'], ['overlay', '疊加視窗']].map(([name, label]) => ({
         label,
         click: () => wins[name] && wins[name].webContents.openDevTools({ mode: 'detach' }),
       })),
     }] : []),
     { type: 'separator' },
-    { label: 'Quit', click: () => { quitting = true; app.quit(); } },
+    { label: '結束', click: () => { quitting = true; app.quit(); } },
   ]));
 }
 
@@ -1781,7 +1781,7 @@ if (!app.requestSingleInstanceLock()) {
     await refreshLog();
     await adoptLiveAgreement();
     makeOverlay();
-    makeSiteWindow('follow', { width: 1000, height: 860, title: 'Auto Screenshot Mode · Tartarus Overlay' });
+    makeSiteWindow('follow', { width: 1000, height: 860, title: '自動截圖模式 · Tartarus Overlay 繁中版' });
     makeAnalyzer();
     makeTray();
     registerHotkeys();
@@ -1790,7 +1790,7 @@ if (!app.requestSingleInstanceLock()) {
     setInterval(checkSite, 10 * 60 * 1000);
     startUpdater();
     if (!TEST && !game.running) {
-      tray.displayBalloon({ title: 'Tartarus Overlay is running', content: 'The advice shows over Torchlight: Infinite while you play. The tray icon has the board analyzer and settings.', iconType: 'info' });
+      tray.displayBalloon({ title: 'Tartarus Overlay 繁中版已啟動', content: '玩《火炬之光：無限》時，建議會顯示在遊戲畫面上。盤面分析器和設定都在系統匣圖示裡。', iconType: 'info' });
     }
     if (TEST) console.log(`[overlay] ready site=${SITE} log=${logPath} win32=${!!win32}`);
   });

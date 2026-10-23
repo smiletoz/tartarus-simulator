@@ -1,3 +1,18 @@
+# 塔羅斯模擬器（繁體中文版）
+
+《火炬之光：無限》困獸賽季典獄玩法的練習模擬器、盤面分析器與 Windows 疊加程式，繁體中文翻譯版。
+
+- **線上玩**：https://10840130.github.io/tartarus-simulator/
+- **盤面分析器**：https://10840130.github.io/tartarus-simulator/analyze.html
+- **Windows 程式（Tartarus Overlay TW）**：到 [Releases](https://github.com/10840130/tartarus-simulator/releases/latest) 下載 `Tartarus-Overlay-TW-Setup-*.exe`
+- **本地玩**：下載後直接打開 `index.html`
+
+原作者是 **CoffeeBns**（[原版 repo](https://github.com/blahdot3h/tartarus-simulator)、[twitch.tv/coffeebns](https://twitch.tv/coffeebns)、[youtube.com/@CoffeeBns](https://youtube.com/@CoffeeBns)）。遊戲規則、策略與程式都出自原作者，本 repo 只做翻譯。用語以遊戲官方名稱為準，對照表見 [zh-TW/GLOSSARY.md](zh-TW/GLOSSARY.md)。
+
+翻譯怎麼維護、怎麼跟上原作者更新，見 [zh-TW/README.md](zh-TW/README.md)。以下是原作者的英文說明。
+
+---
+
 # Tartarus Simulator
 
 A free, fan-made English practice simulator for the Tartarus prison season (SS14) of *Torchlight: Infinite*. It began as a translation of the Chinese fan simulator [塔羅斯监狱 (Talos Prison)](https://torchlightskill.com/talos/), but its rules have since been updated to match the video reveal, so it now differs heavily from the Chinese sim. You walk the ring of fifteen cells around the warden's office: patrol a door each morning, let beasts devour same-rarity rivals, and raise inmates from Normal to Rainbow before the handoff.

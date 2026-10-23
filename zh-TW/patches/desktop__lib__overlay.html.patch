@@ -1,0 +1,52 @@
+desktop/lib/overlay.html：語言、字型（Noto Sans TC，CSP 已允許 fonts.googleapis.com / fonts.gstatic.com）、按鈕文字。
+data-cmd 與 id 不翻。品牌字 "Tartarus" 保留（顯示字型只有拉丁字母）。
+
+<<<< once
+<html lang="en">
+====
+<html lang="zh-Hant">
+>>>>
+
+<<<< once
+<title>Tartarus Overlay</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;500;600;700&family=Big+Shoulders+Stencil+Display:wght@800&family=IBM+Plex+Mono:wght@400;500&display=swap">
+====
+<title>Tartarus Overlay 繁中版</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;500;600;700&family=Big+Shoulders+Stencil+Display:wght@800&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+TC:wght@400;500;700;900&display=swap">
+>>>>
+
+<<<< once
+    --font-display: "Big Shoulders Stencil Display", "Arial Narrow", Impact, sans-serif;
+    --font-body: "Barlow Semi Condensed", "Segoe UI", system-ui, sans-serif;
+    --font-mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+====
+    --font-display: "Big Shoulders Stencil Display", "Arial Narrow", Impact, "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+    --font-body: "Barlow Semi Condensed", "Segoe UI", "Noto Sans TC", "Microsoft JhengHei", system-ui, sans-serif;
+    --font-mono: "IBM Plex Mono", ui-monospace, Consolas, "Noto Sans TC", "Microsoft JhengHei", monospace;
+>>>>
+
+<<<< once
+    <button type="button" id="fold" title="Fold it to a thin bar">&#8211;</button>
+====
+    <button type="button" id="fold" title="摺疊成細條">&#8211;</button>
+>>>>
+
+<<<< once
+    <button type="button" class="btn" data-cmd="board" title="Show or hide the board analyzer (Ctrl+Alt+A)">Board</button>
+    <button type="button" class="btn" data-cmd="capture" title="Take a picture of the game now and read it (Ctrl+Alt+P)">Picture</button>
+    <button type="button" class="btn" id="report" title="Report a wrong reading, or something the simulator doesn't have">Report</button>
+    <span class="dots"><span class="dot" id="dot-log">Log</span><span class="dot" id="dot-win">Window</span></span>
+    <div class="menu" id="report-menu" hidden>
+      <button type="button" class="btn" data-cmd="report" id="report-reading">Wrong reading</button>
+      <button type="button" class="btn" data-cmd="report-new">Something new</button>
+      <button type="button" class="btn" data-cmd="debug-report" title="Something isn't working: sends the app's debug report">Not working?</button>
+====
+    <button type="button" class="btn" data-cmd="board" title="顯示或隱藏盤面分析器（Ctrl+Alt+A）">盤面</button>
+    <button type="button" class="btn" data-cmd="capture" title="立即截取遊戲畫面並讀取（Ctrl+Alt+P）">截圖</button>
+    <button type="button" class="btn" id="report" title="回報辨識錯誤，或模擬器還沒有的東西">回報</button>
+    <span class="dots"><span class="dot" id="dot-log">紀錄檔</span><span class="dot" id="dot-win">視窗</span></span>
+    <div class="menu" id="report-menu" hidden>
+      <button type="button" class="btn" data-cmd="report" id="report-reading">辨識錯誤</button>
+      <button type="button" class="btn" data-cmd="report-new">新東西</button>
+      <button type="button" class="btn" data-cmd="debug-report" title="有功能不正常：傳送本程式的除錯報告">無法運作？</button>
+>>>>

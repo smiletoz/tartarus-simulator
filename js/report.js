@@ -22,7 +22,7 @@
   // A wrong reading keeps more of its screenshot: the reader is retrained on
   // the whole picture, at the largest size that fits.
   const READING_SIDE = 1600;
-  const KINDS = [['event', 'Event'], ['tool', 'Instrument'], ['gift', 'Gift'], ['other', 'Something else']];
+  const KINDS = [['event', '獄中事變'], ['tool', '刑具'], ['gift', '珍藏'], ['other', '其他']];
 
   let dlg = null;
   let kind = 'event';
@@ -70,46 +70,46 @@
     dlg.innerHTML = `
       <form class="sheet-inner" method="dialog">
         <header class="sheet-head">
-          <div><p class="eyebrow" id="rp-eyebrow">Help the simulator</p><h2 id="rp-title">Report something new</h2></div>
-          <button type="button" class="x" data-rp-close aria-label="Close">×</button>
+          <div><p class="eyebrow" id="rp-eyebrow">協助改進模擬器</p><h2 id="rp-title">回報新內容</h2></div>
+          <button type="button" class="x" data-rp-close aria-label="關閉">×</button>
         </header>
         <div class="sheet-body">
           <p class="field-note" id="rp-intro"></p>
           <fieldset class="field" id="rp-kind-field">
-            <legend class="field-label">What is it?</legend>
+            <legend class="field-label">這是什麼？</legend>
             <div class="az-seg" id="rp-kind">${KINDS.map(([v, label]) => `<button type="button" data-v="${v}" aria-pressed="false">${label}</button>`).join('')}</div>
           </fieldset>
           <div class="field">
-            <span class="field-label">Screenshot</span>
-            <div class="rp-drop" id="rp-drop">Press <kbd>Ctrl</kbd>+<kbd>V</kbd> to paste a screenshot, drop one here, or <button type="button" class="link" id="rp-choose">choose a file</button>.</div>
+            <span class="field-label">截圖</span>
+            <div class="rp-drop" id="rp-drop">按 <kbd>Ctrl</kbd>+<kbd>V</kbd> 貼上截圖、把圖片拖到這裡，或<button type="button" class="link" id="rp-choose">選擇檔案</button>。</div>
             <input type="file" id="rp-file" accept="image/*" hidden>
             <div class="rp-shot" id="rp-shot" hidden>
-              <canvas id="rp-canvas" aria-label="Your screenshot. Drag a box to send only part of it."></canvas>
+              <canvas id="rp-canvas" aria-label="你的截圖。拖曳出一個框，就只送出框內的部分。"></canvas>
               <p class="field-note" id="rp-size"></p>
               <div class="rp-shot-actions">
-                <button type="button" class="btn" id="rp-whole">Use the whole screenshot</button>
-                <button type="button" class="btn" id="rp-remove">Remove it</button>
+                <button type="button" class="btn" id="rp-whole">使用整張截圖</button>
+                <button type="button" class="btn" id="rp-remove">移除截圖</button>
               </div>
             </div>
           </div>
           <div class="field" id="rp-name-field">
-            <label class="field-label" for="rp-name">Its name, as the game shows it</label>
+            <label class="field-label" for="rp-name">名稱（照遊戲中顯示的寫）</label>
             <input type="text" id="rp-name" maxlength="80" autocomplete="off" spellcheck="false">
           </div>
           <div class="field">
-            <label class="field-label" for="rp-text" id="rp-text-label">What it says or does</label>
-            <textarea id="rp-text" rows="3" maxlength="2000" placeholder="Its description, or the event's choices"></textarea>
+            <label class="field-label" for="rp-text" id="rp-text-label">說明文字或效果</label>
+            <textarea id="rp-text" rows="3" maxlength="2000" placeholder="它的說明，或事變的選項"></textarea>
           </div>
           <div class="field">
-            <label class="field-label" for="rp-outcome" id="rp-outcome-label">What happened (optional)</label>
-            <textarea id="rp-outcome" rows="2" maxlength="1000" placeholder="What you picked, and what it did"></textarea>
+            <label class="field-label" for="rp-outcome" id="rp-outcome-label">發生了什麼（選填）</label>
+            <textarea id="rp-outcome" rows="2" maxlength="1000" placeholder="你選了什麼，結果如何"></textarea>
           </div>
-          <p class="field-note">Crop out anything personal, like chat or player names. Reports go to the simulator's private database, with no account or address attached.</p>
+          <p class="field-note">請裁掉聊天內容、玩家名稱等個人資訊。回報會送到模擬器的私人資料庫，不會附帶任何帳號或地址。原作者使用英文，能附上截圖最好，文字用中文填寫也可以。</p>
           <p class="rp-status" id="rp-status" aria-live="polite"></p>
         </div>
         <footer class="sheet-foot">
-          <button type="button" class="btn" data-rp-close>Cancel</button>
-          <button type="button" class="btn btn-primary" id="rp-send">Send report</button>
+          <button type="button" class="btn" data-rp-close>取消</button>
+          <button type="button" class="btn btn-primary" id="rp-send">送出回報</button>
         </footer>
       </form>`;
     document.body.appendChild(dlg);
@@ -155,24 +155,24 @@
   function setKind(v) {
     kind = KINDS.some(([k]) => k === v) ? v : 'other';
     dlg.querySelectorAll('#rp-kind [data-v]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.v === kind)));
-    const label = { event: 'event', tool: 'instrument', gift: 'gift', other: 'thing' }[kind];
-    $('rp-name').placeholder = { event: 'The event title', tool: 'The instrument name', gift: 'The gift name', other: 'What it is called' }[kind];
-    $('rp-text').placeholder = kind === 'event' ? "The event's text and its choices" : `What the ${label} says it does`;
+    const label = { event: '獄中事變', tool: '刑具', gift: '珍藏', other: '東西' }[kind];
+    $('rp-name').placeholder = { event: '事變標題', tool: '刑具名稱', gift: '珍品名稱', other: '它叫什麼' }[kind];
+    $('rp-text').placeholder = kind === 'event' ? '事變的內容和選項' : `這個${label}的說明效果`;
   }
 
   // The dialog's words: for something new, or for a wrong reading.
   function setMode() {
-    $('rp-eyebrow').textContent = wrong ? 'Help the reader learn' : 'Help the simulator';
-    $('rp-title').textContent = wrong ? 'Report a wrong reading' : 'Report something new';
+    $('rp-eyebrow').textContent = wrong ? '協助改進截圖辨識' : '協助改進模擬器';
+    $('rp-title').textContent = wrong ? '回報辨識錯誤' : '回報新內容';
     $('rp-intro').textContent = wrong
-      ? 'Did the reader get your game wrong, or does the advice point at something that isn’t there? Your screenshot and what the analyzer made of it are filled in. Say what’s wrong, and I’ll retrain the reader on it.'
-      : 'Found an event, instrument or gift the simulator doesn’t have yet? Paste a screenshot of it and say what it does, and I’ll add it.';
+      ? '截圖辨識讀錯了你的遊戲畫面，或建議指向不存在的東西？你的截圖和分析器的判讀結果已經自動填好。說明哪裡錯了，原作者會用它重新訓練辨識。'
+      : '發現模擬器還沒收錄的獄中事變、刑具或珍藏嗎？貼上截圖並說明它的效果，原作者會把它加進來。';
     $('rp-kind-field').hidden = wrong;
     $('rp-name-field').hidden = wrong;
-    $('rp-text-label').textContent = wrong ? 'What’s wrong?' : 'What it says or does';
-    if (wrong) $('rp-text').placeholder = 'What your game shows, and what the analyzer read or advised instead. Like: my Dog Tag reads as a Skewer.';
-    $('rp-outcome-label').textContent = wrong ? 'What the analyzer read and advised, sent with your report' : 'What happened (optional)';
-    $('rp-outcome').placeholder = wrong ? '' : 'What you picked, and what it did';
+    $('rp-text-label').textContent = wrong ? '哪裡錯了？' : '說明文字或效果';
+    if (wrong) $('rp-text').placeholder = '你的遊戲顯示什麼，而分析器讀成或建議了什麼。例如：我的重刑銘牌被讀成鼠頭串。';
+    $('rp-outcome-label').textContent = wrong ? '分析器的判讀與建議（會隨回報一起送出）' : '發生了什麼（選填）';
+    $('rp-outcome').placeholder = wrong ? '' : '你選了什麼，結果如何';
     $('rp-outcome').rows = wrong ? 7 : 2;
   }
 
@@ -211,7 +211,7 @@
   // A pasted, dropped or chosen file, or the picture a page hands over.
   async function take(file) {
     if (!file || (file instanceof Blob && !/^image\//.test(file.type))) {
-      status('That isn’t an image. Copy a screenshot, then paste it here.', 'bad');
+      status('這不是圖片。請先複製截圖，再貼到這裡。', 'bad');
       return;
     }
     const ticket = opened;
@@ -219,7 +219,7 @@
     try {
       bitmap = await createImageBitmap(file);
     } catch (e) {
-      status('This browser couldn’t open that image.', 'bad');
+      status('這個瀏覽器無法開啟那張圖片。', 'bad');
       return;
     }
     // The dialog was opened afresh while this one loaded.
@@ -304,14 +304,14 @@
     const whole = crop.w === shot.width && crop.h === shot.height;
     $('rp-whole').hidden = whole;
     $('rp-size').textContent = !whole
-      ? 'Only the part in the box will be sent. Drag again to change it.'
+      ? '只會送出框內的部分。再拖曳一次可以修改。'
       : wrong
-        ? 'The reader learns best from the whole screenshot. Drag a box only to leave something personal out.'
-        : 'Drag a box around the event or instrument to send only that part.';
+        ? '截圖辨識從整張截圖學得最好。只有需要排除個人資訊時才拖曳框選。'
+        : '在事變或刑具周圍拖曳出一個框，就只送出那個部分。';
     clearTimeout(sizeTimer);
     sizeTimer = setTimeout(async () => {
       const blob = await pack();
-      if (blob) $('rp-size').textContent += ` About ${Math.max(1, Math.round(blob.size / 1000))} KB.`;
+      if (blob) $('rp-size').textContent += `約 ${Math.max(1, Math.round(blob.size / 1000))} KB。`;
     }, 120);
   }
 
@@ -361,22 +361,22 @@
     const text = $('rp-text').value.trim();
     const outcome = $('rp-outcome').value.trim();
     if (wrong && !text) {
-      status('Say what’s wrong: what your game shows, and what the analyzer read or advised instead.', 'bad');
+      status('請說明哪裡錯了：你的遊戲顯示什麼，而分析器讀成或建議了什麼。', 'bad');
       $('rp-text').focus();
       return;
     }
     if (!shot && !name && !text) {
-      status('Paste a screenshot, or give its name and what it does.', 'bad');
+      status('請貼上截圖，或填寫名稱和效果。', 'bad');
       return;
     }
     sending = true;
     $('rp-send').disabled = true;
-    status('Sending…');
+    status('送出中…');
     try {
       let image = null;
       if (shot) {
         const blob = await pack();
-        if (!blob) throw new Error('That screenshot couldn’t be shrunk enough to send. Drag a smaller box around the part that matters.');
+        if (!blob) throw new Error('那張截圖無法壓縮到可以送出的大小。請只框選重要的部分，框小一點。');
         image = { type: blob.type, data: await base64(blob) };
       }
       let context = null;
@@ -388,14 +388,14 @@
       const body = JSON.stringify({ uid: randomId(), client: clientId(), app: opts.app, kind, name, text, outcome, context, image });
       const res = await fetch(`${ENDPOINT}/v1/reports`, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=UTF-8' }, body });
       const out = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(out.error || `The report didn’t go through (HTTP ${res.status}).`);
-      const more = out.seen > 1 ? ` ${out.seen} reports of it so far.` : '';
-      status(out.image === 'enough' ? `Thank you! There are already screenshots of this one, so your text was kept.${more}` : `Thank you! Your report was sent.${more}`, 'ok');
+      if (!res.ok) throw new Error(out.error || `回報沒有送出（HTTP ${res.status}）。`);
+      const more = out.seen > 1 ? `目前已有 ${out.seen} 筆相同回報。` : '';
+      status(out.image === 'enough' ? `謝謝！這個項目已經有足夠的截圖，所以只保留了你的文字。${more}` : `謝謝！你的回報已送出。${more}`, 'ok');
       setTimeout(() => {
         if (isOpen()) dlg.close();
       }, 3500);
     } catch (e) {
-      status(e && e.message ? e.message : 'The report didn’t go through. Try again in a minute.', 'bad');
+      status(e && e.message ? e.message : '回報沒有送出，請稍後再試。', 'bad');
       $('rp-send').disabled = false;
     } finally {
       sending = false;

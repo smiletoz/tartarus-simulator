@@ -1,0 +1,97 @@
+board.js：牢房上的文字與無障礙標籤。
+注意：analyze.js 第 965 行起會用 badges.replace('>Event<', ...) 換成事變簡稱，
+這裡把徽章改成「事變」後，analyze.js 必須改成比對 '>事變<'。
+
+<<<< once
+    '</svg><span class="office-name">Office</span></span>';
+====
+    '</svg><span class="office-name">審訊室</span></span>';
+>>>>
+<<<< once
+      const label = `Cell ${L(cell.n)}: the warden's office. No inmate is ever held here${warden ? '. The warden is here' : ''}`;
+====
+      const label = `${L(cell.n)} 號牢房：審訊室。這裡永遠不會關押囚犯${warden ? '。典獄長在這裡' : ''}`;
+>>>>
+<<<< once
+    let label = `Cell ${L(cell.n)}: `;
+====
+    let label = `${L(cell.n)} 號牢房：`;
+>>>>
+<<<< once
+        hint = `<span class="nest-count">${left}</span><span class="nest-label"><span class="nest-word">Nest · </span>day ${cell.nest.due}</span>`;
+        label += `sealed rat nest, hatches on day ${cell.nest.due}`;
+====
+        hint = `<span class="nest-count">${left}</span><span class="nest-label"><span class="nest-word">鼠巢 · </span>第 ${cell.nest.due} 天</span>`;
+        label += `未開啟的鼠巢，第 ${cell.nest.due} 天孵化`;
+>>>>
+<<<< once
+        label += `sealed, ${text} inside`;
+====
+        label += `未開啟，裡面是${text}`;
+>>>>
+<<<< once
+        label += `sealed, ${T.tierName(cell.atLeast)} or better inside`;
+      } else {
+        label += 'sealed';
+      }
+      if (cell.event && cell.seen !== false) {
+        badges.push('<span class="badge badge-event">Event</span>');
+        label += ', special event behind the door';
+      }
+====
+        label += `未開啟，裡面是${T.tierName(cell.atLeast)}或更高`;
+      } else {
+        label += '未開啟';
+      }
+      if (cell.event && cell.seen !== false) {
+        badges.push('<span class="badge badge-event">事變</span>');
+        label += '，門後有獄中事變';
+      }
+>>>>
+<<<< once
+        badges.push('<span class="badge badge-ivory">Tusk</span>');
+        label += ', Tusk cell';
+====
+        badges.push('<span class="badge badge-ivory">象牙</span>');
+        label += '，象牙牢房';
+>>>>
+<<<< once
+        badges.push('<span class="badge badge-event">Event</span>');
+        label += ', a special event waits in the cell';
+====
+        badges.push('<span class="badge badge-event">事變</span>');
+        label += '，牢房裡有獄中事變等著';
+>>>>
+<<<< once
+        badges.push(`<span class="badge badge-prey">${hunter ? 'Hunt' : 'Prey'} ${where}·${link.rounds}</span>`);
+        label += hunter ? `, hunting cell ${where}` : `, prey of cell ${where}`;
+====
+        badges.push(`<span class="badge badge-prey">${hunter ? '尋獵' : '獵物'} ${where}·${link.rounds}</span>`);
+        label += hunter ? `，正在尋獵 ${where} 號牢房` : `，是 ${where} 號牢房的獵物`;
+>>>>
+<<<< once
+        badges.push('<span class="badge badge-prey">Prey</span>');
+        label += ', wears a Prey mark';
+====
+        badges.push('<span class="badge badge-prey">獵物</span>');
+        label += '，身上有獵物標記';
+>>>>
+<<<< once
+      body = '<span class="floor">Empty</span>';
+      label += 'empty';
+====
+      body = '<span class="floor">空</span>';
+      label += '空牢房';
+>>>>
+<<<< once
+      badges.push('<span class="badge badge-scratch">Scratch</span>');
+      label += ', scratched door';
+====
+      badges.push('<span class="badge badge-scratch">劃痕</span>');
+      label += '，門上有劃痕';
+>>>>
+<<<< once
+    if (warden) label += '. The warden is here';
+====
+    if (warden) label += '。典獄長在這裡';
+>>>>

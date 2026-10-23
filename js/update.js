@@ -33,9 +33,9 @@
     const bar = document.createElement('div');
     bar.className = 'update-bar';
     bar.setAttribute('role', 'status');
-    bar.innerHTML = '<span>A newer version of this page is out, with the latest fixes. Your board is saved.</span>'
-      + '<span class="update-actions"><button type="button" class="btn btn-primary" data-update="reload">Reload</button>'
-      + '<button type="button" class="btn" data-update="later">Later</button></span>';
+    bar.innerHTML = '<span>本頁面有新版本了，包含最新修正。你的盤面已經存好。</span>'
+      + '<span class="update-actions"><button type="button" class="btn btn-primary" data-update="reload">重新載入</button>'
+      + '<button type="button" class="btn" data-update="later">稍後</button></span>';
     bar.addEventListener('click', (e) => {
       const b = e.target.closest('[data-update]');
       if (!b) return;

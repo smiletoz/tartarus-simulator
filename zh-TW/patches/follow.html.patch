@@ -1,0 +1,439 @@
+follow.html：自動截圖模式的說明、設定與同意頁（Windows 桌面程式 Tartarus Overlay 也會載入這頁）。
+不翻：所有元素 id（desktop/lib/follow-adapter.js 依 id 操作：#az-auto-note、#az-auto-log、#az-auto-win、
+#az-auto-caps li .field-note、#az-auto-body、#agree-off、#follow-enable-log）、錨點、data-file / data-region、
+localStorage key、IndexedDB 名稱、REPO 網址、檔名與資料夾路徑、程式碼區段（從實際檔案讀出來顯示）。
+遊戲選單中的「Enable Log」保留英文加註（啟用日誌）；其他遊戲按鈕名稱繁中客戶端不確定，用中文並附英文。
+
+<<<< once
+<html lang="en">
+====
+<html lang="zh-Hant">
+>>>>
+<<<< once
+<title>Auto Screenshot Mode</title>
+<meta name="description" content="Auto Screenshot Mode for the board analyzer: connect your game log and share the game window, with what it reads and sees and the code that does each part.">
+====
+<title>自動截圖模式</title>
+<meta name="description" content="盤面分析器的自動截圖模式：連接遊戲紀錄檔並分享遊戲視窗。本頁說明它讀取與看到的內容，並附上負責每個部分的程式碼。">
+>>>>
+<<<< once
+family=IBM+Plex+Mono:wght@400;500&display=swap
+====
+family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+TC:wght@400;500;700;900&display=swap
+>>>>
+<<<< once
+  <a class="guide-back" href="analyze.html">← Back to the board analyzer</a>
+  <p class="eyebrow">Tartarus Simulator · Board analyzer · Beta</p>
+  <h1>Auto Screenshot Mode</h1>
+  <p class="lede">Auto Screenshot Mode lets the board analyzer keep up with your game by itself. You connect the game's log and share the game window on this page. When the log shows a move, this page takes a picture of the game and hands it to the board analyzer open in another tab, which reads the board and updates the advice. Everything happens in your browser, on your PC. Below, this page says exactly what it reads and what it sees, with the code that does each part. The code is loaded from the same files your browser runs, so it can't differ from what's described here.</p>
+====
+  <a class="guide-back" href="analyze.html">← 回到盤面分析器</a>
+  <p class="eyebrow">塔羅斯模擬器 · 盤面分析器 · 測試版</p>
+  <h1>自動截圖模式</h1>
+  <p class="lede">自動截圖模式讓盤面分析器自己跟上你的遊戲進度。你在這個頁面連接遊戲的紀錄檔，並分享遊戲視窗。每當紀錄檔顯示有動作，這個頁面就會擷取一張遊戲畫面，交給在另一個分頁開著的盤面分析器，由它讀出盤面並更新建議。一切都在你的瀏覽器裡、你的電腦上進行。下面會清楚說明它讀取什麼、看到什麼，並附上負責每個部分的程式碼。這些程式碼直接從你的瀏覽器正在執行的同一批檔案載入，所以不可能和這裡的說明不一致。</p>
+>>>>
+<<<< once
+    <h2 id="follow-title">Your game <span class="az-auto-beta">Beta</span></h2>
+    <div class="log-setup" id="follow-enable-log">
+      <h3>First, turn on the game's log</h3>
+      <p>Auto Screenshot Mode takes a picture when the game's log shows a move, and the game writes those lines only once its log is turned on:</p>
+      <ol>
+        <li>In the game, press <b>Esc</b> and find <b>Account Related</b>.</li>
+        <li>Click <b>Enable Log</b>.</li>
+        <li>Log out and back in. The game starts writing its log only after you log in again.</li>
+      </ol>
+      <figure>
+        <img src="img/enable-log.webp?v=20261022a" width="803" height="395" alt="The game's Esc menu, under Account Related: Account Center, Redeem Code, Player Service, and the Enable Log button.">
+        <figcaption>Press Esc in the game: Enable Log is under Account Related.</figcaption>
+      </figure>
+      <p class="note">If pictures come only when you press Take a picture now, the game's log is still off: turn it on here, then log out and back in.</p>
+    </div>
+    <div class="az-auto-gate" id="az-auto-gate">
+      <p>Read this page first, then turn Auto Screenshot Mode on at the bottom. Until you do, nothing here can open your log or see any window.</p>
+      <a class="btn btn-report" href="#agree">Turn it on</a>
+    </div>
+====
+    <h2 id="follow-title">你的遊戲 <span class="az-auto-beta">測試版</span></h2>
+    <div class="log-setup" id="follow-enable-log">
+      <h3>第一步：開啟遊戲的日誌</h3>
+      <p>自動截圖模式是在遊戲紀錄檔顯示有動作時截圖，而遊戲要等日誌開啟後才會寫出這些紀錄：</p>
+      <ol>
+        <li>在遊戲中按 <b>Esc</b>，找到<b>「帳號相關」</b>（Account Related）。</li>
+        <li>點 <b>Enable Log</b>（啟用日誌）。</li>
+        <li>登出再登入。遊戲要等你重新登入後才會開始寫紀錄檔。</li>
+      </ol>
+      <figure>
+        <img src="img/enable-log.webp?v=20261022a" width="803" height="395" alt="遊戲的 Esc 選單，在「帳號相關」（Account Related）底下：帳號中心、兌換碼、玩家服務，以及 Enable Log（啟用日誌）按鈕。">
+        <figcaption>在遊戲中按 Esc：Enable Log（啟用日誌）在「帳號相關」（Account Related）底下。（圖為英文客戶端）</figcaption>
+      </figure>
+      <p class="note">如果只有按下「立即截圖」時才有圖片，表示遊戲的日誌還沒開：照上面的步驟開啟，然後登出再登入。</p>
+    </div>
+    <div class="az-auto-gate" id="az-auto-gate">
+      <p>請先讀完這個頁面，再到最下方開啟自動截圖模式。在那之前，這裡的任何東西都無法開啟你的紀錄檔，也看不到任何視窗。</p>
+      <a class="btn btn-report" href="#agree">開啟</a>
+    </div>
+>>>>
+<<<< once
+      <p class="note">Chrome or Edge on a PC, with the game borderless or windowed. Keep this tab open while you play: it follows the log and takes the pictures, and the analyzer tab shows the board and the advice.</p>
+====
+      <p class="note">需要電腦上的 Chrome 或 Edge，遊戲用無邊框或視窗模式。遊玩時請保持這個分頁開著：它負責追蹤紀錄檔和截圖，分析器分頁則顯示盤面和建議。</p>
+>>>>
+<<<< once
+              <strong>Drag <code>UE_game.log</code> here</strong>
+              <span>from the game's log folder, in File Explorer</span>
+            </div>
+            <p class="field-note" id="az-auto-log-state"></p>
+            <button type="button" class="btn" id="az-auto-log">Or choose the file</button>
+            <p class="field-note">To open the log folder, press the Windows key and E together for File Explorer, paste the folder into the address bar at the top, and press Enter. Then drag <code>UE_game.log</code> onto the box above. With Steam's default install folder, the log folder is:</p>
+====
+              <strong>把 <code>UE_game.log</code> 拖到這裡</strong>
+              <span>從檔案總管裡遊戲的紀錄檔資料夾拖進來</span>
+            </div>
+            <p class="field-note" id="az-auto-log-state"></p>
+            <button type="button" class="btn" id="az-auto-log">或選擇檔案</button>
+            <p class="field-note">開啟紀錄檔資料夾的方法：同時按 Windows 鍵和 E 開啟檔案總管，把資料夾路徑貼到上方的網址列，按 Enter。然後把 <code>UE_game.log</code> 拖到上面的框裡。如果 Steam 裝在預設資料夾，紀錄檔資料夾是：</p>
+>>>>
+<<<< once
+data-copy="log-path-steam">Copy</button></div>
+            <p class="field-note">With the game's own launcher, it's usually:</p>
+====
+data-copy="log-path-steam">複製</button></div>
+            <p class="field-note">如果用遊戲自己的啟動器，通常是：</p>
+>>>>
+<<<< once
+data-copy="log-path-launcher">Copy</button></div>
+            <p class="field-note">If the game is in a Steam library on another drive, it's this, with that drive's letter instead of D:</p>
+====
+data-copy="log-path-launcher">複製</button></div>
+            <p class="field-note">如果遊戲裝在其他磁碟的 Steam 收藏庫，是下面這個（把 D: 換成那個磁碟的代號）：</p>
+>>>>
+<<<< once
+data-copy="log-path-library">Copy</button></div>
+            <p class="field-note">Not there? In Steam, right-click Torchlight: Infinite, then Manage, then Browse local files. File Explorer opens the game's folder, and the log folder is <code>UE_game\TorchLight\Saved\Logs</code> inside it. With the launcher, it's <code>Game\UE_game\Torchlight\Saved\Logs</code> inside the game's folder.</p>
+            <p class="field-note">Dragging works wherever the game is installed. Choosing the file with the button doesn't if the game is under <code>C:\Program Files</code> or <code>C:\Program Files (x86)</code>: Chrome and Edge refuse files there from their file window, saying the folder “contains system files”. To use the button anyway, <a href="steam-library.html">move the game out of Program Files</a> first.</p>
+====
+data-copy="log-path-library">複製</button></div>
+            <p class="field-note">找不到？在 Steam 裡對《火炬之光：無限》按右鍵，選「管理」→「瀏覽本機檔案」。檔案總管會開啟遊戲資料夾，紀錄檔資料夾就是裡面的 <code>UE_game\TorchLight\Saved\Logs</code>。如果用啟動器，則是遊戲資料夾裡的 <code>Game\UE_game\Torchlight\Saved\Logs</code>。</p>
+            <p class="field-note">不管遊戲裝在哪裡，用拖曳的都可以。但如果遊戲在 <code>C:\Program Files</code> 或 <code>C:\Program Files (x86)</code> 底下，就無法用按鈕選檔：Chrome 和 Edge 的檔案視窗會拒絕那裡的檔案，說該資料夾「包含系統檔案」。如果還是想用按鈕，請先<a href="steam-library.html">把遊戲移出 Program Files</a>。</p>
+>>>>
+<<<< once
+            <button type="button" class="btn" id="az-auto-win">Share the game window</button>
+            <p class="field-note" id="az-auto-win-state"></p>
+            <p class="field-note">Pick the Torchlight: Infinite window. Only that window is seen, and only when the log shows a move.</p>
+====
+            <button type="button" class="btn" id="az-auto-win">分享遊戲視窗</button>
+            <p class="field-note" id="az-auto-win-state"></p>
+            <p class="field-note">請選擇《火炬之光：無限》的視窗。只會看到那個視窗，而且只在紀錄檔顯示有動作時才看。</p>
+>>>>
+<<<< once
+target="tartarus-analyzer">Open the board analyzer</a>
+            <p class="field-note" id="az-auto-analyzer-state"></p>
+            <p class="field-note">Each picture is read into a board there, in another tab of this browser.</p>
+====
+target="tartarus-analyzer">開啟盤面分析器</a>
+            <p class="field-note" id="az-auto-analyzer-state"></p>
+            <p class="field-note">每張圖片都會在那裡（這個瀏覽器的另一個分頁）讀成盤面。</p>
+>>>>
+<<<< once
+            <button type="button" class="btn" id="az-auto-now">Take a picture now</button>
+            <p class="field-note">Play as usual. Pictures also come by themselves when the log shows a move. If they never do, <a href="#follow-enable-log">turn on the game's log</a>.</p>
+====
+            <button type="button" class="btn" id="az-auto-now">立即截圖</button>
+            <p class="field-note">照平常玩就好。紀錄檔顯示有動作時，圖片也會自己傳來。如果一直沒有，請<a href="#follow-enable-log">開啟遊戲的日誌</a>。</p>
+>>>>
+<<<< once
+<span><strong>Read each picture into the board</strong><small>The advice refreshes after every move. Cells it's unsure of are marked Check: fix anything wrong in the analyzer and press Recheck.</small></span></label>
+        <label class="toggle"><input type="checkbox" id="az-auto-speed"><span><strong>Speed-up is on in the game</strong><small>With the game’s Speed-up (top right of the prison) on, its animations are quicker, so pictures come sooner. Pressing Speed-up in the game flips this by itself.</small></span></label>
+====
+<span><strong>把每張圖片讀進盤面</strong><small>每次動作後建議都會更新。沒把握的格子會標上「檢查」：有錯的話在分析器裡修正，再按「重新檢查」。</small></span></label>
+        <label class="toggle"><input type="checkbox" id="az-auto-speed"><span><strong>遊戲中已開啟加速</strong><small>遊戲的加速（Speed-up，監獄畫面右上角）開啟時，動畫比較快，圖片也會比較早來。在遊戲中按下加速，這個開關會自動跟著切換。</small></span></label>
+>>>>
+<<<< once
+        <summary>Triggers and log lines (testing)</summary>
+        <label class="field"><span class="field-label">Take a picture when a log line matches</span><textarea
+====
+        <summary>觸發規則與紀錄行（測試用）</summary>
+        <label class="field"><span class="field-label">紀錄行符合以下規則時截圖</span><textarea
+>>>>
+<<<< once
+id="az-auto-rules-reset">Reset to the defaults</button></p>
+        <label class="field"><span class="field-label">Show log lines matching</span><input
+====
+id="az-auto-rules-reset">還原為預設值</button></p>
+        <label class="field"><span class="field-label">顯示符合這個規則的紀錄行</span><input
+>>>>
+<<<< once
+id="az-auto-seen-save">Download these lines</button><button type="button" class="btn" id="az-auto-seen-clear">Clear</button></div>
+====
+id="az-auto-seen-save">下載這些紀錄行</button><button type="button" class="btn" id="az-auto-seen-clear">清除</button></div>
+>>>>
+<<<< once
+    <h2>In short</h2>
+    <ul class="facts">
+      <li><b>Nothing before you agree.</b> Until you agree at the bottom of this page, its controls stay hidden: nothing can open your log or see any window, and the board analyzer takes no pictures.</li>
+      <li><b>One file, read only.</b> It reads the game log you drag onto this page or choose (<code>UE_game.log</code>), and only the lines the game writes after you connect it. It can't open any other file, and it never changes the log.</li>
+      <li><b>One window, only with the log connected.</b> It takes pictures of the one window you share, never a whole screen or a browser tab, except in the desktop app when Windows won't share the game window and you allow it: then the screen the game is on, with each picture cut to the game window and taken only while the game is in front. It only does so while the game log is connected: when the log shows a move, or when you press Take a picture now, here or on the board analyzer (which asks this page to take it). Nothing is recorded in between.</li>
+      <li><b>Pictures stay in your browser.</b> This page hands each picture to the board analyzer open in another tab, which reads the board from it with the screenshot reader. The picture passes between the two tabs inside your browser. Pictures are kept as small previews in memory and are gone when you close the tabs. Auto Screenshot Mode never uploads a picture or your log.</li>
+      <li><b>Boards, only if you share boards.</b> The board the analyzer reads from each picture is treated like any board you ask about. If board sharing is on (the switch under the analyzer's ask button), the board is shared for the odds study: its cells, day and tools, with no picture and nothing about you. It's shared once the next picture comes in, so a board you fixed is shared as you fixed it. Turn that switch off and nothing is shared.</li>
+      <li><b>In the desktop app.</b> Tartarus Overlay finds the log and the game window itself, with no picker, and keeps your last 5 runs' pictures, boards and advice on your PC to review. See <a href="#desktop">In the desktop app</a>.</li>
+      <li><b>Off whenever you like.</b> Stop following and Stop sharing end it at once, as does your browser's own stop-sharing button. Turning it off at the bottom of this page stops it at once, and the analyzer stops taking pictures.</li>
+    </ul>
+====
+    <h2>重點整理</h2>
+    <ul class="facts">
+      <li><b>同意之前什麼都不做。</b>在你於本頁最下方同意之前，控制項都是隱藏的：沒有東西能開啟你的紀錄檔或看到任何視窗，盤面分析器也不會截圖。</li>
+      <li><b>只讀一個檔案，唯讀。</b>它只讀你拖到這個頁面或選擇的遊戲紀錄檔（<code>UE_game.log</code>），而且只讀你連接之後遊戲新寫入的內容。它無法開啟其他檔案，也絕不會修改紀錄檔。</li>
+      <li><b>只看一個視窗，而且只在紀錄檔連接時。</b>它只擷取你分享的那一個視窗，絕不擷取整個螢幕或瀏覽器分頁；唯一的例外是在桌面版中，Windows 不肯分享遊戲視窗而你也允許時：這時會改用遊戲所在的螢幕，每張圖片都裁切成遊戲視窗的範圍，而且只在遊戲位於最前面時才截圖。它只在遊戲紀錄檔連接期間截圖：紀錄檔顯示有動作時，或你在這裡或盤面分析器上按下「立即截圖」時（分析器會請這個頁面截圖）。兩次截圖之間什麼都不記錄。</li>
+      <li><b>圖片留在你的瀏覽器裡。</b>這個頁面把每張圖片交給另一個分頁裡的盤面分析器，由它用截圖辨識器讀出盤面。圖片只在你瀏覽器內的兩個分頁之間傳遞，以小型預覽圖保存在記憶體中，關掉分頁就消失。自動截圖模式絕不會上傳任何圖片或你的紀錄檔。</li>
+      <li><b>盤面：只有在你分享盤面時才會分享。</b>分析器從每張圖片讀出的盤面，和你自己詢問的盤面一視同仁。如果盤面分享是開啟的（分析器「我該怎麼做？」按鈕下方的開關），盤面會分享給機率研究：只有格子、天數和刑具，沒有圖片，也沒有任何關於你的資訊。盤面會在下一張圖片進來時才分享，所以你修正過的盤面會以修正後的樣子分享。關掉那個開關就什麼都不分享。</li>
+      <li><b>桌面版。</b>Tartarus Overlay 會自己找到紀錄檔和遊戲視窗，不需要你選擇，並把你最近 5 局的圖片、盤面和建議保存在你的電腦上供回顧。詳見<a href="#desktop">桌面版</a>。</li>
+      <li><b>隨時可以關閉。</b>按「停止追蹤」和「停止分享」會立即結束，瀏覽器本身的停止分享按鈕也一樣。在本頁最下方關閉會立即停止，分析器也不再截圖。</li>
+    </ul>
+>>>>
+<<<< once
+    <h2>What your browser asks you</h2>
+    <p>Nothing happens until you've done both of these yourself:</p>
+    <ol>
+      <li><b>Give it the log.</b> You drag <code>UE_game.log</code> from the game's log folder in File Explorer onto this page, or choose it in the browser's file window (step 1 at the top lists the folders). Either way, the site gets read-only access to that one file and nothing else. The file window refuses files under Program Files, where Steam puts games by default; dragging works anywhere (or <a href="steam-library.html">move the game</a>). On your next visit, the browser asks again before the site can read it.</li>
+      <li><b>To share a window.</b> The browser lists your open windows, and you pick Torchlight: Infinite. Whole screens aren't offered. While the window is shared, the browser shows which one, with a button to stop.</li>
+    </ol>
+    <p class="note">Browsers never tell a website which program a window belongs to: not its name, its title or its process. So the code can't check that the window is the game. What it does check is that you shared one window, not your screen or a browser tab, and the browser's sharing bar shows you which window that is. Pick the game, and only the game is seen.</p>
+    <p class="note">Other browsers can't follow a file on your PC, so Auto Screenshot Mode needs Chrome or Edge on a PC. Run the game borderless or windowed: in exclusive fullscreen, a shared window looks black.</p>
+====
+    <h2>瀏覽器會問你什麼</h2>
+    <p>在你親自完成下面兩件事之前，什麼都不會發生：</p>
+    <ol>
+      <li><b>交出紀錄檔。</b>你從檔案總管裡遊戲的紀錄檔資料夾把 <code>UE_game.log</code> 拖到這個頁面，或在瀏覽器的檔案視窗中選擇它（最上方的步驟 1 列出了資料夾位置）。無論哪種方式，網站都只能唯讀存取那一個檔案，其他什麼都不行。檔案視窗會拒絕 Program Files 底下的檔案，而 Steam 預設就把遊戲裝在那裡；用拖曳的在哪裡都行（或<a href="steam-library.html">把遊戲移走</a>）。下次造訪時，瀏覽器會先再問你一次，網站才能讀取。</li>
+      <li><b>分享視窗。</b>瀏覽器會列出你開著的視窗，由你選擇《火炬之光：無限》。不會提供整個螢幕的選項。分享期間，瀏覽器會顯示分享的是哪個視窗，並附上停止按鈕。</li>
+    </ol>
+    <p class="note">瀏覽器從不告訴網站某個視窗屬於哪個程式：不給名稱、標題，也不給程序。所以程式碼無法確認那個視窗就是遊戲。它確實會檢查的是：你分享的是單一視窗，而不是螢幕或瀏覽器分頁；而瀏覽器的分享列會告訴你那是哪個視窗。只要你選的是遊戲，就只會看到遊戲。</p>
+    <p class="note">其他瀏覽器無法追蹤你電腦上的檔案，所以自動截圖模式需要電腦上的 Chrome 或 Edge。請用無邊框或視窗模式執行遊戲：在獨佔全螢幕模式下，分享的視窗會是一片黑。</p>
+>>>>
+<<<< once
+    <h2>How it works, with its code</h2>
+    <p>Each step shows the code that does it, word for word, with its line numbers in the file. It's read from the site just now.</p>
+
+    <h3>1. Nothing runs before you agree</h3>
+    <p>When this page opens, it checks for your agreement first. Without it, the controls stay hidden, and none of the code that connects the log, shares a window or passes pictures to the analyzer is set up.</p>
+====
+    <h2>運作方式與程式碼</h2>
+    <p>每個步驟都會一字不差地列出負責它的程式碼，以及它在檔案中的行號。這些內容是剛剛才從網站讀取的。</p>
+
+    <h3>1. 同意之前什麼都不執行</h3>
+    <p>這個頁面開啟時，會先檢查你是否已同意。沒有同意的話，控制項保持隱藏，負責連接紀錄檔、分享視窗或把圖片交給分析器的程式碼一概不會啟動。</p>
+>>>>
+<<<< once
+    <p>The part that takes pictures checks again on its own, every time, right before each picture. A picture is taken only if three things hold: you agreed to this version of this page, the game log is connected and being read, and what's shared is a single window. Connecting the log or sharing a window without your agreement is refused too.</p>
+====
+    <p>負責截圖的部分在每次截圖前都會自己再檢查一次。只有三個條件都成立時才會截圖：你同意了這個版本的頁面、遊戲紀錄檔已連接並正在讀取、分享的是單一視窗。沒有你的同意，連接紀錄檔或分享視窗也都會被拒絕。</p>
+>>>>
+<<<< once
+    <h3>2. You give it the log</h3>
+    <p><code>dropLog</code> takes the file you drag onto the page: one <code>.log</code> file, and nothing else. <code>connectLog</code> opens the browser's file window instead, and the site gets only the file you choose. <code>resumeLog</code> is for later visits: the browser remembers your choice, but asks you again before the site may read it.</p>
+====
+    <h3>2. 你交出紀錄檔</h3>
+    <p><code>dropLog</code> 接收你拖到頁面上的檔案：只接受一個 <code>.log</code> 檔，其他一概不收。<code>connectLog</code> 則是開啟瀏覽器的檔案視窗，網站只拿得到你選擇的那個檔案。<code>resumeLog</code> 用於之後的造訪：瀏覽器會記得你的選擇，但在網站讀取前會再問你一次。</p>
+>>>>
+<<<< once
+    <h3>3. It reads only the new lines</h3>
+    <p>Once a second, the follower checks whether the log has grown, and reads only the part added since its last look. It starts at the end of the log, so nothing written before you connected is ever read. Each new line is checked against the triggers below. A line that matches nothing is dropped; a line that matches the watch pattern is shown to you on the page. It runs in a background worker, so it keeps up when the tab is hidden. However the log changes, each look reads at most the newest megabyte and passes at most 200 lines to the page, so the page never has more than it can handle. If the log is deleted, the follower waits, and reads the next log the game writes from its start. The game also writes its language in the log every few minutes (a line with <code>sdkLang=…</code>). The follower notes only that language code, so the analyzer can tell you when names and labels may not be read. Nothing else from that line is kept, shown or sent.</p>
+====
+    <h3>3. 只讀新寫入的紀錄行</h3>
+    <p>追蹤器每秒檢查一次紀錄檔是否變長，並只讀取上次查看後新增的部分。它從紀錄檔的結尾開始讀，所以你連接之前寫入的內容一概不會讀到。每一行新紀錄都會和下面的觸發規則比對。什麼都不符合的行直接丟掉；符合觀察規則的行會顯示在頁面上給你看。它在背景 worker 中執行，所以分頁隱藏時也跟得上。不管紀錄檔怎麼變，每次查看最多只讀最新的 1 MB，最多交 200 行給頁面，所以頁面永遠不會收到超出負荷的量。如果紀錄檔被刪除，追蹤器會等待，並從頭讀取遊戲寫出的下一個紀錄檔。遊戲每隔幾分鐘也會把它的語言寫進紀錄檔（含 <code>sdkLang=…</code> 的那一行）。追蹤器只記下那個語言代碼，讓分析器能在名稱和標籤可能讀不出來時提醒你。那一行的其他內容一概不保留、不顯示、不傳送。</p>
+>>>>
+<<<< once
+    <h3>4. It watches for moves</h3>
+    <p>The triggers are patterns for the lines the game writes when something happens. Each has a kind, the pattern, and a settle time. The built-in ones take a picture at: the run's objective popup; its pick of 3 instruments and each re-roll of it (also an extra pick an objective pays); the start of each day, once the new day's banner closes; after a move, when the cards come up; after an action in the cell, once it has played out; after each bite of a consume chain, and after a Cancel; after an event is confirmed (the Sewer Ratway's cell pick shows then); and the Warden's Treasure, and again once it closes. The Treasure covers the board, so the analyzer waits for it before advising a gift: press View Prison Status in the game, and the picture taken then is of the board behind the Treasure, which still waits; the gift advice uses that board. Two lines take no picture: the next day's banner cancels a picture still waiting, so an action that ends the day takes none of the banner; and the game's Speed-up button switches how soon pictures come. So it takes a picture of each screen where you decide something, and none in between. You can add triggers of your own at the top of this page, under Triggers and log lines; the built-in ones always apply as well.</p>
+====
+    <h3>4. 留意每個動作</h3>
+    <p>觸發規則是比對遊戲在發生事情時寫出的紀錄行的規則，每條都有種類、比對規則和等待時間。內建規則會在以下時機截圖：這一局的目標彈窗；3 選 1 的刑具選擇與每次重骰（包括目標獎勵的額外選擇）；每天開始、新一天的橫幅關閉時；移動之後、卡片浮現時；在牢房中的行動演出完畢後；吞噬連鎖的每一口之後，以及按下取消之後；確認獄中事變之後（暗渠鼠道的選格畫面會在這時出現）；以及典獄長的珍藏出現時和關閉後。典獄長的珍藏會蓋住盤面，所以分析器會等拿到盤面後才建議珍品：在遊戲中按「查看監獄狀態」（View Prison Status），這時擷取的就是珍藏背後的盤面（珍藏仍在等你選），珍品建議就依據這個盤面。有兩種紀錄行不截圖：隔天的橫幅會取消還在等待的截圖，所以結束當天的行動不會拍到橫幅；遊戲的加速（Speed-up）按鈕則會切換截圖的快慢。因此它會在每個需要你做決定的畫面截圖，中間的過程一律不截。你可以在本頁上方的「觸發規則與紀錄行」中加入自己的規則；內建規則永遠同時適用。</p>
+>>>>
+<<<< once
+    <p>When matching lines come in a burst, it waits until the log has been quiet for the settle time, so the animations finish. Then it takes one picture for the whole burst.</p>
+====
+    <p>如果符合的紀錄行一口氣湧進來，它會等紀錄檔安靜下來、經過等待時間讓動畫播完，再為整批紀錄只截一張圖。</p>
+>>>>
+<<<< once
+    <h3>5. It takes one picture of the window you shared</h3>
+    <p><code>connectWindow</code> asks the browser to share a window, which you pick. <code>useStream</code> turns away a whole screen or a browser tab and stops that share at once; only the desktop app can hand it a screen, through <code>useCrop</code>, and only after you've allowed it (see the desktop app below). <code>grab</code> takes a single still frame, and only when the check from step 1 allows it. On such a screen it first asks the app where the game window is: if the game isn't the window in front, it takes nothing, and otherwise it cuts the frame to the game window before the frame leaves <code>grab</code>, so nothing else on the screen is read, kept or sent. In Chrome and Edge, nothing plays the window as video in between.</p>
+====
+    <h3>5. 擷取你分享的視窗的一張畫面</h3>
+    <p><code>connectWindow</code> 請瀏覽器分享一個由你選擇的視窗。<code>useStream</code> 會拒絕整個螢幕或瀏覽器分頁，並立即停止那次分享；只有桌面版能透過 <code>useCrop</code> 交給它一個螢幕，而且必須先經過你允許（見下方的桌面版）。<code>grab</code> 只擷取單一靜止畫面，而且只在步驟 1 的檢查允許時才擷取。如果分享的是螢幕，它會先問桌面程式遊戲視窗在哪裡：遊戲不是最前面的視窗就什麼都不拍，否則會在畫面離開 <code>grab</code> 之前裁切成遊戲視窗的範圍，所以螢幕上的其他東西都不會被讀取、保存或傳送。在 Chrome 和 Edge 中，兩次截圖之間不會把視窗當成影片播放。</p>
+>>>>
+<<<< once
+    <h3>6. The picture goes to your board analyzer</h3>
+    <p>This page lists each picture as a small preview, then hands it to the board analyzer you opened from here, in another tab. It travels between the tabs inside your browser, through the browser's BroadcastChannel, which reaches only this site's own pages. If no analyzer tab is open, the picture is only listed here.</p>
+====
+    <h3>6. 圖片交給你的盤面分析器</h3>
+    <p>這個頁面把每張圖片列成小型預覽，再交給你從這裡開啟、位於另一個分頁的盤面分析器。圖片透過瀏覽器的 BroadcastChannel 在你瀏覽器內的分頁之間傳遞，而它只能送到這個網站自己的頁面。如果沒有開著分析器分頁，圖片就只會列在這裡。</p>
+>>>>
+<<<< once
+    <h3>7. The analyzer reads it into your board</h3>
+    <p>The analyzer answers only after you've agreed, and reads only the pictures sent to it. The screenshot reader, running in your browser, turns the picture into a board, which becomes your board straight away, and the analyzer gives its advice. Cells the reader is unsure of are marked Check. If anything doesn't match your game, fix it on the board and press Recheck. A picture of the objective popup sets the run's objective, read from its title. A picture of the instrument pick is read as that instead: the analyzer starts a fresh run at the offer, with the three instruments it read and whether a re-roll is left, and says which to take, or to re-roll. The instruments are read by their printed names first, with an OCR engine (Tesseract) that the analyzer downloads once from jsDelivr, a public code host, and runs in your browser: the picture itself isn’t sent anywhere. Where a name isn’t clear, the card’s art is used. An instrument it's unsure of is named for you to check. Only how the reading went goes back to this page. Nothing is uploaded.</p>
+    <p>The analyzer also shows, at its top, whether Auto Screenshot Mode is running. This page tells it whether the log is followed and the window shared, whether the game is writing the lines Auto Screenshot Mode needs, how many moves the log has shown, when its last picture was taken and of what, and the game's language. It never sends the log's lines that way. While the log is followed but has shown no move yet, the bar is yellow, and pointing at it says how to turn on the game's log.</p>
+====
+    <h3>7. 分析器把它讀進你的盤面</h3>
+    <p>分析器只在你同意後才會回應，也只讀取傳給它的圖片。在你瀏覽器中執行的截圖辨識器會把圖片轉成盤面，直接成為你的盤面，分析器隨即給出建議。辨識器沒把握的格子會標上「檢查」。如果有任何地方和你的遊戲不符，在盤面上修正後按「重新檢查」。目標彈窗的圖片會從標題讀出這一局的目標並設定好。刑具選擇的圖片則會被當成刑具選擇來讀：分析器會以這組選項開始新的一局，帶入讀到的三件刑具以及是否還能重骰，並告訴你該拿哪一件，或是該重骰。刑具會先讀卡片上印的名稱，使用的 OCR 引擎（Tesseract）由分析器從公開程式碼託管服務 jsDelivr 下載一次，並在你的瀏覽器中執行：圖片本身不會傳到任何地方。名稱看不清楚時，會改用卡片的圖案判斷。沒把握的刑具會列出名稱請你確認。回傳給這個頁面的只有辨識的結果狀況，不會上傳任何東西。</p>
+    <p>分析器的頂端也會顯示自動截圖模式是否在運作。這個頁面會告訴它：紀錄檔是否正在追蹤、視窗是否正在分享、遊戲是否有寫出自動截圖模式需要的紀錄行、紀錄檔已顯示了多少次動作、上一張圖片是何時拍的、拍的是什麼，以及遊戲的語言。紀錄檔的內容本身絕不會透過這個管道傳送。紀錄檔正在追蹤但還沒出現任何動作時，狀態列會是黃色，滑鼠移上去會說明如何開啟遊戲的日誌。</p>
+>>>>
+<<<< once
+    <h2>In the desktop app</h2>
+    <p>Tartarus Overlay is a Windows app that runs Auto Screenshot Mode for you and shows the advice in a small card over the game, so one monitor is enough. It opens this site's own pages (this page and the board analyzer) inside the app, so everything above still holds there, with the differences below. Its code is in the site's repository, under <code>desktop/</code>, and each part is shown here the same way. <a href="https://github.com/blahdot3h/tartarus-simulator/releases/latest" target="_blank" rel="noopener">Download it</a> (Windows; it isn't code-signed yet, so Windows may ask you to confirm: More info, then Run anyway).</p>
+
+    <h3>It finds the log itself</h3>
+    <p>You don't drag the log in. The app looks where the game writes it. While the game runs, that's beside the game itself: Windows tells the app two things about the game: where its program file is, and whether the game (or the program that started it) runs as administrator. The second goes only into the app's debug log, because Windows cuts off a window share to an app that doesn't run as administrator too. The app learns nothing else about it. Otherwise it looks in each Steam library that has the game (from Steam's own list of its libraries) and in the game launcher's default folder, and takes the newest <code>UE_game.log</code> there. You can also choose a log from its tray menu, drag one onto this page, or use the button in step 1. In the app, the app itself reads that file, so it works wherever the game is installed and doesn't ask again. Only this page can read it, and only its size and the bytes it asks for. The follower above still reads only the new lines.</p>
+====
+    <h2>桌面版</h2>
+    <p>Tartarus Overlay 是一個 Windows 程式，會替你執行自動截圖模式，並在遊戲上方用一張小卡片顯示建議，所以一台螢幕就夠了。它在程式裡開啟的就是這個網站自己的頁面（這個頁面和盤面分析器），所以上面說的一切在那裡依然成立，只有下面列出的差異。它的程式碼放在網站儲存庫的 <code>desktop/</code> 底下，每個部分在這裡也都用同樣方式列出。<a href="https://github.com/blahdot3h/tartarus-simulator/releases/latest" target="_blank" rel="noopener">下載</a>（Windows；目前還沒有程式碼簽章，Windows 可能會要你確認：點「其他資訊」，再點「仍要執行」）。</p>
+
+    <h3>它會自己找到紀錄檔</h3>
+    <p>你不用把紀錄檔拖進來，程式會到遊戲寫紀錄檔的地方找。遊戲執行時，紀錄檔就在遊戲本身旁邊：Windows 會告訴程式關於遊戲的兩件事：它的執行檔在哪裡，以及遊戲（或啟動它的程式）是否以系統管理員身分執行。第二件事只會寫進程式的除錯紀錄，因為如果程式本身沒有以系統管理員身分執行，Windows 會切斷對該遊戲視窗的分享。除此之外，程式對遊戲一無所知。遊戲沒在執行時，它會到每個裝有這款遊戲的 Steam 收藏庫（依 Steam 自己的收藏庫清單）以及遊戲啟動器的預設資料夾尋找，取用其中最新的 <code>UE_game.log</code>。你也可以從系統匣選單選擇紀錄檔、把紀錄檔拖到這個頁面，或使用步驟 1 的按鈕。在桌面版中，是由程式本身讀取那個檔案，所以不管遊戲裝在哪裡都能用，也不會再問你。只有這個頁面能讀取它，而且只能讀它的大小和它要求的位元組。上面的追蹤器依然只讀新寫入的紀錄行。</p>
+>>>>
+<<<< once
+    <h3>It shares only the game window, found by its title</h3>
+    <p>A desktop app can see which window is which. Every two seconds the app looks for the window titled Torchlight: Infinite. When this page asks to share a window, the app answers with that window only, with no picker: never a browser tab or any other window. The checks above still run. A picture is taken only while you've agreed, the log is followed and the shared window is live.</p>
+    <p>Sometimes Windows won't share the game window: when the game runs as administrator, say, the share fails with "Could not start video source". Then the overlay asks whether the app may share the screen the game is on instead. Only if you say yes does it share that screen, and every picture is cut to the game window's visible area before anything reads or keeps it, and taken only while the game is the window in front. The overlay stays out of it, as it does from any capture. You can turn it off from the tray menu (Share the game's screen when Windows won't share its window), and turning Auto Screenshot Mode off here clears your answer.</p>
+====
+    <h3>它只分享遊戲視窗，靠標題找到它</h3>
+    <p>桌面程式看得出哪個視窗是哪個。程式每兩秒會尋找標題為 Torchlight: Infinite 的視窗。這個頁面要求分享視窗時，程式只會交出那個視窗，不跳出選擇視窗：絕不會是瀏覽器分頁或其他視窗。上面的檢查依然會執行。只有在你已同意、紀錄檔正在追蹤、而且分享的視窗仍在運作時才會截圖。</p>
+    <p>有時候 Windows 不肯分享遊戲視窗：例如遊戲以系統管理員身分執行時，分享會失敗並出現「Could not start video source」。這時浮動視窗會詢問程式能否改為分享遊戲所在的螢幕。只有你同意時才會分享那個螢幕，而且每張圖片在被讀取或保存之前，都會先裁切成遊戲視窗的可見範圍，也只在遊戲是最前面的視窗時才截圖。浮動視窗本身不會被拍進去，就和任何擷取一樣。你可以從系統匣選單關閉這個功能（Windows 不讓分享遊戲視窗時，改為分享遊戲所在的螢幕），在這裡關閉自動截圖模式也會清除你的答覆。</p>
+>>>>
+<<<< once
+    <p>On this page, the app does what you'd do by hand: once you've agreed, it connects the log it found and shares the game window, only while the game runs. Your Stop following and Stop sharing buttons still work.</p>
+====
+    <p>在這個頁面上，程式做的就是你原本要手動做的事：在你同意之後，連接它找到的紀錄檔並分享遊戲視窗，而且只在遊戲執行期間。你的「停止追蹤」和「停止分享」按鈕依然有效。</p>
+>>>>
+<<<< once
+    <h3>One agreement for the app</h3>
+    <p>You agree once in the app. It remembers which version of this page you agreed to, so it doesn't ask again when it starts or updates. If this page's agreement version changes, it asks again. Turning Auto Screenshot Mode off here turns it off for the app.</p>
+====
+    <h3>桌面版只需同意一次</h3>
+    <p>你在程式裡同意一次就好。它會記得你同意的是這個頁面的哪個版本，所以啟動或更新時不會再問。如果這個頁面的同意書版本有變，才會再問一次。在這裡關閉自動截圖模式，程式裡也會一起關閉。</p>
+>>>>
+<<<< once
+    <h3>A record of your last runs, on your PC</h3>
+    <p>Unlike the browser, the app keeps a record on your PC, so you can look back at a run from its tray menu (Review the record). It holds each picture the analyzer was handed, what the reader made of it, the board and the advice, and the changes you made on the board. It keeps your last 5 runs and deletes older ones. (A test build started with <code>--dev</code> keeps up to 1 GB instead.) The record stays in the app's folder on your PC and is never uploaded. Turn it off in the tray menu: Record every board and advice. The app also keeps a short log of what it did, such as the game starting and closing, pictures taken, readings and advice, for troubleshooting. That log never holds the game log's lines or a picture.</p>
+====
+    <h3>在你的電腦上保存最近幾局的紀錄</h3>
+    <p>和瀏覽器不同，桌面程式會在你的電腦上保存紀錄，讓你從系統匣選單回顧某一局（回顧測試紀錄…）。紀錄包含交給分析器的每張圖片、辨識器讀出的結果、盤面和建議，以及你在盤面上做的修改。它會保留最近 5 局，刪除更早的紀錄。（用 <code>--dev</code> 啟動的測試版則改為最多保留 1 GB。）紀錄留在你電腦上的程式資料夾中，絕不會上傳。可以在系統匣選單中關閉：記錄每個盤面與建議（測試用）。程式也會保留一份簡短的運作紀錄，例如遊戲啟動和關閉、截圖、辨識和建議，用來排除問題。這份紀錄絕不包含遊戲紀錄檔的內容或任何圖片。</p>
+>>>>
+<<<< once
+    <p class="note">The overlay only shows what the analyzer's results say, and presses the analyzer's buttons for you. Boards are shared and reports sent exactly as on the website, by the website's own code: the board-sharing switch under the analyzer's ask button still decides.</p>
+====
+    <p class="note">浮動視窗只會顯示分析器結果的內容，並替你按分析器的按鈕。盤面的分享和回報的傳送都和網站上完全一樣，由網站自己的程式碼處理：依然由分析器「我該怎麼做？」按鈕下方的盤面分享開關決定。</p>
+>>>>
+<<<< once
+    <h2>Check the files</h2>
+    <p>These are the files shown above, as this site serves them now, with each file's SHA-256 fingerprint. A copy from GitHub with the same fingerprint is the same file, byte for byte.</p>
+    <table class="files">
+      <thead><tr><th>File</th><th>What it does</th><th>SHA-256</th></tr></thead>
+====
+    <h2>核對檔案</h2>
+    <p>以下是上面列出的檔案（以這個網站目前提供的版本為準），以及每個檔案的 SHA-256 指紋。從 GitHub 取得的副本只要指紋相同，就是位元組完全相同的檔案。注意：繁體中文翻譯版的部分檔案（例如 <code>js/follow.js</code>、<code>js/capture.js</code>、<code>js/auto.js</code>）已把畫面文字翻成中文，所以指紋和原作者 GitHub 上的英文版不同，程式碼的行號連結也可能略有出入。</p>
+    <table class="files">
+      <thead><tr><th>檔案</th><th>用途</th><th>SHA-256</th></tr></thead>
+>>>>
+<<<< once
+    <h2>Turn it on</h2>
+    <div class="agree">
+      <label class="toggle"><input type="checkbox" id="agree-box"><span><strong>I've read this page.</strong><small>I agree to let Auto Screenshot Mode read the game log and take pictures of the game window, as described above. In a browser, that's the log I give it and the window I share. In the desktop app, it's the log and the Torchlight: Infinite window it finds (or, only if I allow it when Windows won't share that window, the screen it's on, cut to that window), with its record of my last runs kept on this PC.</small></span></label>
+      <div class="agree-actions">
+        <button type="button" class="btn btn-primary" id="agree-on" disabled>Turn on Auto Screenshot Mode</button>
+        <button type="button" class="btn" id="agree-off" hidden>Turn it off and forget my log</button>
+      </div>
+      <p class="agree-status" id="agree-status" aria-live="polite"></p>
+    </div>
+    <p class="note">This is agreement version <span id="consent-version">5</span>. If what Auto Screenshot Mode does changes, this page asks you to read it again before it turns back on.</p>
+====
+    <h2>開啟</h2>
+    <div class="agree">
+      <label class="toggle"><input type="checkbox" id="agree-box"><span><strong>我已讀完這個頁面。</strong><small>我同意讓自動截圖模式依上述說明讀取遊戲紀錄檔，並擷取遊戲視窗的畫面。在瀏覽器中，指的是我交給它的紀錄檔和我分享的視窗。在桌面版中，指的是它找到的紀錄檔和《火炬之光：無限》視窗（或者，只有在 Windows 不肯分享該視窗且我允許時，改用該視窗所在的螢幕並裁切成該視窗範圍），以及保存在這台電腦上的最近幾局紀錄。</small></span></label>
+      <div class="agree-actions">
+        <button type="button" class="btn btn-primary" id="agree-on" disabled>開啟自動截圖模式</button>
+        <button type="button" class="btn" id="agree-off" hidden>關閉，並忘記我的紀錄檔</button>
+      </div>
+      <p class="agree-status" id="agree-status" aria-live="polite"></p>
+    </div>
+    <p class="note">這是第 <span id="consent-version">5</span> 版同意書。如果自動截圖模式的行為有所改變，這個頁面會在重新開啟前請你再讀一次。</p>
+>>>>
+<<<< once
+    ['js/capture.js', 'Follows the log, checks your agreement, and takes pictures of the shared window.'],
+    ['js/follow.js', 'This page’s controls: the agreement check, the triggers, and handing each picture to the analyzer tab.'],
+    ['js/auto.js', 'The analyzer’s side: the agreement check, and reading each picture it’s handed into the board.'],
+    ['desktop/main.js', 'The desktop app: finds the log, shares only the game window (or, if you allow it when Windows won’t, the screen it’s on, cut to the window), and keeps the agreement and the record.'],
+    ['desktop/preload.js', 'What this site’s pages get from the desktop app.'],
+    ['desktop/lib/follow-adapter.js', 'In the desktop app, on this page: connects the log and the game window, and keeps the agreement.'],
+    ['desktop/lib/analyzer-adapter.js', 'In the desktop app, on the analyzer: copies the advice to the overlay, and keeps the record.'],
+====
+    ['js/capture.js', '追蹤紀錄檔、檢查你的同意，並擷取分享視窗的畫面。'],
+    ['js/follow.js', '這個頁面的控制項：同意檢查、觸發規則，以及把每張圖片交給分析器分頁。'],
+    ['js/auto.js', '分析器這一端：同意檢查，以及把收到的每張圖片讀進盤面。'],
+    ['desktop/main.js', '桌面程式：找到紀錄檔、只分享遊戲視窗（或在 Windows 不肯分享時經你允許，改用遊戲所在的螢幕並裁切成視窗範圍），並保存同意狀態與紀錄。'],
+    ['desktop/preload.js', '這個網站的頁面能從桌面程式取得的功能。'],
+    ['desktop/lib/follow-adapter.js', '桌面版中、在這個頁面上：連接紀錄檔和遊戲視窗，並保存同意狀態。'],
+    ['desktop/lib/analyzer-adapter.js', '桌面版中、在分析器上：把建議複製到浮動視窗，並保存紀錄。'],
+>>>>
+<<<< once
+    5: 'it also notes the game’s language, which the game writes in its log every few minutes (a line with sdkLang=…). Only the two-letter language code is kept, so the analyzer can tell you when names and labels may not be read.',
+====
+    5: '它還會記下遊戲的語言：遊戲每隔幾分鐘會把語言寫進紀錄檔（含 sdkLang=… 的那一行）。只保留兩個字母的語言代碼，讓分析器能在名稱和標籤可能讀不出來時提醒你。',
+>>>>
+<<<< once
+    $('agree-status').textContent = on ? `Auto Screenshot Mode is on in this browser${prefs.consentAt ? `, since you agreed on ${new Date(prefs.consentAt).toLocaleDateString()}` : ''}.`
+      : older ? `You agreed to version ${prefs.consent} of this page. Since then, ${since.join(' And ') || 'this page changed'} Auto Screenshot Mode is off until you agree again below.` : '';
+====
+    $('agree-status').textContent = on ? `自動截圖模式在這個瀏覽器中已開啟${prefs.consentAt ? `（你在 ${new Date(prefs.consentAt).toLocaleDateString()} 同意）` : ''}。`
+      : older ? `你同意的是這個頁面的第 ${prefs.consent} 版。之後的變更：${since.join('另外，') || '這個頁面有所變更。'}在你於下方重新同意之前，自動截圖模式會保持關閉。` : '';
+>>>>
+<<<< once
+      $('agree-status').textContent = 'This browser won’t save settings (a private window?), so it can’t be turned on here.';
+====
+      $('agree-status').textContent = '這個瀏覽器無法儲存設定（是無痕視窗嗎？），所以無法在這裡開啟。';
+>>>>
+<<<< once
+    $('agree-status').textContent = 'Turned off, and the log you gave it is forgotten.';
+====
+    $('agree-status').textContent = '已關閉，你交給它的紀錄檔也已忘記。';
+>>>>
+<<<< once
+      b.textContent = ok ? 'Copied' : 'Select it and copy';
+      setTimeout(() => (b.textContent = 'Copy'), 2000);
+====
+      b.textContent = ok ? '已複製' : '請選取後手動複製';
+      setTimeout(() => (b.textContent = '複製'), 2000);
+>>>>
+<<<< once
+        if (!r) throw new Error('that part of the file wasn’t found');
+        box.innerHTML = `<div class="code-head"><span>${esc(path)}, lines ${r.from}–${r.to}</span><span><a href="${esc(path)}" target="_blank" rel="noopener">whole file</a> · <a href="${REPO}${esc(path)}#L${r.from}-L${r.to}" target="_blank" rel="noopener">on GitHub</a></span></div><pre><code>${codeHTML(r)}</code></pre>`;
+      })
+      .catch((e) => {
+        box.innerHTML = `<p class="code-error">${esc(path)} couldn’t be loaded (${esc(e.message)}). <a href="${REPO}${esc(path)}" target="_blank" rel="noopener">Read it on GitHub</a>.</p>`;
+====
+        if (!r) throw new Error('找不到檔案中的那個部分');
+        box.innerHTML = `<div class="code-head"><span>${esc(path)}，第 ${r.from}–${r.to} 行</span><span><a href="${esc(path)}" target="_blank" rel="noopener">完整檔案</a> · <a href="${REPO}${esc(path)}#L${r.from}-L${r.to}" target="_blank" rel="noopener">在 GitHub 上看</a></span></div><pre><code>${codeHTML(r)}</code></pre>`;
+      })
+      .catch((e) => {
+        box.innerHTML = `<p class="code-error">無法載入 ${esc(path)}（${esc(e.message)}）。<a href="${REPO}${esc(path)}" target="_blank" rel="noopener">到 GitHub 上閱讀</a>。</p>`;
+>>>>
+<<<< once
+target="_blank" rel="noopener">as served</a> · <a href="${REPO}${esc(path)}" target="_blank" rel="noopener">on GitHub</a></td><td>${esc(what)}</td><td class="hash" data-hash="${esc(path)}">working it out…</td></tr>`).join('');
+====
+target="_blank" rel="noopener">本站提供的版本</a> · <a href="${REPO}${esc(path)}" target="_blank" rel="noopener">GitHub 上的版本</a></td><td>${esc(what)}</td><td class="hash" data-hash="${esc(path)}">計算中…</td></tr>`).join('');
+>>>>
+<<<< once
+      .catch((e) => (cell.textContent = `couldn’t be read (${e.message})`));
+====
+      .catch((e) => (cell.textContent = `無法讀取（${e.message}）`));
+>>>>
+
+（fork 版）下載連結與程式碼連結指向繁中版 repo
+<<<< once
+<a href="https://github.com/blahdot3h/tartarus-simulator/releases/latest" target="_blank" rel="noopener">
+====
+<a href="https://github.com/10840130/tartarus-simulator/releases/latest" target="_blank" rel="noopener">
+>>>>
+<<<< once
+  const REPO = 'https://github.com/blahdot3h/tartarus-simulator/blob/main/';
+====
+  const REPO = 'https://github.com/10840130/tartarus-simulator/blob/main/';
+>>>>

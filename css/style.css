@@ -62,9 +62,9 @@
   --wood-lo: #5c4530;
 
   /* Type */
-  --font-display: "Big Shoulders Stencil Display", "Arial Narrow", Impact, sans-serif;
-  --font-body: "Barlow Semi Condensed", "Segoe UI", system-ui, sans-serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+  --font-display: "Big Shoulders Stencil Display", "Noto Sans TC", "Microsoft JhengHei", "PingFang TC", "Arial Narrow", Impact, sans-serif;
+  --font-body: "Barlow Semi Condensed", "Noto Sans TC", "Microsoft JhengHei", "PingFang TC", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", "Noto Sans TC", "Microsoft JhengHei", "PingFang TC", ui-monospace, Consolas, monospace;
 
   --radius: 4px;
 }

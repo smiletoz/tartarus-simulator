@@ -1,0 +1,11 @@
+中文字型：英文字型後面接上思源黑體（Noto Sans TC），中文字才不會落到系統預設字型。
+
+<<<< once
+  --font-display: "Big Shoulders Stencil Display", "Arial Narrow", Impact, sans-serif;
+  --font-body: "Barlow Semi Condensed", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+====
+  --font-display: "Big Shoulders Stencil Display", "Noto Sans TC", "Microsoft JhengHei", "PingFang TC", "Arial Narrow", Impact, sans-serif;
+  --font-body: "Barlow Semi Condensed", "Noto Sans TC", "Microsoft JhengHei", "PingFang TC", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", "Noto Sans TC", "Microsoft JhengHei", "PingFang TC", ui-monospace, Consolas, monospace;
+>>>>

@@ -23,14 +23,14 @@
   const VAULT_SLOTS = 10;
   const LOG_LIMIT = 400;
 
-  const TIERS = ['Normal', 'Magic', 'Rare', 'Legendary', 'Supreme', 'Rainbow'];
+  const TIERS = ['普通', '魔法', '稀有', '傳奇', '至臻', '綺彩'];
 
   const BEASTS = ['mammoth', 'lion', 'wolf', 'rat'];
   const BEAST_INFO = {
-    mammoth: { name: 'Mammoth' },
-    lion: { name: 'Lion' },
-    wolf: { name: 'Wolf' },
-    rat: { name: 'Rat' },
+    mammoth: { name: '巨象', en: 'Mammoth' },
+    lion: { name: '狂獅', en: 'Lion' },
+    wolf: { name: '頭狼', en: 'Wolf' },
+    rat: { name: '碩鼠', en: 'Rat' },
   };
 
   // Who eats whom: each beast has one meal, in a loop, and Mammoths also eat
@@ -103,130 +103,130 @@
 
   // Field definitions for the Lab form; normalizeParams clamps to these.
   const PARAM_FIELDS = [
-    { key: 'drillDays', group: 'Pace', label: 'Drill length in days', type: 'int', min: 5, max: 60 },
-    { key: 'destinations', group: 'Pace', label: 'Most patrol doors offered each morning', type: 'int', min: 1, max: 15 },
-    { key: 'patrolRange', group: 'Pace', label: 'Destinations come from this many cells clockwise ahead of the warden', type: 'int', min: 1, max: 15 },
-    { key: 'fewerDoorsChance', group: 'Pace', label: 'Chance a morning offers one door fewer (%)', type: 'int', min: 0, max: 100 },
-    { key: 'swapsPerDay', group: 'Pace', label: 'Replaces per day', type: 'int', min: 0, max: 16 },
-    { key: 'reusableCells', group: 'Pace', label: 'Emptied cells seal again and can be reopened', type: 'bool' },
-    { key: 'chainStop', group: 'Pace', label: 'A consume chain can be stopped after any bite (the game’s Cancel); off, it must go on', type: 'bool' },
-    { key: 'tierWeights', group: 'Odds', label: 'Rarity weights behind a door', type: 'list', names: TIERS.slice(0, 5) },
-    { key: 'swapWeights', group: 'Odds', label: 'Rarity weights for the inmate a Replace brings in', type: 'list', names: TIERS.slice(0, 5) },
-    { key: 'beastWeights', group: 'Odds', label: 'Beast weights for new inmates', type: 'list', names: ['Mammoth', 'Lion', 'Wolf', 'Rat'] },
-    { key: 'doubleEatTier', group: 'Odds', label: 'From this rarity up, Mammoths also eat Wolves and Lions also eat Rats (0 Normal, 1 Magic, 2 Rare, 3 Legendary, 4 Supreme; 5: never)', type: 'int', min: 0, max: 5 },
-    { key: 'eventStartChance', group: 'Special events', label: 'Chance a run starts with a special event behind a random locked door (%)', type: 'int', min: 0, max: 100 },
-    { key: 'eventMorningChance', group: 'Special events', label: 'Chance a special event appears behind a random locked door each morning (%)', type: 'int', min: 0, max: 100 },
-    { key: 'eventWalkChance', group: 'Special events', label: 'Chance one appears after the patrol’s walk (%)', type: 'int', min: 0, max: 100 },
-    { key: 'eventActionChance', group: 'Special events', label: 'Chance one appears after a Consume, Replace, Hunt or special event (%)', type: 'int', min: 0, max: 100 },
-    { key: 'eventTwoDoors', group: 'Special events', label: 'A morning whose doors include an event offers only 2 doors', type: 'bool' },
-    { key: 'executionSameTier', group: 'Special events', label: 'Execution takes same-rarity prey (off: lower rarity only)', type: 'bool' },
-    { key: 'executionRerolls', group: 'Special events', label: "Execution re-rolls the executioner's beast", type: 'bool' },
-    { key: 'ivoryCount', group: 'Markers', label: 'Inmates raised by a Replace in a Tusk cell', type: 'int', min: 1, max: 15 },
-    { key: 'ivoryIncludesSwapped', group: 'Markers', label: 'Tusk can raise the new inmate', type: 'bool' },
-    { key: 'preyRounds', group: 'Markers', label: 'Mornings a prey mark lasts', type: 'int', min: 1, max: 10 },
-    { key: 'scratchStacksBase', group: 'Markers', label: 'Scratch bonus (+2) adds to the base +1', type: 'bool' },
-    { key: 'nestDays', group: 'Markers', label: 'Days before a rat nest hatches', type: 'int', min: 1, max: 10 },
-    { key: 'nestTier', group: 'Markers', label: 'Rarity of a hatched Rat', type: 'tier' },
-    { key: 'rewards', group: 'Rewards', label: "Meeting the run's objective earns a tool; each Rainbow opens the Warden's Treasure", type: 'bool' },
-    { key: 'startTools', group: 'Rewards', label: 'Starting instrument picks, each from 3 random ones (the live game gives 1)', type: 'int', min: 0, max: 5 },
-    { key: 'beastToolOdds', group: 'Rewards', label: "Odds of an instrument named for a beast (Berserk Lion, Mammoth, Alpha Wolf, Colossal Rat) in an offer, as % of another's (the live game: about 12)", type: 'int', min: 0, max: 100 },
+    { key: 'drillDays', group: '節奏', label: '練習天數', type: 'int', min: 5, max: 60 },
+    { key: 'destinations', group: '節奏', label: '每天早上最多提供的巡視門數', type: 'int', min: 1, max: 15 },
+    { key: 'patrolRange', group: '節奏', label: '目的地來自典獄長順時針前方的幾間牢房', type: 'int', min: 1, max: 15 },
+    { key: 'fewerDoorsChance', group: '節奏', label: '早上少一扇門的機率（%）', type: 'int', min: 0, max: 100 },
+    { key: 'swapsPerDay', group: '節奏', label: '每天替換次數', type: 'int', min: 0, max: 16 },
+    { key: 'reusableCells', group: '節奏', label: '清空的牢房會再次上鎖，可以重新開啟', type: 'bool' },
+    { key: 'chainStop', group: '節奏', label: '吞噬連鎖可在任何一口之後停止（遊戲中的「取消」）；關閉則必須繼續', type: 'bool' },
+    { key: 'tierWeights', group: '機率', label: '門後囚犯的稀有度權重', type: 'list', names: TIERS.slice(0, 5) },
+    { key: 'swapWeights', group: '機率', label: '替換帶來的囚犯稀有度權重', type: 'list', names: TIERS.slice(0, 5) },
+    { key: 'beastWeights', group: '機率', label: '新囚犯的野獸權重', type: 'list', names: ['巨象', '狂獅', '頭狼', '碩鼠'] },
+    { key: 'doubleEatTier', group: '機率', label: '從此稀有度起，巨象也吃頭狼、狂獅也吃碩鼠（0 普通、1 魔法、2 稀有、3 傳奇、4 至臻；5：永不）', type: 'int', min: 0, max: 5 },
+    { key: 'eventStartChance', group: '獄中事變', label: '開局時隨機一扇上鎖牢門後有獄中事變的機率（%）', type: 'int', min: 0, max: 100 },
+    { key: 'eventMorningChance', group: '獄中事變', label: '每天早上隨機一扇上鎖牢門後出現獄中事變的機率（%）', type: 'int', min: 0, max: 100 },
+    { key: 'eventWalkChance', group: '獄中事變', label: '巡視行走後出現一個獄中事變的機率（%）', type: 'int', min: 0, max: 100 },
+    { key: 'eventActionChance', group: '獄中事變', label: '吞噬、替換、尋獵或獄中事變之後出現一個獄中事變的機率（%）', type: 'int', min: 0, max: 100 },
+    { key: 'eventTwoDoors', group: '獄中事變', label: '門後有事變的早上只提供 2 扇門', type: 'bool' },
+    { key: 'executionSameTier', group: '獄中事變', label: '處刑效率會吃掉同稀有度的獵物（關閉：只吃較低稀有度）', type: 'bool' },
+    { key: 'executionRerolls', group: '獄中事變', label: '處刑效率會重骰處刑者的野獸', type: 'bool' },
+    { key: 'ivoryCount', group: '標記', label: '在象牙牢房替換時升階的囚犯數', type: 'int', min: 1, max: 15 },
+    { key: 'ivoryIncludesSwapped', group: '標記', label: '象牙也可以讓新囚犯升階', type: 'bool' },
+    { key: 'preyRounds', group: '標記', label: '獵物標記持續的早上數', type: 'int', min: 1, max: 10 },
+    { key: 'scratchStacksBase', group: '標記', label: '劃痕加成（+2）疊加在基本的 +1 上', type: 'bool' },
+    { key: 'nestDays', group: '標記', label: '鼠巢孵化前的天數', type: 'int', min: 1, max: 10 },
+    { key: 'nestTier', group: '標記', label: '孵出的碩鼠的稀有度', type: 'tier' },
+    { key: 'rewards', group: '獎勵', label: '達成本局目標可獲得一件刑具；每隻綺彩開啟一次典獄長的珍藏', type: 'bool' },
+    { key: 'startTools', group: '獎勵', label: '起始刑具選擇次數，每次從 3 件隨機刑具中挑一件（正式遊戲為 1）', type: 'int', min: 0, max: 5 },
+    { key: 'beastToolOdds', group: '獎勵', label: '野獸系刑具（狂獅、巨象、頭狼、碩鼠）出現在選項中的機率，為其他刑具的 %（正式遊戲：約 12）', type: 'int', min: 0, max: 100 },
   ];
 
   // Names exactly as the game prints them: the analyzer reads an instrument
   // pick by its printed name.
   const TOOLS = {
-    revenge: { name: "Avenger's Casket", text: 'After a consume, 30% chance to open a sealed cell holding a meal for the eater at its new rarity. That door triggers nothing else.' },
-    muzzle: { name: "Raging Beast's Agonizing Muzzle", text: 'When 4 or fewer inmates are on the block before a consume (its meal included), the consume gains +2 extra tiers.' },
-    saw: { name: 'Rusty Saw', text: 'After a consume, 25% chance of +1 extra tier.' },
-    keys: { name: 'Lost Ring of Keys', text: 'When a patrol opens a door, 80% chance to also open the cells on both sides. Those doors trigger nothing else.' },
-    rope: { name: "Hangman's Noose", text: 'Replacement inmates are never Normal or Magic.' },
+    revenge: { name: '復仇者之匣', en: "Avenger's Casket", text: '吞噬後，30% 機率開啟一間未開啟的牢房，裡面是吞噬者升階後同稀有度的獵物。該牢門不觸發其他效果。' },
+    muzzle: { name: '狂獸的劇痛口枷', en: "Raging Beast's Agonizing Muzzle", text: '吞噬前監區上的囚犯（含獵物）不超過 4 隻時，該次吞噬額外 +2 階。' },
+    saw: { name: '鏽鋸', en: 'Rusty Saw', text: '吞噬後，25% 機率額外 +1 階。' },
+    keys: { name: '遺落的鑰匙串', en: 'Lost Ring of Keys', text: '巡視開啟牢門時，80% 機率同時開啟左右兩側的牢房。這些牢門不觸發其他效果。' },
+    rope: { name: '絞首繩', en: "Hangman's Noose", text: '替換進來的囚犯不會是普通或魔法。' },
     // Once translated as the Burning Stake, with other rules; the live card reads as below.
-    fire: { name: 'Searing Branding Iron', text: 'When a patrol opens a door, 35% chance to copy the inmate behind it into 1 random unopened cell, which opens holding the copy. That door triggers nothing else.' },
-    ironbox: { name: 'Squirming Iron Box: Colossal Rat', text: 'Each morning a sealed cell becomes a rat nest. It hatches a Rare Rat two days later.' },
-    skewer: { name: 'Skewered Rat Heads: Colossal Rat', text: "Rats can consume Rats of the same rarity, and a Rat's consume gains +1 extra tier." },
-    hook: { name: 'Sorting Hook', text: 'Cells that open never hold a Normal inmate.' },
-    pestle: { name: 'Iron Pestle', text: 'A replacement inmate keeps the beast of the one it replaced; only its rarity is re-rolled.' },
-    scales: { name: "Warden's Scales", text: 'After a Replace, 80% chance to scout the highest-rarity inmate behind the locked doors: its door shows its beast and rarity.' },
-    tongs: { name: 'Iron Tongs of Lust: Mammoth', text: 'Each morning a random Mammoth on the block gets a Tusk mark.' },
-    guillotine: { name: 'Fanged Guillotine: Alpha Wolf', text: 'Wolves can also consume the beasts they eat at a lower rarity than their own.' },
-    axe: { name: "Gaoler's Execution Axe", text: 'When a Replace brings in a higher rarity than it replaced, 2 random sealed cells open. Those doors trigger nothing else.' },
-    shackles: { name: 'Long-Chained Shackles', text: 'When a patrol walks 4 or more cells, 40% chance that 1 random inmate on the block rises a tier.' },
+    fire: { name: '灼痛的烙鐵', en: 'Searing Branding Iron', text: '巡視開啟牢門時，35% 機率把門後的囚犯複製到 1 間隨機未開啟的牢房，該牢房隨即開啟並放入複製品。該牢門不觸發其他效果。' },
+    ironbox: { name: '蠕動鐵盒：碩鼠', en: 'Squirming Iron Box: Colossal Rat', text: '每天早上有一間未開啟的牢房變成鼠巢，兩天後孵出一隻稀有碩鼠。' },
+    skewer: { name: '鼠頭串：碩鼠', en: 'Skewered Rat Heads: Colossal Rat', text: '碩鼠可以吞噬同稀有度的碩鼠，且碩鼠的吞噬額外 +1 階。' },
+    hook: { name: '挑揀鉤', en: 'Sorting Hook', text: '開啟的牢房不會出現普通囚犯。' },
+    pestle: { name: '鐵杵', en: 'Iron Pestle', text: '替換進來的囚犯保留被替換者的野獸，只重骰稀有度。' },
+    scales: { name: '典獄官的天平', en: "Warden's Scales", text: '替換後，80% 機率偵查上鎖牢門後稀有度最高的囚犯：該牢門會顯示牠的野獸與稀有度。' },
+    tongs: { name: '惡欲鐵鉗：巨象', en: 'Iron Tongs of Lust: Mammoth', text: '每天早上，監區上隨機一隻巨象獲得象牙標記。' },
+    guillotine: { name: '狼牙鍘刀：頭狼', en: 'Fanged Guillotine: Alpha Wolf', text: '頭狼也能吞噬稀有度低於自己的可吃野獸。' },
+    axe: { name: '獄卒的行刑巨斧', en: "Gaoler's Execution Axe", text: '替換帶來的稀有度高於被替換者時，隨機開啟 2 間未開啟的牢房。這些牢門不觸發其他效果。' },
+    shackles: { name: '長鏈腳鐐', en: 'Long-Chained Shackles', text: '巡視行走 4 格以上時，40% 機率讓監區上隨機 1 隻囚犯升一階。' },
     // The card reads "When an Inmate Chain Consumes": the bites after the
     // first, which the eater takes by itself.
-    collar: { name: "Maddened Beast's Barbed Collar", text: 'Each bite of a consume chain after the first: 80% chance of +1 extra tier.' },
-    forged: { name: 'Forged Key', text: 'Each morning offers 1 destination fewer. When a patrol opens a door, 50% chance to open 1 more random sealed cell. That door triggers nothing else.' },
+    collar: { name: '瘋獸的倒刺項圈', en: "Maddened Beast's Barbed Collar", text: '吞噬連鎖中第一口之後的每一口：80% 機率額外 +1 階。' },
+    forged: { name: '偽造鑰匙', en: 'Forged Key', text: '每天早上少 1 個目的地。巡視開啟牢門時，50% 機率再隨機開啟 1 間未開啟的牢房。該牢門不觸發其他效果。' },
     // The card: "There is a 25% chance to trigger after opening: +1 Rarity
     // Tier to the current Inmate", read as the inmate in the cell the warden
     // just opened (a player's report, 2026-10-16).
-    dogtag: { name: "Felon's Dog Tag", text: 'When a patrol opens a door, 25% chance that the inmate behind it rises a tier.' },
+    dogtag: { name: '重刑銘牌', en: "Felon's Dog Tag", text: '巡視開啟牢門時，25% 機率讓門後的囚犯升一階。' },
     // The card: "There is a 40% chance to trigger after the Inmate is
     // Consumed: the cell occupied by this Inmate is immediately opened (does
     // not trigger other effects)" (a player's report, 2026-10-16).
-    cage: { name: 'Crowded Beastcage', text: 'After an inmate is consumed, 40% chance its cell opens again at once with a new inmate. That door triggers nothing else.' },
+    cage: { name: '擁擠獸籠', en: 'Crowded Beastcage', text: '囚犯被吞噬後，40% 機率牠的牢房立刻再次開啟，放入新的囚犯。該牢門不觸發其他效果。' },
     // From the user's "Select a Torture Instrument" screenshot (2026-10-16):
     // "When there are no more than 5 unopened cells, after opening: +1 Rarity
     // Tier to 2 random Inmates", and "There is a 50% chance to trigger when
     // moving no more than 3 tiles in a single movement: randomly opens 1 cell".
-    blacklist: { name: "Executioner's Blacklist", text: 'When a patrol opens a door and 5 or fewer cells are still locked, 2 random inmates rise a tier.' },
-    shortchain: { name: 'Short-Chained Shackles', text: 'When a patrol walks 3 cells or fewer, 50% chance that 1 random locked cell opens. That door triggers nothing else.' },
+    blacklist: { name: '執刑官的黑名冊', en: "Executioner's Blacklist", text: '巡視開啟牢門且仍上鎖的牢房不超過 5 間時，隨機 2 隻囚犯升一階。' },
+    shortchain: { name: '短鏈腳鐐', en: 'Short-Chained Shackles', text: '巡視行走 3 格以內時，50% 機率隨機開啟 1 間上鎖的牢房。該牢門不觸發其他效果。' },
     // A player's report (#9, 2026-10-16), the card as typed: "Condition: The
     // quantities of this Inmate's Higher-Tier Inmates and Lower-Tier Inmates
     // are equal. Effect: +3 additional Rarity Tiers to the inmate this
     // Replacement" (spelled "Servered"). Read as the inmate a swap (the
     // game's Replace) brings in, counted against the rest of the block.
-    maiden: { name: 'Severed Iron Maiden', text: 'A Replace of an inmate with as many inmates on the block above its rarity as below it brings the new inmate in +3 tiers.' },
+    maiden: { name: '切開的人形棺', en: 'Severed Iron Maiden', text: '替換一隻囚犯時，若監區上稀有度比牠高與比牠低的囚犯一樣多，新囚犯進場時 +3 階。' },
     // From a player's report (#11, 2026-10-16), the instrument pick: "-1 daily
     // destination option; there is a 35% chance to trigger after Consuming",
     // and "+1 additional Rarity Tier" (the rest of the card was cut off),
     // read like the Rusty Saw: the eater, on each bite.
-    whip: { name: 'Barbed Whip', text: 'Each morning offers 1 destination fewer. Each bite of a consume has a 35% chance of +1 extra tier.' },
+    whip: { name: '棘刺鐵鞭', en: 'Barbed Whip', text: '每天早上少 1 個目的地。每一口吞噬有 35% 機率額外 +1 階。' },
     // From the user's screenshot of its card (2026-10-16): "At the start of
     // each day: Removes Inmates on both sides of the Inmate with the highest
     // rarity; for each Inmate removed, there is a 40% chance to grant that
     // Inmate +1 Rarity Tier". Read as the cells either side on the ring, the
     // removed inmates leaving their cells as a meal does.
-    ravenous: { name: "Ferocious Beast's Ravenous Chains", text: 'Each morning the highest-rarity inmate removes the inmates on both sides of it, with a 40% chance of +1 tier for each one removed.' },
+    ravenous: { name: '兇獸的飢餓絞鏈', en: "Ferocious Beast's Ravenous Chains", text: '每天早上，稀有度最高的囚犯會移除左右兩側的囚犯，每移除一隻有 40% 機率 +1 階。' },
     // A player's report (#12, 2026-10-16), the card: "There are at least 2
     // other Inmates on the field when replacing: Randomly removes 2 other
     // Inmates to guarantee that the Inmate's rarity is increased after
     // replacing".
-    scapegoat: { name: "Scapegoat's Guillotine", text: 'When a Replace has 2 or more other inmates on the block, 2 random ones are removed and the new inmate comes in above the rarity it replaced.' },
+    scapegoat: { name: '替罪人的斷頭台', en: "Scapegoat's Guillotine", text: '替換時若監區上有 2 隻以上其他囚犯，隨機移除其中 2 隻，新囚犯的稀有度必定高於被替換者。' },
     // The user's screenshots of its card (2026-10-16): "-1 daily destination
     // option; when an Inmate with rarity lower than Legendary is Replaced,
     // there is a 40% chance to trigger. Effect: Changes Inmate rarity to
     // Legendary". A separate instrument from the Searing Branding Iron (id
     // `fire`, once taken for its mistranslation).
-    stake: { name: 'Burning Stake', text: 'Each morning offers 1 destination fewer. Replacing an inmate below Legendary has a 40% chance to bring in a Legendary.' },
+    stake: { name: '火刑柱', en: 'Burning Stake', text: '每天早上少 1 個目的地。替換傳奇以下的囚犯時，40% 機率換來傳奇囚犯。' },
     // A player's report (#17, 2026-10-16): "At the start of each day, if there
     // are matching Inmates on the field, there is a 60% chance to trigger:
     // Randomly removes 1 matching Inmate, then randomly selects 1 from the
     // remaining matching Inmates to grant them +2 Rarity Tiers". Matching is
     // the same beast and rarity (the user, from the game's own link).
-    coin: { name: "Kin's Coin of Fate", text: 'Each morning, when two or more inmates share a beast and rarity, 60% chance that one of them is removed and another like it gains +2 tiers.' },
+    coin: { name: '手足的命運硬幣', en: "Kin's Coin of Fate", text: '每天早上，若有兩隻以上野獸與稀有度都相同的囚犯，60% 機率移除其中一隻，並讓另一隻同類 +2 階。' },
     // A player's report (#20, 2026-10-16), the card: "Iron Crown of the
     // Prison King: Berserk Lion. Condition: When Berserk Lion Consumes.
     // Effect: Berserk Lion can Consume any Inmate of the same rarity. +2
     // additional Rarity Tiers after consuming". Read like the Skewered Rat
     // Heads, whose card names the Colossal Rat: every Lion, on each bite.
-    crown: { name: 'Iron Crown of the Prison King: Berserk Lion', text: "Lions can consume any inmate of the same rarity, and a Lion's consume gains +2 extra tiers." },
+    crown: { name: '牢中王的鐵冠：狂獅', en: 'Iron Crown of the Prison King: Berserk Lion', text: '狂獅可以吞噬任何同稀有度的囚犯，且狂獅的吞噬額外 +2 階。' },
     // A player's report (#57, 2026-10-16), the card: "Elephant-Foot Maul:
     // Mammoth. Effect: Mammoth can Consume higher-rarity countered Inmates;
     // after Consuming, its rarity increases to +2 tiers above the consumed
     // target's rarity". Read like the Iron Crown: every Mammoth, on each
     // bite, same-rarity meals included (+2 for those).
-    maul: { name: 'Elephant-Foot Maul: Mammoth', text: "Mammoths can consume the beasts they counter at a higher rarity too, and a Mammoth's consume takes it to 2 tiers above its meal." },
+    maul: { name: '象腳重錘：巨象', en: 'Elephant-Foot Maul: Mammoth', text: '巨象也能吞噬稀有度較高的克制目標，且巨象吞噬後會升到比獵物高 2 階。' },
     // A player's report (#65, 2026-10-17), the card: "Filthy Claws: Alpha
     // Wolf. Condition: At the start of each day. Effect: Randomly adds a
     // Scratch Marks mark to 1 unopened cell". A scratched door shows the
     // rarity inside, and a Wolf of that rarity can consume through it.
-    claws: { name: 'Filthy Claws: Alpha Wolf', text: 'At the start of each day, Scratch Marks go on 1 random unopened cell: it shows the rarity inside, and a Wolf of that rarity can consume the inmate through the door for +3.' },
+    claws: { name: '髒污鐵爪：頭狼', en: 'Filthy Claws: Alpha Wolf', text: '每天開始時，隨機 1 間未開啟的牢房出現劃痕：會顯示裡面的稀有度，同稀有度的頭狼可以隔著牢門吞噬該囚犯，+3。' },
     // A player's report (#100, 2026-10-17), the card: "Blood-Stained Trap:
     // Berserk Lion. Condition: Stops at Berserk Lion's cell. Effect: Adds
     // Hunt to decision options, which can add a Prey mark to Consumable
     // targets". Read as: with the warden on a Lion, Hunt is a choice beside
     // Consume and Replace (a day has one of them), and the Lion marks one
     // inmate it can consume as its prey (the Prey marker's rule).
-    trap: { name: 'Blood-Stained Trap: Berserk Lion', text: "With the warden on a Lion's cell, Hunt joins the day's choices: the Lion puts a Prey mark on one inmate it can consume, and each morning both rise a tier, for 3 mornings. A day has a Consume, a Replace or a Hunt." },
+    trap: { name: '染紅的捕獸夾：狂獅', en: 'Blood-Stained Trap: Berserk Lion', text: '典獄長停在狂獅的牢房時，當天選項多出「尋獵」：狂獅對一隻牠能吞噬的囚犯加上獵物標記，之後 3 個早上兩者每天各升一階。一天只能吞噬、替換或尋獵擇一。' },
   };
   const TOOL_IDS = Object.keys(TOOLS);
 
@@ -251,30 +251,30 @@
 
   // Special events behind sealed doors, each equally likely.
   const EVENTS = {
-    chain: { name: 'Chain reaction' },
-    execution: { name: 'Execution' },
-    trickster: { name: 'Behind Closed Doors' },
-    appetite: { name: 'Ravenous Appetite' },
-    convict: { name: 'High-Risk Convict' },
-    crow: { name: 'Crow Whispers' },
-    freedom: { name: 'Taste of Freedom' },
-    usurp1: { name: 'Usurpation I' },
-    usurp2: { name: 'Usurpation II' },
-    usurp3: { name: 'Usurpation III' },
-    usurp4: { name: 'Usurpation IV' },
+    chain: { name: '連鎖反應', en: 'Chain reaction' },
+    execution: { name: '處刑效率', en: 'Execution' },
+    trickster: { name: '暗箱操作', en: 'Behind Closed Doors' },
+    appetite: { name: '飢腸轆轆', en: 'Ravenous Appetite' },
+    convict: { name: '高危罪犯', en: 'High-Risk Convict' },
+    crow: { name: '鴉之低語', en: 'Crow Whispers' },
+    freedom: { name: '自由的滋味', en: 'Taste of Freedom' },
+    usurp1: { name: '僭越 I', en: 'Usurpation I' },
+    usurp2: { name: '僭越 II', en: 'Usurpation II' },
+    usurp3: { name: '僭越 III', en: 'Usurpation III' },
+    usurp4: { name: '僭越 IV', en: 'Usurpation IV' },
     // A player's report (#13) and the user's screenshot (2026-10-16): "Select
     // any 1 cell (excluding the Interrogation Room), move to that cell, and
     // trigger subsequent content". The game then asks "Select an Objective"
     // with every cell but the office (the Interrogation Room) on offer.
-    ratway: { name: 'Sewer Ratway' },
+    ratway: { name: '暗渠鼠道', en: 'Sewer Ratway' },
     // A player's report (#41, 2026-10-16), a card with only Confirm:
     // "Reveals all unopened cells with rarity below Rare". A revealed door
     // shows its rarity (a "?" portrait), as with Crow Whispers, so the
     // locked doors left dark hold Rare or better.
-    hunt: { name: '"Treasure" Hunt' },
+    hunt: { name: '尋「寶」', en: '"Treasure" Hunt' },
     // A player's report (#313, 2026-10-17): "randomly select up to 3 inmates
     // and increase their rarity by 1 tier".
-    portion: { name: 'Extra Portion' },
+    portion: { name: '有福同享', en: 'Extra Portion' },
   };
   // The pool new events are drawn from (the game's "Prison Incidents"). It
   // changes during a run: Usurpation I trades itself for Usurpation II.
@@ -311,7 +311,7 @@
   const APPETITE_TRIES = 5;
   const APPETITE_ODDS = 0.5;
   const EVENT_IDS = Object.keys(EVENTS);
-  const eventName = (id) => (EVENTS[id] ? EVENTS[id].name : 'Special event');
+  const eventName = (id) => (EVENTS[id] ? EVENTS[id].name : '獄中事變');
 
   // Each run has one objective, drawn at the start; meeting it earns a tool
   // when rewards are on. The live game has more objectives, and what each
@@ -319,17 +319,17 @@
   // stands for one the simulator doesn't know: it's never drawn, and it
   // pays nothing, so no tool is ever assumed for it.
   const OBJECTIVES = {
-    king: { name: 'King of the Caged', text: "At least 1 inmate's rarity reaches Supreme" },
-    walk: { name: 'Prison Walk', text: 'Move 18 tiles', need: 18, unit: 'Tiles moved' },
+    king: { name: '困獸稱王', en: 'King of the Caged', text: '至少 1 隻囚犯的稀有度達到至臻' },
+    walk: { name: '巡獄之路', en: 'Prison Walk', text: '移動 18 格', need: 18, unit: '已移動格數' },
     // Seen live 2026-10-16, each paying a tool when met (and a Warden's Cache
     // at the riot, not simulated). Not drawn in simulated runs yet: the
     // analyzer uses them when the player sets them.
-    consume: { name: 'Survival of the Fittest', text: 'Consume 4 times', need: 4, unit: 'Consumes', drawn: false },
-    incident: { name: 'Undercurrents', text: 'Trigger a Prison Incident 2 times', need: 2, unit: 'Prison Incidents', drawn: false },
+    consume: { name: '適者生存', en: 'Survival of the Fittest', text: '吞噬 4 次', need: 4, unit: '吞噬次數', drawn: false },
+    incident: { name: '暗流湧動', en: 'Undercurrents', text: '觸發獄中事變 2 次', need: 2, unit: '獄中事變次數', drawn: false },
     // Reports 30 and 51: "Objective: Behind Cell Doors. Open 10 cells".
     // Every cell that opens counts, however it opens.
-    doors: { name: 'Behind Cell Doors', text: 'Open 10 cells', need: 10, unit: 'Cells opened', drawn: false },
-    other: { name: 'Another objective', text: 'Not in the simulator yet, so no tool is assumed for it', drawn: false },
+    doors: { name: '牢門之後', en: 'Behind Cell Doors', text: '開啟 10 間牢房', need: 10, unit: '已開啟牢房', drawn: false },
+    other: { name: '其他目標', en: 'Another objective', text: '模擬器尚未收錄，因此不假設它會給刑具', drawn: false },
   };
   const OBJECTIVE_IDS = Object.keys(OBJECTIVES).filter((id) => OBJECTIVES[id].drawn !== false);
 
@@ -342,36 +342,36 @@
     // beasts an inmate eats, at its rarity or lower, with both meals at any
     // rarity (a Rare Mammoth ate Wolves). Codes: beasts, as in Behind Closed
     // Doors' "Scarce Code".
-    cagefight: { name: 'Cage Fight', text: 'Inmates can consume the beasts they counter (Mammoths: Lions and Wolves; Lions: Wolves and Rats; Wolves: Rats; Rats: Mammoths) at their own rarity or lower, and consuming never changes their beast' },
+    cagefight: { name: '囚徒困鬥', en: 'Cage Fight', text: '囚犯可以吞噬稀有度不高於自己的克制目標（巨象：狂獅與頭狼；狂獅：頭狼與碩鼠；頭狼：碩鼠；碩鼠：巨象），且吞噬後野獸不會改變' },
     // "Iron Law. Extends the duration of the current run to 30 days".
-    ironlaw: { name: 'Iron Law', text: 'The run lasts 30 days', days: 30 },
+    ironlaw: { name: '鐵律', en: 'Iron Law', text: '本局持續 30 天', days: 30 },
     // "Tyranny. Automatically triggers Instigate and Bestow 3 additional
     // times each time you stop at the Interrogation Room" (the user's
     // screenshot, 2026-10-16): read as 3 more of each, on top of the
     // visit's own choice.
-    tyranny: { name: 'Tyranny', text: 'Each stop at the Interrogation Room also triggers Instigate and Bestow 3 more times each, on top of your choice there', extra: 3 },
+    tyranny: { name: '暴政', en: 'Tyranny', text: '每次停在審訊室，除了你自己的選擇之外，還會再自動觸發煽動與賞賜各 3 次', extra: 3 },
     // "Opulence. You can make 2 additional choices when obtaining Warden's
     // Treasure" (the user's screenshot, 2026-10-17): 3 picks in a row, and a
     // Rainbow a pick makes opens another Treasure (the user's log: 7
     // Rainbows, 21 picks).
-    opulence: { name: 'Opulence', text: 'Each Warden’s Treasure gives 3 picks in a row (2 extra choices), and a Rainbow made by a pick brings 3 more', picks: 3 },
+    opulence: { name: '奢靡', en: 'Opulence', text: '每次典獄長的珍藏可以連續選 3 次（多 2 次選擇），而選擇造出的綺彩會再帶來 3 次', picks: 3 },
   };
 
   const GIFTS = {
-    ring: { name: 'Three-Headed Thumb Ring', text: 'Open up to 3 random sealed cells. They trigger nothing else.' },
-    horn: { name: 'Brass Horn of Strife', text: 'Every inmate with a target consumes one at random, in turn.' },
-    wine: { name: 'Crimson Vintage', text: 'Every inmate below Legendary rises one tier.' },
-    brand: { name: 'Brand of Original Sin', text: 'Up to 4 inmates with no meal change beast so they have a same-rarity target.' },
+    ring: { name: '三首扳指', en: 'Three-Headed Thumb Ring', text: '隨機開啟最多 3 間未開啟的牢房。不觸發其他效果。' },
+    horn: { name: '鬥爭銅號', en: 'Brass Horn of Strife', text: '每隻有目標的囚犯依序隨機吞噬一個目標。' },
+    wine: { name: '赤色佳釀', en: 'Crimson Vintage', text: '所有傳奇以下的囚犯升一階。' },
+    brand: { name: '原罪烙印', en: 'Brand of Original Sin', text: '最多 4 隻沒有獵物的囚犯改變野獸，讓牠們有同稀有度的目標。' },
   };
   const GIFT_IDS = Object.keys(GIFTS);
 
   const SCENARIOS = {
-    empty: { name: 'Empty prison', text: 'Day 1 with all 15 prison cells sealed. Recommended for a first run.' },
-    events: { name: 'Special events drill', text: 'The three doors on today’s route hide an Execution, a Chain reaction, and Behind Closed Doors or Ravenous Appetite.' },
-    ivory: { name: 'Tusk drill', text: 'Replace the inmate in a Tusk cell and four inmates rise a tier.' },
-    prey: { name: 'Prey drill', text: 'A Lion and its marked prey both rise each morning for three days.' },
-    scratch: { name: 'Scratch drill', text: 'Wolves consume through scratched doors for +3.' },
-    nest: { name: 'Rat nest drill', text: 'Leave a nest sealed for two days to hatch a Rare Rat.' },
+    empty: { name: '空監獄', text: '第 1 天，15 間牢房全部上鎖。建議第一局從這裡開始。' },
+    events: { name: '獄中事變練習', text: '今天路線上的三扇門後，分別藏著處刑效率、連鎖反應，以及暗箱操作或飢腸轆轆。' },
+    ivory: { name: '象牙練習', text: '替換象牙牢房裡的囚犯，四隻囚犯各升一階。' },
+    prey: { name: '獵物標記練習', text: '一隻狂獅和牠標記的獵物，連續三天每天早上各升一階。' },
+    scratch: { name: '劃痕練習', text: '頭狼可以隔著有劃痕的牢門吞噬，+3。' },
+    nest: { name: '鼠巢練習', text: '讓鼠巢保持上鎖兩天，就會孵出一隻稀有碩鼠。' },
   };
 
   const SEED_WORDS = ['ASH', 'BONE', 'IRON', 'SALT', 'EMBER', 'CHAIN', 'GATE', 'WARD', 'HOWL', 'TUSK', 'FANG', 'MANE', 'CINDER', 'SHACKLE'];
@@ -379,11 +379,11 @@
   // ---------- Small helpers ----------
 
   const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
-  const plural = (n, word) => `${n} ${word}${n === 1 ? '' : 's'}`;
+  const plural = (n, word) => `${n} ${word}`;
   const tierName = (t) => TIERS[clamp(t, 0, RAINBOW)];
-  const beastName = (b) => (BEAST_INFO[b] ? BEAST_INFO[b].name : 'Unknown');
+  const beastName = (b) => (BEAST_INFO[b] ? BEAST_INFO[b].name : '未知');
   const cellLabel = (n) => String(n + 1).padStart(2, '0');
-  const describe = (inmate) => `${tierName(inmate.tier)} ${beastName(inmate.beast)}`;
+  const describe = (inmate) => `${tierName(inmate.tier)}${beastName(inmate.beast)}`;
   const ok = (events) => ({ ok: true, events: events || [] });
   const fail = (reason) => ({ ok: false, reason });
   const has = (state, tool) => state.tools.includes(tool);
@@ -606,7 +606,7 @@
       const lion = boardCellOf(state, link.lion);
       const prey = boardCellOf(state, link.prey);
       const valid = lion && prey && lion.inmate.beast === 'lion' && prey.inmate.beast === link.preyBeast;
-      if (!valid) log(state, 'prey', 'A prey mark ended: one side left the block or changed beast.');
+      if (!valid) log(state, 'prey', '一個獵物標記結束了：其中一方離開了監區或改變了野獸。');
       return valid;
     });
   }
@@ -647,7 +647,7 @@
     const cell = pickOne(state, free);
     cell.event = rollEvent(state);
     cell.seen = true;
-    log(state, 'event', `A special event now waits behind cell ${cellLabel(cell.n)}.`, { type: 'spawn', cell: cell.n });
+    log(state, 'event', `牢房 ${cellLabel(cell.n)} 的門後出現了一個獄中事變。`, { type: 'spawn', cell: cell.n });
     return cell;
   }
 
@@ -658,7 +658,7 @@
     const name = OBJECTIVES[state.objective.id].name;
     const options = state.params.rewards ? drawTools(state, state, TOOL_IDS.filter((t) => !has(state, t)), 3) : [];
     if (options.length) state.pending.push({ kind: 'tool', options });
-    log(state, 'tool', `Objective met, ${name}: ${why}.${options.length ? ' Choose a tool.' : ''}`, { type: 'objective', id: state.objective.id });
+    log(state, 'tool', `達成目標「${name}」：${why}。${options.length ? '請選一件刑具。' : ''}`, { type: 'objective', id: state.objective.id });
   }
 
   // Counts toward an objective met by doing something a number of times
@@ -677,14 +677,14 @@
   function afterGrowth(state, inmate, events) {
     if (inmate.tier >= RAINBOW && state.vault.length >= VAULT_SLOTS) inmate.tier = SUPREME;
     state.stats.best = Math.max(state.stats.best, inmate.tier);
-    if (state.objective.id === 'king' && !state.milestone && inmate.tier >= SUPREME) meetObjective(state, `a ${describe(inmate)}`);
+    if (state.objective.id === 'king' && !state.milestone && inmate.tier >= SUPREME) meetObjective(state, `一隻${describe(inmate)}`);
     if (inmate.tier < RAINBOW) return;
     const cell = cellOf(state, inmate.id);
     if (!cell) return;
     emptyCell(state, cell);
     state.vault.push({ id: inmate.id, beast: inmate.beast, day: state.day });
     state.cache += 1;
-    log(state, 'rainbow', `Rainbow ${beastName(inmate.beast)}! It left cell ${cellLabel(cell.n)} for the vault. Warden's Treasure claims: ${state.cache}.`, { type: 'rainbow', cell: cell.n, who: snap(inmate) });
+    log(state, 'rainbow', `綺彩${beastName(inmate.beast)}！牠離開牢房 ${cellLabel(cell.n)} 進入收容區。可領取的典獄長的珍藏：${state.cache}。`, { type: 'rainbow', cell: cell.n, who: snap(inmate) });
     events.push({ type: 'rainbow', cell: cell.n });
     // Each Treasure is one pick, or more with a start card (Opulence: 3).
     const picks = (START_EVENTS[state.startEvent] && START_EVENTS[state.startEvent].picks) || 1;
@@ -723,14 +723,14 @@
     cell.event = null;
     state.stats.opened += 1;
     events.push({ type: 'open', cell: cell.n });
-    const extra = how === 'patrol' ? '' : ' (extra door)';
-    log(state, 'patrol', `Opened cell ${cellLabel(cell.n)}${extra}: ${describe(inmate)}.${lostNest ? ' The rat nest inside was destroyed.' : ''}`, { type: 'open', cell: cell.n, side: how !== 'patrol', who: snap(inmate) });
-    if (event && how !== 'patrol') log(state, 'event', `The special event behind cell ${cellLabel(cell.n)} was used up without triggering.`);
-    countObjective(state, 'doors', 'cells opened');
+    const extra = how === 'patrol' ? '' : '（額外開門）';
+    log(state, 'patrol', `開啟牢房 ${cellLabel(cell.n)}${extra}：${describe(inmate)}。${lostNest ? '裡面的鼠巢被摧毀了。' : ''}`, { type: 'open', cell: cell.n, side: how !== 'patrol', who: snap(inmate) });
+    if (event && how !== 'patrol') log(state, 'event', `牢房 ${cellLabel(cell.n)} 門後的獄中事變未觸發就消耗掉了。`);
+    countObjective(state, 'doors', '間牢房已開啟');
     afterGrowth(state, inmate, events);
     // Felon's Dog Tag: the inmate behind a patrolled door may rise a tier.
     if (how === 'patrol' && has(state, 'dogtag') && cell.inmate === inmate && inmate.tier < RAINBOW && rand(state) < 0.25) {
-      log(state, 'tool', `Felon's Dog Tag: the ${describe(inmate)} in cell ${cellLabel(cell.n)} rises a tier.`, { type: 'dogtag', cell: cell.n });
+      log(state, 'tool', `重刑銘牌：牢房 ${cellLabel(cell.n)} 的${describe(inmate)}升一階。`, { type: 'dogtag', cell: cell.n });
       promote(state, inmate, 1, false, events);
     }
     // Executioner's Blacklist: once 5 or fewer cells are still locked, each
@@ -738,7 +738,7 @@
     if (how === 'patrol' && has(state, 'blacklist') && state.cells.filter((c) => c.sealed).length <= 5) {
       const picks = shuffle(state, boardInmates(state).filter((i) => i.tier < RAINBOW)).slice(0, 2);
       if (picks.length) {
-        log(state, 'tool', `Executioner's Blacklist: ${picks.map((who) => `the ${describe(who)} in cell ${cellLabel(cellOf(state, who.id).n)}`).join(' and ')} ${picks.length === 1 ? 'rises' : 'rise'} a tier.`, { type: 'blacklist', cells: picks.map((who) => cellOf(state, who.id).n) });
+        log(state, 'tool', `執刑官的黑名冊：${picks.map((who) => `牢房 ${cellLabel(cellOf(state, who.id).n)} 的${describe(who)}`).join('與')}升一階。`, { type: 'blacklist', cells: picks.map((who) => cellOf(state, who.id).n) });
         for (const who of picks) if (boardCellOf(state, who.id)) promote(state, who, 1, false, events);
       }
     }
@@ -748,12 +748,12 @@
       const sealed = state.cells.filter((c) => c.sealed);
       if (sealed.length) {
         const target = pickOne(state, sealed);
-        log(state, 'tool', `Searing Branding Iron: the ${describe(inmate)} is copied into cell ${cellLabel(target.n)}.`);
+        log(state, 'tool', `灼痛的烙鐵：${describe(inmate)}被複製到牢房 ${cellLabel(target.n)}。`);
         openCell(state, target, 'side', events, { beast: inmate.beast, tier: inmate.tier });
       }
     }
     if (how === 'patrol' && has(state, 'keys') && rand(state) < 0.8) {
-      log(state, 'tool', 'Lost Ring of Keys: the cells on both sides swing open too.');
+      log(state, 'tool', '遺落的鑰匙串：左右兩側的牢房也一起打開了。');
       // Next to the office there is only one door to open.
       for (const step of [-1, 1]) openCell(state, state.cells[(cell.n + step + CELL_COUNT) % CELL_COUNT], 'side', events);
     }
@@ -761,7 +761,7 @@
       const sealed = state.cells.filter((c) => c.sealed);
       if (sealed.length) {
         const extra = pickOne(state, sealed);
-        log(state, 'tool', `Forged Key: cell ${cellLabel(extra.n)} opens too.`);
+        log(state, 'tool', `偽造鑰匙：牢房 ${cellLabel(extra.n)} 也開啟了。`);
         openCell(state, extra, 'side', events);
       }
     }
@@ -769,13 +769,13 @@
   }
 
   function guard(state, need) {
-    if (state.phase === 'ended') return fail('This run is over. Start a new run to keep playing.');
-    if (state.pending.length) return fail('Make your pending choice first.');
-    if (state.chaining) return fail(canStopChain(state) ? 'Finish the consume chain first: pick its next meal, or stop it.' : 'The consume chain must go on: pick its next meal first.');
-    if (state.phase === 'office') return fail('Choose Instigate or Bestow first.');
-    if (state.phase === 'event') return fail('Decide on the special event first.');
-    if (need === 'manage' && state.phase === 'patrol') return fail('Patrol first: walk to one of today’s destinations.');
-    if (need === 'patrol' && state.phase !== 'patrol') return fail('Today’s patrol is done.');
+    if (state.phase === 'ended') return fail('這一局已經結束。開始新的一局繼續玩吧。');
+    if (state.pending.length) return fail('請先完成待選的選擇。');
+    if (state.chaining) return fail(canStopChain(state) ? '請先完成吞噬連鎖：選下一個獵物，或停止連鎖。' : '吞噬連鎖必須繼續：請先選下一個獵物。');
+    if (state.phase === 'office') return fail('請先選擇煽動或賞賜。');
+    if (state.phase === 'event') return fail('請先決定是否接受獄中事變。');
+    if (need === 'manage' && state.phase === 'patrol') return fail('請先巡視：走到今天的其中一個目的地。');
+    if (need === 'patrol' && state.phase !== 'patrol') return fail('今天已經巡視過了。');
     return null;
   }
 
@@ -836,9 +836,9 @@
     // Most runs start with one special event showing (72% of players' first
     // boards: one, 1.4% two, the rest none).
     spawnEvent(state, params.eventStartChance);
-    log(state, 'day', `Day 1 of ${state.maxDays}.`);
+    log(state, 'day', `第 1 天，共 ${state.maxDays} 天。`);
     const goal = OBJECTIVES[state.objective.id];
-    log(state, 'tool', `Objective: ${goal.name}. ${goal.text}.`);
+    log(state, 'tool', `目標：${goal.name}。${goal.text}。`);
     setupDrill(state);
     return state;
   }
@@ -860,7 +860,7 @@
 
   function setupDrill(state) {
     const s = state.scenario;
-    let note = 'All 15 prison cells are sealed, and the warden starts in the office at cell 01. Pick one of today’s destinations to meet your first inmate.';
+    let note = '15 間牢房全部上鎖，典獄長從牢房 01 的審訊室出發。從今天的目的地中選一個，去見你的第一隻囚犯。';
     let destinations = null;
     // Marker drills open after the day-1 patrol, with the warden at cell 02.
     // The events drill is about the patrol itself, so it starts in the office.
@@ -877,7 +877,7 @@
       hide(state, 2, 'lion', 2, { event: 'execution', known: 1, seen: true });
       hide(state, 3, 'mammoth', 1, { event: 'chain', seen: true });
       destinations = [1, 2, 3];
-      note = `Special events drill: cell 02 hides ${eventName(bonus)}, cell 03 hides an Execution behind a Rare inmate, and cell 04 hides a Chain reaction. Patrol one, then accept or skip the event.`;
+      note = `獄中事變練習：牢房 02 藏著${eventName(bonus)}，牢房 03 的稀有囚犯身後藏著處刑效率，牢房 04 藏著連鎖反應。巡視其中一間，然後選擇接受或略過事變。`;
     } else if (s === 'ivory') {
       place(state, 1, 'wolf', 1);
       state.cells[1].ivory = true;
@@ -886,7 +886,7 @@
       place(state, 7, 'wolf', 2);
       place(state, 12, 'mammoth', 3);
       place(state, 15, 'rat', 1);
-      note = `Tusk drill: cell 02, the warden's cell, carries a Tusk mark. Replace its inmate and ${plural(state.params.ivoryCount, 'inmate')} on the block each gain a tier.`;
+      note = `象牙練習：典獄長所在的牢房 02 帶有象牙標記。替換牠的囚犯，監區上就有 ${plural(state.params.ivoryCount, '隻囚犯')}各升一階。`;
     } else if (s === 'prey') {
       const lion = place(state, 1, 'lion', 2);
       const wolf = place(state, 2, 'wolf', 2);
@@ -894,21 +894,21 @@
       place(state, 9, 'mammoth', 1);
       place(state, 13, 'rat', 1);
       state.prey.push({ lion: lion.id, prey: wolf.id, preyBeast: 'wolf', rounds: state.params.preyRounds, next: 2 });
-      note = `Prey drill: the Lion in cell 02 has marked the Wolf in cell 03. Each morning both rise a tier, for ${plural(state.params.preyRounds, 'morning')}. The Lion stands in the warden's cell, so it could consume its prey today, but that re-rolls its beast and ends the mark.`;
+      note = `獵物標記練習：牢房 02 的狂獅已標記牢房 03 的頭狼。每天早上兩者各升一階，持續 ${plural(state.params.preyRounds, '個早上')}。狂獅就在典獄長的牢房，今天就能吞噬牠的獵物，但這會重骰牠的野獸並結束標記。`;
     } else if (s === 'scratch') {
       place(state, 1, 'wolf', 1);
       hide(state, 2, 'mammoth', 1, { scratch: true, known: 1 });
       place(state, 8, 'wolf', 2);
       hide(state, 9, 'lion', 2, { scratch: true, known: 1 });
       place(state, 14, 'rat', 0);
-      note = 'Scratch drill: a scratched door shows the rarity inside. A Wolf can consume a same-rarity inmate through it, whatever its beast, and gains +3.';
+      note = '劃痕練習：有劃痕的牢門會顯示裡面的稀有度。頭狼可以隔著門吞噬同稀有度的囚犯（不論野獸），+3。';
     } else if (s === 'nest') {
       place(state, 1, 'lion', 2);
       hide(state, 2, 'rat', 0, { nest: { due: 1 + state.params.nestDays } });
       place(state, 5, 'mammoth', 2);
       place(state, 11, 'wolf', 2);
       place(state, 15, 'rat', 0);
-      note = `Rat nest drill: the nest in cell 03 hatches a ${tierName(state.params.nestTier)} Rat on the morning of day ${1 + state.params.nestDays}. Patrolling it before then destroys it.`;
+      note = `鼠巢練習：牢房 03 的鼠巢會在第 ${1 + state.params.nestDays} 天早上孵出一隻${tierName(state.params.nestTier)}碩鼠。在那之前巡視它會把它摧毀。`;
     }
     for (const cell of state.cells) if (!cell.sealed) cell.event = null;
     offerStartTools(state);
@@ -931,7 +931,7 @@
       pool = pool.filter((t) => !options.includes(t));
       state.pending.push({ kind: 'tool', options, start: true });
     }
-    log(state, 'tool', picks === 1 ? 'Choose a starting instrument.' : `Choose ${picks} starting instruments, one at a time.`);
+    log(state, 'tool', picks === 1 ? '請選一件起始刑具。' : `請逐一選擇 ${picks} 件起始刑具。`);
   }
 
   // ---------- Day flow ----------
@@ -975,7 +975,7 @@
       const prey = boardCellOf(state, link.prey).inmate;
       link.rounds -= 1;
       link.next = state.day + 1;
-      log(state, 'prey', `Prey mark: the Lion and its prey each rise a tier (${describe(lion)} to ${tierName(Math.min(RAINBOW, lion.tier + 1))}, ${describe(prey)} to ${tierName(Math.min(RAINBOW, prey.tier + 1))}).${link.rounds > 0 ? ` ${plural(link.rounds, 'morning')} left.` : ' The mark is spent.'}`);
+      log(state, 'prey', `獵物標記：狂獅與牠的獵物各升一階（${describe(lion)} 升到${tierName(Math.min(RAINBOW, lion.tier + 1))}，${describe(prey)} 升到${tierName(Math.min(RAINBOW, prey.tier + 1))}）。${link.rounds > 0 ? `還剩 ${plural(link.rounds, '個早上')}。` : '標記已用盡。'}`);
       if (link.rounds <= 0) state.prey = state.prey.filter((l) => l !== link);
       promote(state, lion, 1, false, events);
       promote(state, prey, 1, false, events);
@@ -983,7 +983,7 @@
     checkPrey(state);
     for (const cell of state.cells) {
       if (!cell.nest || cell.nest.due > state.day) continue;
-      log(state, 'nest', `The rat nest in cell ${cellLabel(cell.n)} hatched.`);
+      log(state, 'nest', `牢房 ${cellLabel(cell.n)} 的鼠巢孵化了。`);
       openCell(state, cell, 'side', events, { beast: 'rat', tier: state.params.nestTier });
       events.push({ type: 'hatch', cell: cell.n });
     }
@@ -992,7 +992,7 @@
       if (mammoths.length) {
         const cell = pickOne(state, mammoths);
         cell.ivory = true;
-        log(state, 'tool', `Iron Tongs of Lust: the Mammoth in cell ${cellLabel(cell.n)} gets a Tusk mark.`);
+        log(state, 'tool', `惡欲鐵鉗：牢房 ${cellLabel(cell.n)} 的巨象獲得象牙標記。`);
       }
     }
     // Filthy Claws: Scratch Marks on 1 random unopened cell, which then
@@ -1004,7 +1004,7 @@
         const who = hiddenOf(state, cell);
         cell.scratch = true;
         cell.known = Math.max(cell.known, 1);
-        log(state, 'tool', `Filthy Claws: Scratch Marks on cell ${cellLabel(cell.n)}, which holds a ${tierName(who.tier)} inmate.`, { type: 'claws', cell: cell.n });
+        log(state, 'tool', `髒污鐵爪：牢房 ${cellLabel(cell.n)} 出現劃痕，裡面是一隻${tierName(who.tier)}囚犯。`, { type: 'claws', cell: cell.n });
       }
     }
     if (has(state, 'ironbox')) {
@@ -1012,7 +1012,7 @@
       if (free.length) {
         const cell = pickOne(state, free);
         cell.nest = { due: state.day + state.params.nestDays };
-        log(state, 'nest', `Squirming Iron Box: cell ${cellLabel(cell.n)} is now a rat nest. It hatches on day ${cell.nest.due}.`);
+        log(state, 'nest', `蠕動鐵盒：牢房 ${cellLabel(cell.n)} 變成鼠巢，將在第 ${cell.nest.due} 天孵化。`);
         events.push({ type: 'nest', cell: cell.n });
       }
     }
@@ -1041,7 +1041,7 @@
     emptyCell(state, gone);
     events.push({ type: 'removed', cell: gone.n });
     checkPrey(state);
-    log(state, 'tool', `Kin's Coin of Fate: the ${goneWho} in cell ${cellLabel(gone.n)} goes, and the ${luckyWho} in cell ${cellLabel(lucky.n)} rises 2 tiers.`, { type: 'coin', removed: gone.n, cell: lucky.n });
+    log(state, 'tool', `手足的命運硬幣：牢房 ${cellLabel(gone.n)} 的${goneWho}被移除，牢房 ${cellLabel(lucky.n)} 的${luckyWho}升 2 階。`, { type: 'coin', removed: gone.n, cell: lucky.n });
     promote(state, lucky.inmate, 2, false, events);
   }
 
@@ -1056,7 +1056,7 @@
     const eater = cell.inmate;
     const sides = [(cell.n + CELL_COUNT - 1) % CELL_COUNT, (cell.n + 1) % CELL_COUNT].map((k) => state.cells[k]).filter((c) => !c.sealed && c.inmate);
     if (!sides.length) return;
-    const gone = sides.map((c) => `the ${describe(c.inmate)} in ${cellLabel(c.n)}`);
+    const gone = sides.map((c) => `${cellLabel(c.n)} 的${describe(c.inmate)}`);
     let rises = 0;
     for (const side of sides) {
       emptyCell(state, side);
@@ -1064,7 +1064,7 @@
       if (rand(state) < 0.4) rises += 1;
     }
     checkPrey(state);
-    log(state, 'tool', `Ferocious Beast's Ravenous Chains: the ${describe(eater)} in cell ${cellLabel(cell.n)} removes ${gone.join(' and ')}${rises ? ` and rises ${plural(rises, 'tier')}` : ''}.`, { type: 'ravenous', cell: cell.n, removed: sides.map((c) => c.n), rises });
+    log(state, 'tool', `兇獸的飢餓絞鏈：牢房 ${cellLabel(cell.n)} 的${describe(eater)}移除了${gone.join('與')}${rises ? `，並升 ${plural(rises, '階')}` : ''}。`, { type: 'ravenous', cell: cell.n, removed: sides.map((c) => c.n), rises });
     if (rises) promote(state, eater, rises, false, events);
   }
 
@@ -1102,25 +1102,25 @@
     const eater = state.cells[from].inmate;
     let gain = option.scratch ? 2 + (state.params.scratchStacksBase ? 1 : 0) : 1;
     const notes = [];
-    if (option.scratch) notes.push(`scratch +${gain - 1}`);
+    if (option.scratch) notes.push(`劃痕 +${gain - 1}`);
     const target = state.cells[option.cell];
     const meal = target ? (target.sealed ? target.hidden : target.inmate) : null;
     if (!option.scratch && meal && eater && eater.beast === 'mammoth' && has(state, 'maul')) {
       gain = Math.max(1, meal.tier + 2 - eater.tier);
-      notes.push(`Elephant-Foot Maul to ${tierName(Math.min(RAINBOW, meal.tier + 2))}`);
+      notes.push(`象腳重錘升到${tierName(Math.min(RAINBOW, meal.tier + 2))}`);
     }
     // The Muzzle counts the block before the meal goes, the meal included.
     if (has(state, 'muzzle') && boardCells(state).length <= 4) {
       gain += 2;
-      notes.push('Agonizing Muzzle +2');
+      notes.push('痛苦口籠 +2');
     }
     if (has(state, 'skewer') && eater && eater.beast === 'rat') {
       gain += 1;
-      notes.push('Skewered Rat Heads +1');
+      notes.push('鼠頭串 +1');
     }
     if (has(state, 'crown') && eater && eater.beast === 'lion') {
       gain += 2;
-      notes.push('Iron Crown +2');
+      notes.push('牢中王的鐵冠 +2');
     }
     return { gain, notes, saw: has(state, 'saw'), revenge: has(state, 'revenge') };
   }
@@ -1151,21 +1151,23 @@
 
   function rosterOf(state) {
     const rows = [];
-    for (const c of state.cells) if (!c.sealed && c.inmate) rows.push({ beast: c.inmate.beast, tier: c.inmate.tier, where: `Cell ${cellLabel(c.n)}` });
-    for (const v of state.vault) rows.push({ beast: v.beast, tier: RAINBOW, where: `Vault, day ${v.day}` });
+    for (const c of state.cells) if (!c.sealed && c.inmate) rows.push({ beast: c.inmate.beast, tier: c.inmate.tier, where: `牢房 ${cellLabel(c.n)}` });
+    for (const v of state.vault) rows.push({ beast: v.beast, tier: RAINBOW, where: `收容區，第 ${v.day} 天` });
     rows.sort((a, b) => b.tier - a.tier || BEASTS.indexOf(a.beast) - BEASTS.indexOf(b.beast));
     return { rows, byTier: TIERS.map((_, t) => rows.filter((r) => r.tier === t).length) };
   }
 
   const toolText = (id) => (TOOLS[id] ? TOOLS[id].text : GIFTS[id] ? GIFTS[id].text : '');
   const toolName = (id) => (TOOLS[id] ? TOOLS[id].name : GIFTS[id] ? GIFTS[id].name : id);
+  // The English name the game client prints (for matching screenshot text).
+  const toolNameEn = (id) => (TOOLS[id] ? (TOOLS[id].en || TOOLS[id].name) : GIFTS[id] ? (GIFTS[id].en || GIFTS[id].name) : id);
 
   // ---------- Actions ----------
 
   function patrol(state, n) {
     const blocked = guard(state, 'patrol');
     if (blocked) return blocked;
-    if (!state.destinations.includes(n)) return fail(state.ratway ? 'The Sewer Ratway goes to any cell but the office.' : 'Patrol one of today’s destinations.');
+    if (!state.destinations.includes(n)) return fail(state.ratway ? '暗渠鼠道可以前往審訊室以外的任何牢房。' : '請巡視今天的其中一個目的地。');
     const events = [{ type: 'move', from: state.position, to: n }];
     const cell = state.cells[n];
     // The Sewer Ratway's move isn't a walk: no tiles.
@@ -1176,17 +1178,17 @@
     let event = null;
     if (state.chain && !ratway) {
       const path = clockwisePath(state, n);
-      log(state, 'event', `Chain reaction: walking clockwise from cell ${cellLabel(state.position)} to cell ${cellLabel(n)} opens every sealed door on the way.`, { type: 'sweep', from: state.position, cell: n });
+      log(state, 'event', `連鎖反應：從牢房 ${cellLabel(state.position)} 順時針走到牢房 ${cellLabel(n)}，沿途所有未開啟的牢門都會打開。`, { type: 'sweep', from: state.position, cell: n });
       for (const k of path) openCell(state, state.cells[k], 'side', events);
       state.chain = false;
     } else if (cell.sealed) {
       event = openCell(state, cell, 'patrol', events);
     } else if (n === OFFICE) {
-      log(state, 'patrol', "Walked to the warden's office: Instigate or Bestow.", { type: 'walk', cell: n, who: null });
+      log(state, 'patrol', '走到審訊室：煽動或賞賜。', { type: 'walk', cell: n, who: null });
     } else if (cell.inmate) {
-      log(state, 'patrol', `Walked to cell ${cellLabel(n)}. Its ${describe(cell.inmate)} can start today's consume.`, { type: 'walk', cell: n, who: snap(cell.inmate) });
+      log(state, 'patrol', `走到牢房 ${cellLabel(n)}。牠的${describe(cell.inmate)}可以發起今天的吞噬。`, { type: 'walk', cell: n, who: snap(cell.inmate) });
     } else {
-      log(state, 'patrol', `Walked to empty cell ${cellLabel(n)}.`, { type: 'walk', cell: n, who: null });
+      log(state, 'patrol', `走到空牢房 ${cellLabel(n)}。`, { type: 'walk', cell: n, who: null });
     }
     // An event can wait in an open cell beside its inmate (the game's cell
     // popup: "Can trigger Prison Incident", report 52). Walking in sets it
@@ -1203,16 +1205,16 @@
     if (event && state.cells[n].inmate) {
       state.phase = 'event';
       state.event = { kind: event, cell: n };
-      countObjective(state, 'incident', 'Prison Incidents');
-      log(state, 'event', `Cell ${cellLabel(n)} held a special event: ${eventName(event)}. Accept or skip it.`);
+      countObjective(state, 'incident', '次獄中事變');
+      log(state, 'event', `牢房 ${cellLabel(n)} 有一個獄中事變：${eventName(event)}。接受或略過。`);
     } else {
       state.phase = n === OFFICE ? 'office' : 'manage';
       // Tyranny: each stop at the office also triggers Instigate and Bestow
       // 3 more times each, by themselves, before the visit's own choice.
       if (n === OFFICE && state.startEvent === 'tyranny') {
         for (let i = 0; i < START_EVENTS.tyranny.extra; i++) {
-          instigate(state, events, 'Tyranny, Instigate');
-          bestow(state, events, 'Tyranny, Bestow');
+          instigate(state, events, '暴政，煽動');
+          bestow(state, events, '暴政，賞賜');
         }
       }
     }
@@ -1223,16 +1225,16 @@
   // doors, and Bestow raises 1 random inmate on the block a tier. One of
   // the two, then the day goes on as usual.
   function officeAct(state, choice) {
-    if (state.phase !== 'office') return fail("Instigate and Bestow come with a visit to the warden's office.");
-    if (state.pending.length) return fail('Make your pending choice first.');
+    if (state.phase !== 'office') return fail('只有前往審訊室時才能煽動或賞賜。');
+    if (state.pending.length) return fail('請先完成待選的選擇。');
     // used.officeOnly: the game shows only that card (the analyzer reads
     // them; report 383 had Bestow alone).
     const only = state.used && state.used.officeOnly;
-    if (only && choice !== only) return fail(`Your game offers only ${only === 'bestow' ? 'Bestow' : 'Instigate'} today.`);
+    if (only && choice !== only) return fail(`你的遊戲今天只提供${only === 'bestow' ? '賞賜' : '煽動'}。`);
     const events = [];
-    if (choice === 'instigate') instigate(state, events, 'Instigate');
-    else if (choice === 'bestow') bestow(state, events, 'Bestow');
-    else return fail('Choose Instigate or Bestow.');
+    if (choice === 'instigate') instigate(state, events, '煽動');
+    else if (choice === 'bestow') bestow(state, events, '賞賜');
+    else return fail('請選擇煽動或賞賜。');
     state.phase = 'manage';
     return ok(events);
   }
@@ -1249,8 +1251,8 @@
       c.seen = true;
     }
     log(state, 'event', cells.length
-      ? `${how}: a special event now waits ${cells.map((c) => `${c.sealed ? 'behind' : 'in'} cell ${cellLabel(c.n)}`).join(' and ')}.`
-      : `${how}: no cell was free for a new event.`, { type: 'instigate', cells: cells.map((c) => c.n) });
+      ? `${how}：${cells.map((c) => `牢房 ${cellLabel(c.n)} ${c.sealed ? '門後' : '裡'}`).join('與')}出現了一個獄中事變。`
+      : `${how}：沒有空的牢房可以放新事變。`, { type: 'instigate', cells: cells.map((c) => c.n) });
   }
 
   // Bestow: 1 random inmate on the block rises a tier.
@@ -1262,9 +1264,9 @@
       const before = snap(who);
       const cell = cellOf(state, who.id).n;
       promote(state, who, 1, false, events);
-      logAt(state, at, 'event', `${how}: the ${describe(before)} in cell ${cellLabel(cell)} rises to ${tierName(before.tier + 1)}.`, { type: 'bestow', cell, who: before });
+      logAt(state, at, 'event', `${how}：牢房 ${cellLabel(cell)} 的${describe(before)}升到${tierName(before.tier + 1)}。`, { type: 'bestow', cell, who: before });
     } else {
-      log(state, 'event', `${how}: nobody was on the block to rise.`, { type: 'bestow', cell: null, who: null });
+      log(state, 'event', `${how}：監區上沒有可以升階的囚犯。`, { type: 'bestow', cell: null, who: null });
     }
   }
 
@@ -1276,7 +1278,7 @@
       const sealed = state.cells.filter((c) => c.sealed);
       if (sealed.length) {
         const target = pickOne(state, sealed);
-        log(state, 'tool', `Short-Chained Shackles: a ${steps}-cell walk opens cell ${cellLabel(target.n)}.`, { type: 'shortchain', cell: target.n });
+        log(state, 'tool', `短鏈腳鐐：走了 ${steps} 格，開啟牢房 ${cellLabel(target.n)}。`, { type: 'shortchain', cell: target.n });
         openCell(state, target, 'side', events);
       }
     }
@@ -1284,26 +1286,26 @@
       const pool = boardInmates(state).filter((i) => i.tier < RAINBOW);
       if (pool.length) {
         const who = pickOne(state, pool);
-        log(state, 'tool', `Long-Chained Shackles: a ${steps}-cell walk raises the ${describe(who)} in cell ${cellLabel(cellOf(state, who.id).n)} a tier.`, { type: 'shackles', cell: cellOf(state, who.id).n, who: snap(who) });
+        log(state, 'tool', `長鏈腳鐐：走了 ${steps} 格，牢房 ${cellLabel(cellOf(state, who.id).n)} 的${describe(who)}升一階。`, { type: 'shackles', cell: cellOf(state, who.id).n, who: snap(who) });
         promote(state, who, 1, false, events);
       }
     }
     const o = state.objective;
     if (o.id !== 'walk' || state.milestone) return;
     o.progress = Math.min(OBJECTIVES.walk.need, o.progress + steps);
-    if (o.progress >= OBJECTIVES.walk.need) meetObjective(state, `${OBJECTIVES.walk.need} tiles moved`);
+    if (o.progress >= OBJECTIVES.walk.need) meetObjective(state, `已移動 ${OBJECTIVES.walk.need} 格`);
   }
 
   function resolveEvent(state, accept) {
-    if (state.phase !== 'event' || !state.event) return fail('There is no special event to decide.');
-    if (state.pending.length) return fail('Make your pending choice first.');
+    if (state.phase !== 'event' || !state.event) return fail('沒有需要決定的獄中事變。');
+    if (state.pending.length) return fail('請先完成待選的選擇。');
     const { kind, cell: n } = state.event;
     const events = [];
     const name = eventName(kind);
     if (!accept) {
       state.event = null;
       state.phase = 'manage';
-      log(state, 'event', `Skipped the ${name}.`, { type: 'skipped', name });
+      log(state, 'event', `略過了${name}。`, { type: 'skipped', name });
       return ok(events);
     }
     if (kind === 'ratway') {
@@ -1314,22 +1316,22 @@
       state.phase = 'patrol';
       state.ratway = true;
       state.destinations = state.cells.filter((c) => c.n !== OFFICE).map((c) => c.n);
-      log(state, 'event', 'Sewer Ratway: pick any cell but the office to move to.', { type: 'ratway' });
+      log(state, 'event', '暗渠鼠道：選擇審訊室以外的任何牢房移動過去。', { type: 'ratway' });
       return ok(events);
     }
     if (kind === 'chain') {
       state.chain = true;
-      log(state, 'event', 'Chain reaction armed: your next patrol opens every sealed cell on the clockwise walk to its destination.', { type: 'armed' });
+      log(state, 'event', '連鎖反應已就緒：下一次巡視會打開順時針走到目的地沿途所有未開啟的牢房。', { type: 'armed' });
     } else if (kind === 'trickster') {
       const who = state.cells[n].inmate;
-      if (!who) return fail('Nobody is left in that cell for the event to change.');
+      if (!who) return fail('那間牢房已經沒有囚犯可以讓事變改變了。');
       const before = snap(who);
       const scarce = scarceBeasts(state);
       who.beast = pickOne(state, scarce);
       who.tier = SUPREME;
       checkPrey(state);
-      const why = scarce.length === 1 ? `the scarcest beast on the block` : `drawn from the ${scarce.length} scarcest beasts`;
-      log(state, 'event', `Behind Closed Doors: the ${describe(before)} in cell ${cellLabel(n)} is now a ${describe(who)} (${why}).`, { type: 'trickster', cell: n, who: before, after: snap(who) });
+      const why = scarce.length === 1 ? `監區上最稀少的野獸` : `從 ${scarce.length} 種最稀少的野獸中抽出`;
+      log(state, 'event', `暗箱操作：牢房 ${cellLabel(n)} 的${describe(before)}變成了${describe(who)}（${why}）。`, { type: 'trickster', cell: n, who: before, after: snap(who) });
       events.push({ type: 'promote', cell: n, from: before.tier, to: who.tier });
       // The card says it triggers no other effects: no instrument reacts. The
       // run's objective still counts the Supreme.
@@ -1346,8 +1348,8 @@
         seen.push(c);
       }
       log(state, 'event', seen.length
-        ? `Crow Whispers: ${seen.map((c) => `cell ${cellLabel(c.n)} holds a ${tierName(c.hidden.tier)}`).join(', ')}.`
-        : 'Crow Whispers: no locked cell was left to reveal.', { type: 'crow', cells: seen.map((c) => c.n) });
+        ? `鴉之低語：${seen.map((c) => `牢房 ${cellLabel(c.n)} 裡是${tierName(c.hidden.tier)}`).join('，')}。`
+        : '鴉之低語：沒有剩下可揭露的上鎖牢房。', { type: 'crow', cells: seen.map((c) => c.n) });
     } else if (kind === 'hunt') {
       // Every locked cell holding a Normal or Magic shows its rarity, so the
       // ones left dark hold Rare or better. Nests hold no inmate yet.
@@ -1363,10 +1365,10 @@
           high.push(c);
         }
       }
-      const shown = low.map((c) => `cell ${cellLabel(c.n)} holds a ${tierName(c.hidden.tier)}`).join(', ');
-      const dark = high.length === 1 ? `cell ${cellLabel(high[0].n)} holds Rare or better` : `${low.length ? 'the other' : 'all'} ${high.length} locked cells hold Rare or better`;
-      const text = low.length && high.length ? `${shown}; ${dark}` : low.length ? shown : high.length ? dark : 'no locked cell was left to reveal';
-      log(state, 'event', `${eventName(kind)}: ${text}.`, { type: 'hunt', cells: low.map((c) => c.n), high: high.map((c) => c.n) });
+      const shown = low.map((c) => `牢房 ${cellLabel(c.n)} 裡是${tierName(c.hidden.tier)}`).join('，');
+      const dark = high.length === 1 ? `牢房 ${cellLabel(high[0].n)} 裡是稀有以上` : `${low.length ? '其餘' : '全部'} ${high.length} 間上鎖牢房裡都是稀有以上`;
+      const text = low.length && high.length ? `${shown}；${dark}` : low.length ? shown : high.length ? dark : '沒有剩下可揭露的上鎖牢房';
+      log(state, 'event', `${eventName(kind)}：${text}。`, { type: 'hunt', cells: low.map((c) => c.n), high: high.map((c) => c.n) });
     } else if (kind === 'portion') {
       // Up to 3 random inmates rise a tier; with fewer on the block, all of
       // them. It stays among the Prison Incidents.
@@ -1376,11 +1378,11 @@
       const raised = picks.map((who) => ({ who: snap(who), cell: cellOf(state, who.id).n }));
       for (const who of picks) if (boardCellOf(state, who.id)) promote(state, who, 1, false, events);
       if (raised.length) {
-        const names = raised.map((r) => `the ${describe(r.who)} in cell ${cellLabel(r.cell)}`);
-        const who = names.length > 1 ? `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}` : names[0];
-        logAt(state, at, 'event', `${eventName(kind)}: ${who} ${raised.length === 1 ? 'rises' : 'rise'} a tier.`, { type: kind, raised });
+        const names = raised.map((r) => `牢房 ${cellLabel(r.cell)} 的${describe(r.who)}`);
+        const who = names.join('、');
+        logAt(state, at, 'event', `${eventName(kind)}：${who}升一階。`, { type: kind, raised });
       } else {
-        log(state, 'event', `${eventName(kind)}: nobody was on the block to rise.`, { type: kind, raised: [] });
+        log(state, 'event', `${eventName(kind)}：監區上沒有可以升階的囚犯。`, { type: kind, raised: [] });
       }
     } else if (USURP[kind]) {
       // Random inmates rise (all of them for Usurpation IV), then this
@@ -1391,12 +1393,12 @@
       const at = state.log.length;
       const raised = picks.map((who) => ({ who: snap(who), cell: cellOf(state, who.id).n }));
       for (const who of picks) if (boardCellOf(state, who.id)) promote(state, who, u.by, false, events);
-      const tiers = u.by === 1 ? 'a tier' : `${u.by} tiers`;
+      const tiers = u.by === 1 ? '一階' : `${u.by} 階`;
       if (raised.length) {
-        const who = u.count === 'all' ? `all ${plural(raised.length, 'inmate')} on the block` : raised.map((r) => `the ${describe(r.who)} in cell ${cellLabel(r.cell)}`).join(' and ');
-        logAt(state, at, 'event', `${eventName(kind)}: ${who} ${raised.length === 1 ? 'rises' : 'rise'} ${tiers}.`, { type: kind, raised });
+        const who = u.count === 'all' ? `監區上全部 ${plural(raised.length, '隻囚犯')}` : raised.map((r) => `牢房 ${cellLabel(r.cell)} 的${describe(r.who)}`).join('與');
+        logAt(state, at, 'event', `${eventName(kind)}：${who}升${tiers}。`, { type: kind, raised });
       } else {
-        log(state, 'event', `${eventName(kind)}: nobody was on the block to rise.`, { type: kind, raised: [] });
+        log(state, 'event', `${eventName(kind)}：監區上沒有可以升階的囚犯。`, { type: kind, raised: [] });
       }
       state.eventPool = (state.eventPool || EVENT_POOL).filter((id) => id !== kind);
       if (u.next && !state.eventPool.includes(u.next)) state.eventPool.push(u.next);
@@ -1409,13 +1411,13 @@
           const cell = pickOne(state, free);
           cell.event = u.next;
           cell.seen = true;
-          log(state, 'event', `${eventName(u.next)} now waits ${cell.sealed ? 'behind' : 'in'} cell ${cellLabel(cell.n)}.`);
+          log(state, 'event', `${eventName(u.next)}出現在牢房 ${cellLabel(cell.n)} ${cell.sealed ? '門後' : '裡'}。`);
         }
       }
     } else if (kind === 'freedom') {
       // Random locked cells open, setting nothing else off.
       const doors = shuffle(state, state.cells.filter((c) => c.sealed)).slice(0, FREEDOM_CELLS);
-      log(state, 'event', doors.length ? `Taste of Freedom: ${doors.length === 1 ? `cell ${cellLabel(doors[0].n)} opens` : `cells ${doors.map((c) => cellLabel(c.n)).join(', ')} open`}.` : 'Taste of Freedom: no locked cell was left to open.', { type: 'freedom', cells: doors.map((c) => c.n) });
+      log(state, 'event', doors.length ? `自由的滋味：${doors.length === 1 ? `牢房 ${cellLabel(doors[0].n)} 開啟` : `牢房 ${doors.map((c) => cellLabel(c.n)).join('、')} 開啟`}。` : '自由的滋味：沒有剩下可開啟的上鎖牢房。', { type: 'freedom', cells: doors.map((c) => c.n) });
       for (const c of doors) openCell(state, c, 'side', events);
     } else if (kind === 'convict') {
       // A random locked cell opens on a Legendary or better inmate, rolled
@@ -1426,10 +1428,10 @@
         const target = pickOne(state, sealed);
         const weights = state.params.tierWeights.map((w, t) => (t >= 3 ? w : 0));
         const tier = weights.some((w) => w > 0) ? pickIndex(state, weights) : 3;
-        log(state, 'event', `High-Risk Convict: cell ${cellLabel(target.n)} opens on a ${tierName(tier)} inmate.`, { type: 'convict', cell: target.n });
+        log(state, 'event', `高危罪犯：牢房 ${cellLabel(target.n)} 開啟，裡面是一隻${tierName(tier)}囚犯。`, { type: 'convict', cell: target.n });
         openCell(state, target, 'side', events, { beast: BEASTS[pickIndex(state, state.params.beastWeights)], tier });
       } else {
-        log(state, 'event', 'High-Risk Convict: no locked cell was left to open.', { type: 'convict', cell: null });
+        log(state, 'event', '高危罪犯：沒有剩下可開啟的上鎖牢房。', { type: 'convict', cell: null });
       }
     } else if (kind === 'appetite') {
       const who = pickOne(state, lowestInmates(state));
@@ -1442,15 +1444,15 @@
       if (gain) promote(state, who, gain, false, events);
       const after = { beast: before.beast, tier: Math.min(RAINBOW, before.tier + gain) };
       logAt(state, at, 'event', gain
-        ? `Ravenous Appetite: the ${describe(before)} in cell ${cellLabel(where)} won ${gain} of ${APPETITE_TRIES} tries and rose to ${tierName(after.tier)}.`
-        : `Ravenous Appetite: the ${describe(before)} in cell ${cellLabel(where)} won none of its ${APPETITE_TRIES} tries.`, { type: 'appetite', cell: where, who: before, after, gain });
+        ? `飢腸轆轆：牢房 ${cellLabel(where)} 的${describe(before)}在 ${APPETITE_TRIES} 次嘗試中成功 ${gain} 次，升到${tierName(after.tier)}。`
+        : `飢腸轆轆：牢房 ${cellLabel(where)} 的${describe(before)} ${APPETITE_TRIES} 次嘗試全部失敗。`, { type: 'appetite', cell: where, who: before, after, gain });
     } else {
       const cell = state.cells[n];
       const exec = cell.inmate;
-      if (!exec) return fail('Nobody is left in that cell to carry out the execution.');
+      if (!exec) return fail('那間牢房已經沒有囚犯可以執行處刑效率了。');
       const victims = executionVictims(state, n);
       const at = state.log.length;
-      const names = victims.map((c) => `${describe(c.inmate)} (${cellLabel(c.n)})`);
+      const names = victims.map((c) => `${describe(c.inmate)}（${cellLabel(c.n)}）`);
       const record = { type: 'execution', cell: n, who: snap(exec), victims: victims.map((c) => snap(c.inmate)) };
       for (const c of victims) {
         emptyCell(state, c);
@@ -1462,8 +1464,8 @@
       if (victims.length) promote(state, exec, victims.length, state.params.executionRerolls, events);
       record.after = snap(exec);
       logAt(state, at, 'event', victims.length
-        ? `Execution: the ${before} in cell ${cellLabel(n)} removed ${names.join(', ')} and rose ${victims.length} ${victims.length === 1 ? 'tier' : 'tiers'}.`
-        : `Execution: the ${before} in cell ${cellLabel(n)} found nobody to execute.`, record);
+        ? `處刑效率：牢房 ${cellLabel(n)} 的${before}移除了${names.join('、')}，並升 ${victims.length} 階。`
+        : `處刑效率：牢房 ${cellLabel(n)} 的${before}找不到可以處決的對象。`, record);
     }
     state.event = null;
     state.phase = 'manage';
@@ -1479,7 +1481,7 @@
     const eater = eaterCell.inmate;
     const meal = mealCell.sealed ? mealCell.hidden : mealCell.inmate;
     const bite = { from, cell: option.cell, scratch: !!option.scratch, eater: snap(eater), meal: snap(meal) };
-    countObjective(state, 'consume', 'consumes');
+    countObjective(state, 'consume', '次吞噬');
     const wasRat = eater.beast === 'rat';
     const wasLion = eater.beast === 'lion';
     // The Muzzle counts the block before the meal goes, the meal included
@@ -1488,35 +1490,35 @@
     emptyCell(state, mealCell);
     let gain = option.scratch ? 2 + (state.params.scratchStacksBase ? 1 : 0) : 1;
     const notes = [];
-    if (option.scratch) notes.push(`scratch +${gain - 1}`);
+    if (option.scratch) notes.push(`劃痕 +${gain - 1}`);
     // The Elephant-Foot Maul: a Mammoth rises to 2 tiers above its meal.
     if (!option.scratch && eater.beast === 'mammoth' && has(state, 'maul')) {
       gain = Math.max(1, meal.tier + 2 - eater.tier);
-      notes.push(`Elephant-Foot Maul to ${tierName(Math.min(RAINBOW, meal.tier + 2))}`);
+      notes.push(`象腳重錘升到${tierName(Math.min(RAINBOW, meal.tier + 2))}`);
     }
     if (has(state, 'muzzle') && crowd <= 4) {
       gain += 2;
-      notes.push('Agonizing Muzzle +2');
+      notes.push('痛苦口籠 +2');
     }
     if (has(state, 'skewer') && wasRat) {
       gain += 1;
-      notes.push('Skewered Rat Heads +1');
+      notes.push('鼠頭串 +1');
     }
     if (has(state, 'crown') && wasLion) {
       gain += 2;
-      notes.push('Iron Crown +2');
+      notes.push('牢中王的鐵冠 +2');
     }
     if (has(state, 'saw') && rand(state) < 0.25) {
       gain += 1;
-      notes.push('Rusty Saw +1');
+      notes.push('鏽鋸 +1');
     }
     if (has(state, 'whip') && rand(state) < 0.35) {
       gain += 1;
-      notes.push('Barbed Whip +1');
+      notes.push('棘刺鐵鞭 +1');
     }
     if (chained && has(state, 'collar') && rand(state) < 0.8) {
       gain += 1;
-      notes.push('Barbed Collar +1');
+      notes.push('倒刺項圈 +1');
     }
     const revenge = has(state, 'revenge') && rand(state) < 0.3;
     events.push({ type: 'devour', from, to: option.cell });
@@ -1529,14 +1531,14 @@
       if (sealed.length) {
         const target = pickOne(state, sealed);
         const food = pickOne(state, eatsOf(state, eater.beast, eater.tier));
-        log(state, 'tool', `Avenger's Casket: cell ${cellLabel(target.n)} opens with a meal for the ${describe(eater)}.`);
+        log(state, 'tool', `復仇者之匣：牢房 ${cellLabel(target.n)} 開啟，裡面是${describe(eater)}的獵物。`);
         openCell(state, target, 'side', events, { beast: food, tier: eater.tier });
       }
     }
     // Crowded Beastcage: the eaten inmate's cell may open again at once,
     // holding someone new.
     if (has(state, 'cage') && mealCell.sealed && rand(state) < 0.4) {
-      log(state, 'tool', `Crowded Beastcage: cell ${cellLabel(mealCell.n)} opens again.`, { type: 'cage', cell: mealCell.n });
+      log(state, 'tool', `擁擠獸籠：牢房 ${cellLabel(mealCell.n)} 再次開啟。`, { type: 'cage', cell: mealCell.n });
       openCell(state, mealCell, 'side', events);
     }
     return bite;
@@ -1549,15 +1551,15 @@
     if (!bites.length) return;
     const first = bites[0];
     const last = bites[bites.length - 1];
-    const end = last.after.tier >= RAINBOW ? ' It reached Rainbow and left for the vault.' : '';
-    const stop = stopped ? ' Then the chain was stopped.' : '';
+    const end = last.after.tier >= RAINBOW ? '牠達到綺彩，進入收容區。' : '';
+    const stop = stopped ? '之後連鎖被停止。' : '';
     let text;
     if (bites.length === 1) {
-      const outcome = last.after.tier < RAINBOW ? ` and is now a ${beastName(last.after.beast)}` : '';
-      text = `The ${describe(first.eater)} in cell ${cellLabel(first.from)} consumed the ${first.scratch ? 'scratched-door ' : ''}${describe(first.meal)} in cell ${cellLabel(first.cell)}. It rose to ${tierName(last.after.tier)}${outcome}${first.notes.length ? ` (${first.notes.join(', ')})` : ''}.${stop}`;
+      const outcome = last.after.tier < RAINBOW ? `，現在是${beastName(last.after.beast)}` : '';
+      text = `牢房 ${cellLabel(first.from)} 的${describe(first.eater)}吞噬了牢房 ${cellLabel(first.cell)} ${first.scratch ? '有劃痕門後' : ''}的${describe(first.meal)}。牠升到${tierName(last.after.tier)}${outcome}${first.notes.length ? `（${first.notes.join('，')}）` : ''}。${stop}`;
     } else {
-      const steps = bites.map((b) => `${describe(b.eater)} ate ${b.scratch ? 'the scratched-door ' : ''}${describe(b.meal)} (${cellLabel(b.cell)})${b.notes.length ? ` [${b.notes.join(', ')}]` : ''}`);
-      text = `Consume chain, ${bites.length} bites, from cell ${cellLabel(first.from)}: ${steps.join('; then ')}.${end || ` It ended as a ${describe(last.after)}.`}${stop}`;
+      const steps = bites.map((b) => `${describe(b.eater)}吃掉${b.scratch ? '有劃痕門後的' : ''}${describe(b.meal)}（${cellLabel(b.cell)}）${b.notes.length ? `［${b.notes.join('，')}］` : ''}`);
+      text = `吞噬連鎖，共 ${bites.length} 口，從牢房 ${cellLabel(first.from)} 開始：${steps.join('；接著')}。${end || `最後成為${describe(last.after)}。`}${stop}`;
     }
     logAt(state, at, 'devour', text, Object.assign({ type: 'devour', from: first.from, bites }, stopped ? { stopped: true } : {}));
   }
@@ -1568,11 +1570,11 @@
   function devour(state, from, to) {
     const blocked = guard(state, 'manage');
     if (blocked) return blocked;
-    if (state.used.swap > 0 && !state.used.devourAfterSwap) return fail('You replaced an inmate today, and a day has a Replace or a consume, not both. End the day.');
-    if (!canDevourNow(state)) return fail('Today’s consume is used. End the day for another.');
-    if (from !== state.position) return fail(`Only the inmate in the warden's cell (${cellLabel(state.position)}) can start a consume.`);
+    if (state.used.swap > 0 && !state.used.devourAfterSwap) return fail('你今天已經替換過囚犯，一天只能替換或吞噬擇一。請結束這一天。');
+    if (!canDevourNow(state)) return fail('今天的吞噬已用掉。結束這一天才能再吞噬。');
+    if (from !== state.position) return fail(`只有典獄長所在牢房（${cellLabel(state.position)}）的囚犯可以發起吞噬。`);
     const option = framedMeals(state, devourOptions(state, from)).find((o) => o.cell === to);
-    if (!option) return fail('That inmate cannot consume that target.');
+    if (!option) return fail('那隻囚犯無法吞噬那個目標。');
     const events = [];
     state.used.devour += 1;
     state.used.mealOnly = null;
@@ -1611,11 +1613,11 @@
 
   // The player's pick of the chain's next meal.
   function chainBite(state, to) {
-    if (!state.chaining) return fail('No consume chain is waiting for a meal.');
-    if (state.pending.length) return fail('Make your pending choice first.');
+    if (!state.chaining) return fail('沒有等待選擇獵物的吞噬連鎖。');
+    if (state.pending.length) return fail('請先完成待選的選擇。');
     const cell = boardCellOf(state, state.chaining.eater);
     const option = cell ? framedMeals(state, devourOptions(state, cell.n)).find((o) => o.cell === to) : null;
-    if (!option) return fail('The chain can’t take that meal.');
+    if (!option) return fail('連鎖無法吃那個獵物。');
     const events = [];
     state.used.mealOnly = null;
     state.chaining.bites.push(doDevour(state, cell.n, option, events, true));
@@ -1628,9 +1630,9 @@
   // what it gained, its meals stay on the block, and today's consume stays
   // used.
   function stopChain(state) {
-    if (!state.chaining) return fail('No consume chain is waiting for a meal.');
-    if (!canStopChain(state)) return fail('With this Lab setting, a consume chain must go on while it has a meal.');
-    if (state.pending.length) return fail('Make your pending choice first.');
+    if (!state.chaining) return fail('沒有等待選擇獵物的吞噬連鎖。');
+    if (!canStopChain(state)) return fail('在這個實驗室設定下，只要還有獵物，吞噬連鎖就必須繼續。');
+    if (state.pending.length) return fail('請先完成待選的選擇。');
     const ch = state.chaining;
     state.chaining = null;
     logDevour(state, ch.at, ch.bites, true);
@@ -1641,15 +1643,15 @@
   function swap(state, n = state.position) {
     const blocked = guard(state, 'manage');
     if (blocked) return blocked;
-    if (n !== state.position) return fail(`Only the inmate in the warden's cell (${cellLabel(state.position)}) can be replaced.`);
+    if (n !== state.position) return fail(`只有典獄長所在牢房（${cellLabel(state.position)}）的囚犯可以被替換。`);
     const cell = state.cells[n];
-    if (!cell || cell.sealed || !cell.inmate) return fail('The warden’s cell has no inmate to replace.');
-    if (state.used.devour > 0) return fail('You consumed today, and a day has a consume or a Replace, not both. End the day.');
-    if (state.used.swap >= state.params.swapsPerDay) return fail('No Replaces left today.');
-    if (state.used.noSwap) return fail('Your game offers no Replace today.');
+    if (!cell || cell.sealed || !cell.inmate) return fail('典獄長所在的牢房沒有可替換的囚犯。');
+    if (state.used.devour > 0) return fail('你今天已經吞噬過，一天只能吞噬或替換擇一。請結束這一天。');
+    if (state.used.swap >= state.params.swapsPerDay) return fail('今天沒有剩餘的替換次數。');
+    if (state.used.noSwap) return fail('你的遊戲今天沒有提供替換。');
     const weights = (state.params.swapWeights || state.params.tierWeights).slice();
     if (has(state, 'rope')) weights[0] = weights[1] = 0;
-    if (!weights.some((w) => w > 0)) return fail('No rarity is left to roll. Adjust the rarity weights in the Lab.');
+    if (!weights.some((w) => w > 0)) return fail('沒有可以骰出的稀有度。請到實驗室調整稀有度權重。');
     const old = cell.inmate;
     const events = [{ type: 'swap', cell: n }];
     const at = state.log.length;
@@ -1670,13 +1672,13 @@
       const others = boardCells(state);
       if (others.length >= 2) {
         const victims = shuffle(state, others).slice(0, 2);
-        const names = victims.map((c) => `the ${describe(c.inmate)} in ${cellLabel(c.n)}`);
+        const names = victims.map((c) => `${cellLabel(c.n)} 的${describe(c.inmate)}`);
         for (const v of victims) {
           emptyCell(state, v);
           events.push({ type: 'removed', cell: v.n });
         }
         checkPrey(state);
-        log(state, 'tool', `Scapegoat's Guillotine: ${names.join(' and ')} go, so the new inmate comes in above ${TIERS[old.tier]}.`, { type: 'scapegoat', cell: n, removed: victims.map((c) => c.n) });
+        log(state, 'tool', `替罪人的斷頭台：${names.join('與')}被移除，因此新囚犯的稀有度會高於${TIERS[old.tier]}。`, { type: 'scapegoat', cell: n, removed: victims.map((c) => c.n) });
         above = true;
       }
     }
@@ -1691,18 +1693,18 @@
     cell.inmate = fresh;
     state.used.swap += 1;
     state.stats.swaps += 1;
-    logAt(state, at, 'swap', `Replaced the ${describe(old)} in cell ${cellLabel(n)}. In came a ${describe(fresh)}.`, { type: 'swap', cell: n, old: snap(old), fresh: snap(fresh) });
-    if (staked) log(state, 'tool', `Burning Stake: the ${describe(fresh)} in cell ${cellLabel(n)} came in Legendary.`, { type: 'stake', cell: n });
+    logAt(state, at, 'swap', `替換了牢房 ${cellLabel(n)} 的${describe(old)}，換來一隻${describe(fresh)}。`, { type: 'swap', cell: n, old: snap(old), fresh: snap(fresh) });
+    if (staked) log(state, 'tool', `火刑柱：牢房 ${cellLabel(n)} 的${describe(fresh)}以傳奇進場。`, { type: 'stake', cell: n });
     // Severed Iron Maiden: the inmate replaced stood level, so the newcomer gains 3 tiers.
     if (level) {
-      log(state, 'tool', `Severed Iron Maiden: the ${describe(old)} it replaced had ${aboveOld ? `${plural(aboveOld, 'inmate')} above it and as many below` : 'nobody above or below it'}, so the ${describe(fresh)} in cell ${cellLabel(n)} gains 3 tiers.`, { type: 'maiden', cell: n });
+      log(state, 'tool', `切開的人形棺：被替換的${describe(old)}${aboveOld ? `上方有 ${plural(aboveOld, '隻囚犯')}，下方也一樣多` : '上下都沒有其他囚犯'}，因此牢房 ${cellLabel(n)} 的${describe(fresh)}升 3 階。`, { type: 'maiden', cell: n });
       promote(state, fresh, 3, false, events);
     }
     afterGrowth(state, fresh, events);
     if (has(state, 'axe') && fresh.tier > old.tier) {
       const doors = shuffle(state, state.cells.filter((c) => c.sealed)).slice(0, 2);
       if (doors.length) {
-        log(state, 'tool', `Gaoler's Execution Axe: the Replace raised the rarity, so ${doors.length === 1 ? `cell ${cellLabel(doors[0].n)} opens` : `cells ${doors.map((c) => cellLabel(c.n)).join(' and ')} open`}.`);
+        log(state, 'tool', `獄卒的行刑巨斧：這次替換提高了稀有度，因此${doors.length === 1 ? `牢房 ${cellLabel(doors[0].n)} 開啟` : `牢房 ${doors.map((c) => cellLabel(c.n)).join('與')} 開啟`}。`);
         for (const c of doors) openCell(state, c, 'side', events);
       }
     }
@@ -1711,7 +1713,7 @@
       const pool = boardInmates(state).filter((i) => state.params.ivoryIncludesSwapped || i.id !== fresh.id);
       const picks = shuffle(state, pool).slice(0, state.params.ivoryCount);
       if (picks.length) {
-        log(state, 'ivory', `Tusk: ${plural(picks.length, 'inmate')} each gain a tier (cells ${picks.map((i) => cellLabel(cellOf(state, i.id).n)).join(', ')}).`, { type: 'ivory', count: picks.length });
+        log(state, 'ivory', `象牙：${plural(picks.length, '隻囚犯')}各升一階（牢房 ${picks.map((i) => cellLabel(cellOf(state, i.id).n)).join('、')}）。`, { type: 'ivory', count: picks.length });
         for (const i of picks) if (boardCellOf(state, i.id)) promote(state, i, 1, false, events);
       }
     }
@@ -1727,7 +1729,7 @@
     const top = Math.max(...doors.map((c) => c.hidden.tier));
     const cell = pickOne(state, doors.filter((c) => c.hidden.tier === top));
     cell.known = 2;
-    log(state, 'tool', `Warden's Scales: cell ${cellLabel(cell.n)} holds a ${describe(cell.hidden)}, the best behind the locked doors.`);
+    log(state, 'tool', `典獄官的天平：牢房 ${cellLabel(cell.n)} 裡是一隻${describe(cell.hidden)}，是上鎖牢門後最好的囚犯。`);
   }
 
   function endDay(state) {
@@ -1745,7 +1747,7 @@
       return;
     }
     state.day += 1;
-    log(state, 'day', `Day ${state.day} of ${state.maxDays}.`);
+    log(state, 'day', `第 ${state.day} 天，共 ${state.maxDays} 天。`);
     beginDay(state, events);
     events.push({ type: 'day' });
   }
@@ -1764,11 +1766,11 @@
       best: Math.max(state.stats.best, ...roster.rows.map((r) => r.tier), 0),
       stats: Object.assign({}, state.stats),
     };
-    log(state, 'end', early ? 'The run was closed early. The handoff roster is ready.' : 'The run is over. The handoff roster is ready.');
+    log(state, 'end', early ? '這一局提前結束。交接名冊已備妥。' : '這一局結束了。交接名冊已備妥。');
   }
 
   function endRun(state) {
-    if (state.phase === 'ended') return fail('This run is already over.');
+    if (state.phase === 'ended') return fail('這一局已經結束了。');
     state.pending = [];
     if (state.chaining) {
       logDevour(state, state.chaining.at, state.chaining.bites);
@@ -1782,20 +1784,20 @@
 
   function choose(state, id) {
     const choice = state.pending[0];
-    if (!choice) return fail('There is nothing to choose right now.');
-    if (!choice.options.includes(id)) return fail('That option is not on offer.');
+    if (!choice) return fail('現在沒有需要選擇的東西。');
+    if (!choice.options.includes(id)) return fail('那個選項不在提供範圍內。');
     state.pending.shift();
     const events = [{ type: 'tool' }];
     if (choice.kind === 'gift') applyGift(state, id, events);
     else {
       state.tools.push(id);
-      log(state, 'tool', `Took the ${TOOLS[id].name}.`, { type: 'tool', id });
+      log(state, 'tool', `取得了${TOOLS[id].name}。`, { type: 'tool', id });
       if (state.phase === 'patrol') fitDestinations(state);
     }
     // A gift can remove the inmate a waiting event needs (the Brass Horn's
     // bites); the event is then lost.
     if (state.phase === 'event' && state.event && !state.cells[state.event.cell].inmate) {
-      log(state, 'event', `The ${eventName(state.event.kind)} in cell ${cellLabel(state.event.cell)} is lost: nobody is left there.`);
+      log(state, 'event', `牢房 ${cellLabel(state.event.cell)} 的${eventName(state.event.kind)}失效了：那裡已經沒有囚犯。`);
       state.event = null;
       state.phase = 'manage';
     }
@@ -1811,18 +1813,18 @@
   }
 
   function rerollOffer(state) {
-    if (!canReroll(state)) return fail('There is no re-roll left for this offer.');
+    if (!canReroll(state)) return fail('這次選擇已經沒有重骰次數了。');
     const choice = state.pending[0];
     let pool = TOOL_IDS.filter((t) => !has(state, t) && !choice.options.includes(t));
     if (pool.length < 3) pool = TOOL_IDS.filter((t) => !has(state, t));
     choice.options = drawTools(state, state, pool, 3);
     choice.rerolls -= 1;
-    log(state, 'tool', `Re-rolled the offer: ${choice.options.map((t) => TOOLS[t].name).join(', ')}.`, { type: 'reroll' });
+    log(state, 'tool', `重骰了選項：${choice.options.map((t) => TOOLS[t].name).join('、')}。`, { type: 'reroll' });
     return ok([]);
   }
 
   function applyGift(state, id, events) {
-    log(state, 'tool', `Warden's Treasure: ${GIFTS[id].name}.`, { type: 'gift', id });
+    log(state, 'tool', `典獄長的珍藏：${GIFTS[id].name}。`, { type: 'gift', id });
     if (id === 'ring') {
       for (const c of shuffle(state, state.cells.filter((x) => x.sealed)).slice(0, 3)) openCell(state, c, 'side', events);
     } else if (id === 'horn') {
@@ -1844,7 +1846,7 @@
         const possible = BEASTS.filter((b) => boardInmates(state).some((o) => canEat(state, { id: i.id, beast: b, tier: i.tier }, o)));
         if (possible.length) {
           i.beast = pickOne(state, possible);
-          log(state, 'tool', `Brand of Original Sin: cell ${cellLabel(cell.n)} is now a ${describe(i)}.`);
+          log(state, 'tool', `原罪烙印：牢房 ${cellLabel(cell.n)} 現在是一隻${describe(i)}。`);
         }
       }
       checkPrey(state);
@@ -1854,8 +1856,8 @@
   // ---------- Lab ----------
 
   function labCheck(state) {
-    if (state.phase === 'ended') return fail('This run is over.');
-    if (state.phase === 'event' || state.phase === 'office' || state.pending.length || state.chaining) return fail('Finish the current decision first.');
+    if (state.phase === 'ended') return fail('這一局已經結束了。');
+    if (state.phase === 'event' || state.phase === 'office' || state.pending.length || state.chaining) return fail('請先完成目前的決定。');
     return null;
   }
 
@@ -1863,8 +1865,8 @@
     const blocked = labCheck(state);
     if (blocked) return blocked;
     const cell = state.cells[n];
-    if (!cell) return fail('Pick a cell to edit.');
-    if (n === OFFICE) return fail("Cell 01 is the warden's office. Nothing can be placed there.");
+    if (!cell) return fail('請選一間要編輯的牢房。');
+    if (n === OFFICE) return fail('牢房 01 是審訊室，不能放任何東西。');
     Object.assign(cell, blankCell(n));
     const beast = BEASTS.includes(spec.beast) ? spec.beast : 'mammoth';
     const tier = clamp(Math.round(Number(spec.tier)) || 0, 0, RAINBOW - 1);
@@ -1875,28 +1877,28 @@
       cell.inmate = makeInmate(state, beast, tier);
       cell.ivory = !!spec.ivory;
       state.stats.best = Math.max(state.stats.best, tier);
-      what = `an open cell with a ${describe(cell.inmate)}${cell.ivory ? ' and Tusk' : ''}`;
+      what = `有一隻${describe(cell.inmate)}的開啟牢房${cell.ivory ? '（帶象牙）' : ''}`;
     } else if (spec.kind === 'empty') {
       cell.sealed = false;
-      what = 'an empty open cell';
+      what = '一間空的開啟牢房';
     } else if (spec.kind === 'nest') {
       cell.nest = { due: state.day + state.params.nestDays };
-      what = `a rat nest that hatches on day ${cell.nest.due}`;
+      what = `一個將在第 ${cell.nest.due} 天孵化的鼠巢`;
     } else if (spec.kind === 'hidden') {
       cell.hidden = makeInmate(state, beast, tier);
       cell.scratch = !!spec.scratch;
       cell.known = cell.scratch ? 1 : 0;
       cell.event = event;
-      what = `a sealed door hiding a ${describe(cell.hidden)}${cell.scratch ? ', scratched' : ''}`;
+      what = `一扇藏著${describe(cell.hidden)}的上鎖牢門${cell.scratch ? '（有劃痕）' : ''}`;
     } else {
       cell.event = event;
-      what = 'a sealed door with an unknown occupant';
+      what = '一扇裡面未知的上鎖牢門';
     }
-    if (event && cell.sealed && !cell.nest) what += `, with a ${eventName(event)} event`;
+    if (event && cell.sealed && !cell.nest) what += `，附帶獄中事變「${eventName(event)}」`;
     // An event placed by hand shows at once.
     cell.seen = !!cell.event;
     checkPrey(state);
-    log(state, 'lab', `Scene editor: cell ${cellLabel(n)} is now ${what}.`);
+    log(state, 'lab', `場景編輯器：牢房 ${cellLabel(n)} 現在是${what}。`);
     return ok([]);
   }
 
@@ -1905,15 +1907,15 @@
   function hunt(state, to) {
     const blocked = guard(state, 'manage');
     if (blocked) return blocked;
-    if (!has(state, 'trap')) return fail('Only the Blood-Stained Trap offers a Hunt.');
-    if (state.used.devour > 0 || state.used.swap > 0 || state.used.hunt) return fail('A day has a Consume, a Replace or a Hunt. End the day.');
-    if (state.used.noHunt) return fail('Your game offers no Hunt today.');
-    if (!huntTargets(state).includes(to)) return fail("A Hunt marks an inmate the Lion in the warden's cell can consume, when neither has a prey mark.");
+    if (!has(state, 'trap')) return fail('只有染紅的捕獸夾才能尋獵。');
+    if (state.used.devour > 0 || state.used.swap > 0 || state.used.hunt) return fail('一天只能吞噬、替換或尋獵擇一。請結束這一天。');
+    if (state.used.noHunt) return fail('你的遊戲今天沒有提供尋獵。');
+    if (!huntTargets(state).includes(to)) return fail('尋獵只能標記典獄長牢房裡的狂獅能吞噬的囚犯，而且兩者都還沒有獵物標記。');
     const lion = state.cells[state.position].inmate;
     const prey = state.cells[to].inmate;
     state.used.hunt = 1;
     state.prey.push({ lion: lion.id, prey: prey.id, preyBeast: prey.beast, rounds: state.params.preyRounds, next: state.day + 1 });
-    log(state, 'tool', `Blood-Stained Trap, Hunt: the ${describe(lion)} in cell ${cellLabel(state.position)} puts a Prey mark on the ${describe(prey)} in cell ${cellLabel(to)}. Each morning both rise a tier, for ${plural(state.params.preyRounds, 'morning')}.`, { type: 'trap', cell: to });
+    log(state, 'tool', `染紅的捕獸夾，尋獵：牢房 ${cellLabel(state.position)} 的${describe(lion)}對牢房 ${cellLabel(to)} 的${describe(prey)}加上獵物標記。之後每天早上兩者各升一階，持續 ${plural(state.params.preyRounds, '個早上')}。`, { type: 'trap', cell: to });
     return ok([]);
   }
 
@@ -1922,41 +1924,41 @@
     if (blocked) return blocked;
     const a = state.cells[lionCell];
     const b = state.cells[targetCell];
-    if (!a || a.sealed || !a.inmate || a.inmate.beast !== 'lion') return fail('Pick an open cell with a Lion.');
-    if (!b || b.sealed || !b.inmate || !canEat(state, a.inmate, b.inmate)) return fail('The prey must be a same-rarity inmate the Lion can eat.');
-    if (linkOf(state, a.inmate.id) || linkOf(state, b.inmate.id)) return fail('One of them already has a prey mark.');
+    if (!a || a.sealed || !a.inmate || a.inmate.beast !== 'lion') return fail('請選一間有狂獅的開啟牢房。');
+    if (!b || b.sealed || !b.inmate || !canEat(state, a.inmate, b.inmate)) return fail('獵物必須是狂獅能吃的同稀有度囚犯。');
+    if (linkOf(state, a.inmate.id) || linkOf(state, b.inmate.id)) return fail('其中一方已經有獵物標記了。');
     state.prey.push({ lion: a.inmate.id, prey: b.inmate.id, preyBeast: b.inmate.beast, rounds: state.params.preyRounds, next: state.day + 1 });
-    log(state, 'lab', `Scene editor: the Lion in cell ${cellLabel(lionCell)} marked the ${describe(b.inmate)} in cell ${cellLabel(targetCell)} as prey.`);
+    log(state, 'lab', `場景編輯器：牢房 ${cellLabel(lionCell)} 的狂獅把牢房 ${cellLabel(targetCell)} 的${describe(b.inmate)}標記為獵物。`);
     return ok([]);
   }
 
   function moveWarden(state, n) {
     const blocked = labCheck(state);
     if (blocked) return blocked;
-    if (n < 0 || n >= CELL_COUNT) return fail('Pick a cell.');
+    if (n < 0 || n >= CELL_COUNT) return fail('請選一間牢房。');
     state.position = n;
     // Destinations always come from the cells ahead of the warden.
     if (state.phase === 'patrol') rollDestinations(state);
-    log(state, 'lab', `Scene editor: the warden now stands ${n === OFFICE ? 'in the office' : `at cell ${cellLabel(n)}`}.`);
+    log(state, 'lab', `場景編輯器：典獄長現在${n === OFFICE ? '在審訊室' : `在牢房 ${cellLabel(n)}`}。`);
     return ok([]);
   }
 
   function addTool(state, id) {
     const blocked = labCheck(state);
     if (blocked) return blocked;
-    if (!TOOLS[id]) return fail('Unknown tool.');
-    if (has(state, id)) return fail('You already hold that tool.');
+    if (!TOOLS[id]) return fail('未知的刑具。');
+    if (has(state, id)) return fail('你已經持有那件刑具。');
     state.tools.push(id);
-    log(state, 'lab', `Scene editor: added the ${TOOLS[id].name}.`);
+    log(state, 'lab', `場景編輯器：加入了${TOOLS[id].name}。`);
     return ok([]);
   }
 
   function removeTool(state, id) {
     const blocked = labCheck(state);
     if (blocked) return blocked;
-    if (!has(state, id)) return fail('You do not hold that tool.');
+    if (!has(state, id)) return fail('你沒有持有那件刑具。');
     state.tools = state.tools.filter((t) => t !== id);
-    log(state, 'lab', `Scene editor: removed the ${TOOLS[id].name}.`);
+    log(state, 'lab', `場景編輯器：移除了${TOOLS[id].name}。`);
     return ok([]);
   }
 
@@ -2017,23 +2019,23 @@
     const own = linkOf(state, eater.id);
     if (own) {
       score -= own.rounds * step * 1.5;
-      notes.push('ends its prey mark if its beast changes');
+      notes.push('若野獸改變會結束牠的獵物標記');
     }
     const meal = state.cells[option.cell];
     const theirs = !meal.sealed ? linkOf(state, meal.inmate.id) : null;
     if (theirs && theirs !== own) {
       score -= theirs.rounds * step;
-      notes.push('ends a prey mark');
+      notes.push('會結束一個獵物標記');
     }
-    const target = meal.sealed ? 'the scratched door' : beastName(meal.inmate.beast);
-    const short = `${target} in ${cellLabel(option.cell)}, to ${TIERS[to]}`;
+    const target = meal.sealed ? '有劃痕門後的囚犯' : beastName(meal.inmate.beast);
+    const short = `${cellLabel(option.cell)} 的${target}，升到${TIERS[to]}`;
     return {
       kind,
       from,
       to: option.cell,
       score,
       short,
-      text: `${beastName(eater.beast)} in ${cellLabel(from)} eats ${target} in ${cellLabel(option.cell)}: ${TIERS[to]}${gain > 1 ? ` (+${gain})` : ''}${to === RAINBOW ? ', a Rainbow' : ''}${notes.length ? `; ${notes.join(', ')}` : ''}.`,
+      text: `${cellLabel(from)} 的${beastName(eater.beast)}吃掉 ${cellLabel(option.cell)} 的${target}：${TIERS[to]}${gain > 1 ? `（+${gain}）` : ''}${to === RAINBOW ? '，成為綺彩' : ''}${notes.length ? `；${notes.join('，')}` : ''}。`,
     };
   }
 
@@ -2046,46 +2048,46 @@
     const choice = state.pending[0];
     if (choice) {
       return choice.options
-        .map((id) => ({ kind: 'choose', id, score: choiceScore(state, id), text: `${toolName(id)}: ${toolText(id)}` }))
+        .map((id) => ({ kind: 'choose', id, score: choiceScore(state, id), text: `${toolName(id)}：${toolText(id)}` }))
         .sort((a, b) => b.score - a.score)
         .slice(0, 3);
     }
     if (state.chaining) {
       const from = boardCellOf(state, state.chaining.eater).n;
       const tips = chainOptions(state).map((o) => devourTip(state, from, o, 'chain')).sort((a, b) => b.score - a.score).slice(0, 3);
-      if (canStopChain(state)) tips.push({ kind: 'stopchain', from, score: 0, text: 'Stop the chain (Cancel): the eater keeps what it gained, and its meals stay on the block.' });
+      if (canStopChain(state)) tips.push({ kind: 'stopchain', from, score: 0, text: '停止連鎖（取消）：吞噬者保留已獲得的升階，牠的獵物留在監區上。' });
       return tips;
     }
     if (state.phase === 'office') {
       const pool = board.filter((i) => i.tier < RAINBOW);
       const raise = pool.reduce((sum, i) => sum + WORTH[Math.min(RAINBOW, i.tier + 1)] - WORTH[i.tier], 0) / Math.max(1, pool.length);
       return [
-        { kind: 'office', choice: 'bestow', score: raise, text: 'Bestow: 1 random inmate on the block rises a tier.' },
-        { kind: 'office', choice: 'instigate', score: 12, text: `Instigate: ${plural(instigateCount(state), 'special event')} on a random cell, a locked door or an inmate's.` },
+        { kind: 'office', choice: 'bestow', score: raise, text: '賞賜：監區上隨機 1 隻囚犯升一階。' },
+        { kind: 'office', choice: 'instigate', score: 12, text: `煽動：在隨機一間牢房（上鎖牢門或囚犯的牢房）出現 ${plural(instigateCount(state), '個獄中事變')}。` },
       ].sort((a, b) => b.score - a.score);
     }
     if (state.phase === 'event' && state.event) {
       if (state.event.kind === 'execution') {
         const victims = executionVictims(state, state.event.cell);
-        return [{ kind: 'event', accept: victims.length > 0, text: victims.length ? `Accept: the executioner removes ${plural(victims.length, 'inmate')} and rises ${victims.length} ${victims.length === 1 ? 'tier' : 'tiers'}.` : 'Skip: there is nobody for this inmate to execute.' }];
+        return [{ kind: 'event', accept: victims.length > 0, text: victims.length ? `接受：處刑者移除 ${plural(victims.length, '隻囚犯')}並升 ${victims.length} 階。` : '略過：這隻囚犯沒有可以處決的對象。' }];
       }
       if (state.event.kind === 'trickster') {
         const who = state.cells[state.event.cell].inmate;
         const gains = who && who.tier < SUPREME;
-        return [{ kind: 'event', accept: !!gains, text: gains ? `Accept: the ${describe(who)} becomes a Supreme.` : 'Skip: it is already a Supreme, and only its beast would change.' }];
+        return [{ kind: 'event', accept: !!gains, text: gains ? `接受：${describe(who)}變成至臻。` : '略過：牠已經是至臻，只有野獸會改變。' }];
       }
-      if (state.event.kind === 'appetite') return [{ kind: 'event', accept: true, text: `Accept: a lowest-rarity inmate gets ${APPETITE_TRIES} tries at +1 tier.` }];
-      if (state.event.kind === 'convict') return [{ kind: 'event', accept: true, text: 'Accept: a locked cell opens on a Legendary or better inmate.' }];
-      if (state.event.kind === 'crow') return [{ kind: 'event', accept: true, text: `Accept: the rarity behind the next ${CROW_CELLS} locked cells is shown.` }];
-      if (state.event.kind === 'freedom') return [{ kind: 'event', accept: true, text: `Accept: ${FREEDOM_CELLS} random locked cells open.` }];
-      if (state.event.kind === 'portion') return [{ kind: 'event', accept: true, text: `Accept: up to ${PORTION_INMATES} random inmates rise a tier.` }];
+      if (state.event.kind === 'appetite') return [{ kind: 'event', accept: true, text: `接受：一隻最低稀有度的囚犯獲得 ${APPETITE_TRIES} 次 +1 階的機會。` }];
+      if (state.event.kind === 'convict') return [{ kind: 'event', accept: true, text: '接受：一間上鎖的牢房開啟，裡面是傳奇以上的囚犯。' }];
+      if (state.event.kind === 'crow') return [{ kind: 'event', accept: true, text: `接受：顯示接下來 ${CROW_CELLS} 間上鎖牢房裡的稀有度。` }];
+      if (state.event.kind === 'freedom') return [{ kind: 'event', accept: true, text: `接受：隨機開啟 ${FREEDOM_CELLS} 間上鎖的牢房。` }];
+      if (state.event.kind === 'portion') return [{ kind: 'event', accept: true, text: `接受：最多 ${PORTION_INMATES} 隻隨機囚犯升一階。` }];
       if (USURP[state.event.kind]) {
         const u = USURP[state.event.kind];
-        return [{ kind: 'event', accept: true, text: `Accept: ${u.count === 'all' ? 'every inmate rises' : u.count === 1 ? 'a random inmate rises' : `${u.count} random inmates rise`} ${u.by === 1 ? 'a tier' : `${u.by} tiers`}.` }];
+        return [{ kind: 'event', accept: true, text: `接受：${u.count === 'all' ? '所有囚犯' : u.count === 1 ? '隨機一隻囚犯' : `隨機 ${u.count} 隻囚犯`}升${u.by === 1 ? '一階' : ` ${u.by} 階`}。` }];
       }
-      if (state.event.kind === 'ratway') return [{ kind: 'event', accept: true, text: 'Accept: move to any cell but the office, and open it if it is locked.' }];
+      if (state.event.kind === 'ratway') return [{ kind: 'event', accept: true, text: '接受：移動到審訊室以外的任何牢房，若上鎖就打開它。' }];
       const keepSmall = has(state, 'muzzle') && board.length <= 4;
-      return [{ kind: 'event', accept: !keepSmall, text: keepSmall ? 'Skip: a chain would flood the block and switch off the Agonizing Muzzle.' : 'Accept: your next patrol opens every sealed cell on the way to its destination.' }];
+      return [{ kind: 'event', accept: !keepSmall, text: keepSmall ? '略過：連鎖會讓監區擠滿囚犯，使痛苦口籠失效。' : '接受：下一次巡視會打開前往目的地沿途所有未開啟的牢房。' }];
     }
     if (state.phase === 'patrol') {
       for (const n of patrolOptions(state)) {
@@ -2096,31 +2098,31 @@
           // Walking to a known inmate makes it the one that devours today.
           const best = devourOptions(state, n).map((o) => devourTip(state, n, o, 'devour')).sort((a, b) => b.score - a.score)[0];
           score = best ? 10 + best.score : has(state, 'muzzle') && board.length <= 4 ? 8 : 2;
-          why = best ? `its ${describe(c.inmate)} can then consume (${best.short})` : `its ${describe(c.inmate)} has no target from there`;
+          why = best ? `牠的${describe(c.inmate)}接著可以吞噬（${best.short}）` : `牠的${describe(c.inmate)}在那裡沒有目標`;
         } else if (!c.sealed) {
           score = 1;
-          why = n === OFFICE ? 'Instigate or Bestow' : 'an empty cell';
+          why = n === OFFICE ? '煽動或賞賜' : '一間空牢房';
         } else if (c.nest) {
           score = -40;
-          why = `it destroys the rat nest due on day ${c.nest.due}`;
+          why = `會摧毀預定第 ${c.nest.due} 天孵化的鼠巢`;
         } else if (c.known && c.hidden) {
           const t = c.hidden.tier;
           score = 12 + WORTH[t] + counts[t] * 6;
-          why = `${c.known === 2 ? describe(c.hidden) : `${TIERS[t]} inmate`} inside${counts[t] ? `, pairs with ${counts[t]} ${TIERS[t]} on the block` : ''}`;
+          why = `裡面是${c.known === 2 ? describe(c.hidden) : `${TIERS[t]}囚犯`}${counts[t] ? `，可與監區上 ${counts[t]} 隻${TIERS[t]}配對` : ''}`;
         } else {
           score = 9;
-          why = 'unknown occupant';
+          why = '裡面未知';
         }
         if (c.sealed && c.event && c.seen) {
           score += 6;
-          why += '; a special event waits there';
+          why += '；那裡有一個獄中事變';
         }
         if (state.chain) {
           const opens = clockwisePath(state, n).filter((k) => state.cells[k].sealed).length;
           score += opens * 3;
-          why += `; the chain opens ${plural(opens, 'door')} on the way`;
+          why += `；連鎖沿途會打開 ${plural(opens, '扇門')}`;
         }
-        tips.push({ kind: 'patrol', cell: n, score, text: `Go to ${n === OFFICE ? 'Interrogation Room' : `cell ${cellLabel(n)}`}: ${why}.` });
+        tips.push({ kind: 'patrol', cell: n, score, text: `前往${n === OFFICE ? '審訊室' : `牢房 ${cellLabel(n)}`}：${why}。` });
       }
       tips.sort((a, b) => b.score - a.score);
       return tips.slice(0, 3);
@@ -2130,15 +2132,15 @@
     // Only the warden's cell can be swapped.
     const here = state.cells[state.position];
     if (canSwapNow(state) && here.ivory && !here.sealed && here.inmate) {
-      tips.push({ kind: 'swap', cell: here.n, score: 20 + Math.min(board.length, state.params.ivoryCount) * 6, text: `Replace the inmate in Tusk cell ${cellLabel(here.n)}: up to ${plural(state.params.ivoryCount, 'inmate')} gain a tier.` });
+      tips.push({ kind: 'swap', cell: here.n, score: 20 + Math.min(board.length, state.params.ivoryCount) * 6, text: `替換象牙牢房 ${cellLabel(here.n)} 的囚犯：最多 ${plural(state.params.ivoryCount, '隻囚犯')}各升一階。` });
     }
     tips.sort((a, b) => b.score - a.score);
     const out = tips.filter((t) => t.score > 0).slice(0, 4);
     if (!out.length) {
       const waits = [];
-      if (state.prey.length) waits.push('prey marks grow');
-      if (state.cells.some((c) => c.nest)) waits.push('nests hatch');
-      out.push({ kind: 'end', text: `Nothing on the block is worth doing now. End the day${waits.length ? ` so ${waits.join(' and ')}` : ''}.` });
+      if (state.prey.length) waits.push('獵物標記成長');
+      if (state.cells.some((c) => c.nest)) waits.push('鼠巢孵化');
+      out.push({ kind: 'end', text: `監區上目前沒有值得做的事。結束這一天${waits.length ? `，讓${waits.join('、')}` : ''}。` });
     }
     return out;
   }
@@ -2154,13 +2156,13 @@
     try {
       data = JSON.parse(typeof input === 'string' ? input : JSON.stringify(input));
     } catch (e) {
-      throw new Error('That is not valid save data. The JSON could not be read.');
+      throw new Error('這不是有效的存檔資料，無法讀取 JSON。');
     }
     if (data && data.app === 'tartarus-sim') data = data.state;
     const valid = data && data.v === VERSION && Array.isArray(data.cells) && data.cells.length === CELL_COUNT && Array.isArray(data.log) && typeof data.day === 'number';
-    if (!valid) throw new Error('That save is not from this version of the simulator.');
+    if (!valid) throw new Error('這個存檔不是來自這個版本的模擬器。');
     // The contract challenge is gone (it isn't in the live game).
-    if (data.mode === 'challenge') throw new Error('That save is a contract challenge, which the simulator no longer has. Start a new run.');
+    if (data.mode === 'challenge') throw new Error('這個存檔是契約挑戰，模擬器已不再提供這個模式。請開始新的一局。');
     data.mode = 'drill';
     delete data.challenge;
     delete data.loadout;
@@ -2237,7 +2239,7 @@
     removeTool: bounded(removeTool),
     patrolOptions, clockwisePath, devourOptions, startOptions, chainOptions, canStopChain, cageFight, gainFor, executionVictims, canEat, eatsOf, canDevourNow, canSwapNow, canHuntNow, huntTargets, canReroll,
     linkOf, cellOf, boardInmates, rosterOf, advise, limits,
-    toolText, toolName, eventName, describe, tierName, beastName, cellLabel, plural, stepsBetween, scarceBeasts, lowestInmates,
+    toolText, toolName, toolNameEn, eventName, describe, tierName, beastName, cellLabel, plural, stepsBetween, scarceBeasts, lowestInmates,
   };
 
   if (typeof module === 'object' && module.exports) module.exports = api;

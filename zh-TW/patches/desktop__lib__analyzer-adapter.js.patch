@@ -1,0 +1,54 @@
+desktop/lib/analyzer-adapter.js：分析器頁面（analyze.html / js/analyze.js）已翻成中文，
+這裡讀取結果面板文字的比對改成中英文都接受（中文為 out/js/analyze.js 的譯文，一字不差）。
+各擷取群組編號維持不變：中文用另一個 exec 接在 || 後面。
+
+  "Working it out…"              → 「計算中…」
+  "Nothing to decide here."      → 「這裡沒有需要決定的事。」
+  "X of Y games played"          → 「已模擬 X / Y 局」
+  "Expected: …"                  → 「預期：…」
+  "N cells marked Check"         → 「有N 間牢房標記「檢查」」（T.plural(n, '間牢房')）
+  "margin of error"              → 「誤差範圍內」
+  "After this first bite…"       → 原版 analyze.js 已沒有這段文字（舊比對），中文版也沒有對應，維持原樣。
+
+<<<< once
+ * ids and words, so keep them in step with analyze.html and js/analyze.js:
+====
+ * ids and words, so keep them in step with analyze.html and js/analyze.js
+ * (繁中版: each phrase is matched in English or in the translated page's
+ * Chinese: 計算中, 這裡沒有需要決定的事, 已模擬 X / Y 局, 預期：,
+ * N 間牢房標記「檢查」, 誤差範圍內):
+>>>>
+
+<<<< once
+    const flagged = Number((/(\d+) cells? marked Check/.exec(shotText) || [])[1] || 0);
+====
+    const flagged = Number((/(\d+) cells? marked Check/.exec(shotText) || /(\d+)\s*間牢房標記「檢查」/.exec(shotText) || [])[1] || 0);
+>>>>
+
+<<<< once
+    const working = shown(res) && /Working it out/.test(move);
+    const status = text($('az-res-status'));
+    const played = /([\d,]+) of ([\d,]+) games played/.exec(status);
+====
+    const working = shown(res) && /Working it out|計算中/.test(move);
+    const status = text($('az-res-status'));
+    const played = /([\d,]+) of ([\d,]+) games played/.exec(status) || /已模擬\s*([\d,]+)\s*\/\s*([\d,]+)\s*局/.exec(status);
+>>>>
+
+<<<< once
+      nothing: shown(res) && !working && !rec && /^Nothing to decide/.test(move),
+====
+      nothing: shown(res) && !working && !rec && /^(?:Nothing to decide|這裡沒有需要決定的事)/.test(move),
+>>>>
+
+<<<< once
+      expect: rec ? paras.find((p) => /^Expected:/.test(p)) || '' : '',
+====
+      expect: rec ? paras.find((p) => /^(?:Expected:|預期：)/.test(p)) || '' : '',
+>>>>
+
+<<<< once
+      close: /margin of error/.test(text($('az-res-note'))),
+====
+      close: /margin of error|誤差範圍內/.test(text($('az-res-note'))),
+>>>>

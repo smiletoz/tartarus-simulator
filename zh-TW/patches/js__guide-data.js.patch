@@ -1,0 +1,254 @@
+js/guide-data.js：刑具／秘藏珍品名稱（"name"）與習慣變體標籤（"label"）翻成中文，供 strategy.html 與教練顯示。
+此檔由 tools/strategy-sim.js 重新產生，所以每個名稱一個區塊，帶 key 當原文。
+刑具 id、habits 的 id 都不動。
+
+<<<< once
+"name":"Blood-Stained Trap: Berserk Lion"
+====
+"name":"染紅的捕獸夾：狂獅"
+>>>>
+<<<< once
+"name":"Elephant-Foot Maul: Mammoth"
+====
+"name":"象腳重錘：巨象"
+>>>>
+<<<< once
+"name":"Iron Crown of the Prison King: Berserk Lion"
+====
+"name":"牢中王的鐵冠：狂獅"
+>>>>
+<<<< once
+"name":"Hangman's Noose"
+====
+"name":"絞首繩"
+>>>>
+<<<< once
+"name":"Filthy Claws: Alpha Wolf"
+====
+"name":"髒污鐵爪：頭狼"
+>>>>
+<<<< once
+"name":"Severed Iron Maiden"
+====
+"name":"切開的人形棺"
+>>>>
+<<<< once
+"name":"Kin's Coin of Fate"
+====
+"name":"手足的命運硬幣"
+>>>>
+<<<< once
+"name":"Long-Chained Shackles"
+====
+"name":"長鏈腳鐐"
+>>>>
+<<<< once
+"name":"Scapegoat's Guillotine"
+====
+"name":"替罪人的斷頭台"
+>>>>
+<<<< once
+"name":"Avenger's Casket"
+====
+"name":"復仇者之匣"
+>>>>
+<<<< once
+"name":"Raging Beast's Agonizing Muzzle"
+====
+"name":"狂獸的劇痛口枷"
+>>>>
+<<<< once
+"name":"Skewered Rat Heads: Colossal Rat"
+====
+"name":"鼠頭串：碩鼠"
+>>>>
+<<<< once
+"name":"Maddened Beast's Barbed Collar"
+====
+"name":"瘋獸的倒刺項圈"
+>>>>
+<<<< once
+"name":"Ferocious Beast's Ravenous Chains"
+====
+"name":"兇獸的飢餓絞鏈"
+>>>>
+<<<< once
+"name":"Sorting Hook"
+====
+"name":"挑揀鉤"
+>>>>
+<<<< once
+"name":"Rusty Saw"
+====
+"name":"鏽鋸"
+>>>>
+<<<< once
+"name":"Executioner's Blacklist"
+====
+"name":"執刑官的黑名冊"
+>>>>
+<<<< once
+"name":"Fanged Guillotine: Alpha Wolf"
+====
+"name":"狼牙鍘刀：頭狼"
+>>>>
+<<<< once
+"name":"Felon's Dog Tag"
+====
+"name":"重刑銘牌"
+>>>>
+<<<< once
+"name":"Iron Tongs of Lust: Mammoth"
+====
+"name":"惡欲鐵鉗：巨象"
+>>>>
+<<<< once
+"name":"Burning Stake"
+====
+"name":"火刑柱"
+>>>>
+<<<< once
+"name":"Crowded Beastcage"
+====
+"name":"擁擠獸籠"
+>>>>
+<<<< once
+"name":"Barbed Whip"
+====
+"name":"棘刺鐵鞭"
+>>>>
+<<<< once
+"name":"Warden's Scales"
+====
+"name":"典獄官的天平"
+>>>>
+<<<< once
+"name":"Lost Ring of Keys"
+====
+"name":"遺落的鑰匙串"
+>>>>
+<<<< once
+"name":"Iron Pestle"
+====
+"name":"鐵杵"
+>>>>
+<<<< once
+"name":"Searing Branding Iron"
+====
+"name":"灼痛的烙鐵"
+>>>>
+<<<< once
+"name":"Short-Chained Shackles"
+====
+"name":"短鏈腳鐐"
+>>>>
+<<<< once
+"name":"Gaoler's Execution Axe"
+====
+"name":"獄卒的行刑巨斧"
+>>>>
+<<<< once
+"name":"Forged Key"
+====
+"name":"偽造鑰匙"
+>>>>
+<<<< once
+"name":"Squirming Iron Box: Colossal Rat"
+====
+"name":"蠕動鐵盒：碩鼠"
+>>>>
+<<<< once
+"name":"Crimson Vintage"
+====
+"name":"赤色佳釀"
+>>>>
+<<<< once
+"name":"Brass Horn of Strife"
+====
+"name":"鬥爭銅號"
+>>>>
+<<<< once
+"name":"Three-Headed Thumb Ring"
+====
+"name":"三首扳指"
+>>>>
+<<<< once
+"name":"Brand of Original Sin"
+====
+"name":"原罪烙印"
+>>>>
+<<<< once
+"label":"The full strategy"
+====
+"label":"完整策略"
+>>>>
+<<<< once
+"label":"Always accepting Executions"
+====
+"label":"一律接受處刑效率"
+>>>>
+<<<< once
+"label":"Never accepting Executions"
+====
+"label":"一律拒絕處刑效率"
+>>>>
+<<<< once
+"label":"Preferring short walks"
+====
+"label":"偏好短距離行走"
+>>>>
+<<<< once
+"label":"Ignoring the beast spread"
+====
+"label":"不考慮野獸分布"
+>>>>
+<<<< once
+"label":"Replacing Normals only"
+====
+"label":"只替換普通"
+>>>>
+<<<< once
+"label":"Replacing Rares too"
+====
+"label":"連稀有也替換"
+>>>>
+<<<< once
+"label":"Waiting for bigger chains (small threshold)"
+====
+"label":"等待更長的連鎖（低門檻）"
+>>>>
+<<<< once
+"label":"Waiting for bigger chains (large threshold)"
+====
+"label":"等待更長的連鎖（高門檻）"
+>>>>
+<<<< once
+"label":"Accepting Chain reactions"
+====
+"label":"接受連鎖反應"
+>>>>
+<<<< once
+"label":"Always choosing Bestow at the office"
+====
+"label":"審訊室一律選賞賜"
+>>>>
+<<<< once
+"label":"Always choosing Instigate at the office"
+====
+"label":"審訊室一律選煽動"
+>>>>
+<<<< once
+"label":"Never replacing"
+====
+"label":"從不替換"
+>>>>
+<<<< once
+"label":"A simple player"
+====
+"label":"簡單玩家"
+>>>>
+<<<< once
+"label":"Random moves"
+====
+"label":"隨機行動"
+>>>>

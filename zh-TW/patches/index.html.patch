@@ -1,0 +1,961 @@
+index.html：主遊戲頁面。
+不動：id、class、data-*、<option value>、URL、作者名稱與連結、程式註解、SVG 圖中的 M/L/W/R 字母。
+注意：#continue-meta、#btn-title-sound、#btn-lab-apply、#emblem-text、#phase-pill、#goal-title、
+#choice-eyebrow、#results-eyebrow 等的文字會被 js/ui.js 覆寫，這裡翻的是初始值。
+
+== head ==
+
+<<<< once
+<html lang="en">
+====
+<html lang="zh-Hant">
+>>>>
+
+<<<< once
+<title>Tartarus Simulator</title>
+<meta name="description" content="Fan-made English practice simulator for the Tartarus prison season of Torchlight: Infinite.">
+====
+<title>塔羅斯模擬器</title>
+<meta name="description" content="《火炬之光：無限》困獸賽季（塔羅斯監獄）的玩家自製練習模擬器，繁體中文翻譯版。">
+>>>>
+
+<<<< once
+family=IBM+Plex+Mono:wght@400;500&display=swap
+====
+family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+TC:wght@400;500;700;900&display=swap
+>>>>
+
+== 標題畫面 ==
+
+<<<< once
+      <p class="eyebrow">Torchlight: Infinite · Season 14 · Warden practice</p>
+      <h1 class="brand"><span class="brand-main">Tartarus</span><span class="brand-sub">Prison simulator</span></h1>
+      <p class="lede">Walk the ring of fifteen cells around the warden's office. Patrol a door each morning, let beasts consume rivals of the same rarity, and raise inmates from Normal to Rainbow before the handoff.</p>
+====
+      <p class="eyebrow">火炬之光：無限 · S14 困獸賽季 · 典獄長練習</p>
+      <h1 class="brand"><span class="brand-main">塔羅斯</span><span class="brand-sub">監獄模擬器</span></h1>
+      <p class="lede">繞著審訊室，在十五間牢房組成的環形監區裡巡視。每天早上巡視一扇門，讓野獸吞噬同稀有度的對手，在交接前把囚犯從普通一路養到綺彩。</p>
+>>>>
+
+<<<< once
+          <span class="route-name">Board analyzer</span>
+          <span class="route-text">Playing live? Enter your board exactly as it is, with your tools, and get the best move for that position.</span>
+          <span class="route-meta">Your position · move advice</span>
+====
+          <span class="route-name">盤面分析器</span>
+          <span class="route-text">正在實戰中？照實輸入你的盤面和刑具，取得這個局面的最佳動作。</span>
+          <span class="route-meta">你的局面 · 動作建議</span>
+>>>>
+
+<<<< once
+          <span>Continue run</span><small id="continue-meta"></small>
+====
+          <span>繼續這局</span><small id="continue-meta"></small>
+>>>>
+
+<<<< once
+          <span class="route-name">Rules drill</span>
+          <span class="route-text">Start from an empty prison: day 1, all 15 cells sealed. Best for a first run.</span>
+          <span class="route-meta">20 days · practice values</span>
+====
+          <span class="route-name">規則練習</span>
+          <span class="route-text">從空監獄開始：第1天，15間牢房全部上鎖。最適合第一次玩。</span>
+          <span class="route-meta">20天 · 練習數值</span>
+>>>>
+
+<<<< once
+          <span class="route-name">Focused drills</span>
+          <span class="route-text">Fixed scenes for special events, Tusk, Prey, Scratch and Rat nest, so you can test each one on its own.</span>
+          <span class="route-meta">5 scenes</span>
+====
+          <span class="route-name">專項練習</span>
+          <span class="route-text">針對獄中事變、象牙、獵物標記、劃痕和鼠巢的固定場景，可以逐一單獨測試。</span>
+          <span class="route-meta">5個場景</span>
+>>>>
+
+<<<< once
+          <span class="route-name">Strategy guide</span>
+          <span class="route-text">New here? Learn a rough strategy first: what over 25 million simulated runs say about vaulting Rainbows.</span>
+          <span class="route-meta">5-minute read</span>
+====
+          <span class="route-name">策略指南</span>
+          <span class="route-text">第一次來？先學個大致策略：超過2,500萬局模擬告訴你怎麼把綺彩送進收容區。</span>
+          <span class="route-meta">約5分鐘讀完</span>
+>>>>
+
+<<<< once
+        <button type="button" class="link" data-open="dlg-handbook">Handbook</button>
+        <button type="button" class="link" id="btn-title-import">Import save</button>
+        <button type="button" class="link" id="btn-title-sound">Sound: on</button>
+        <button type="button" class="link" data-open="dlg-about">About</button>
+====
+        <button type="button" class="link" data-open="dlg-handbook">手冊</button>
+        <button type="button" class="link" id="btn-title-import">匯入存檔</button>
+        <button type="button" class="link" id="btn-title-sound">音效：開</button>
+        <button type="button" class="link" data-open="dlg-about">關於</button>
+>>>>
+
+<<<< once
+      <figcaption class="sample-caption">A sample block. Cell 01 is the warden's office, and the prison cells run clockwise from 02. The lantern marks the warden, and glowing cells are today's patrol choices.</figcaption>
+====
+      <figcaption class="sample-caption">監區範例。01號是審訊室，牢房從02號開始順時針排列。提燈標示典獄長的位置，發光的牢房是今天可巡視的目的地。</figcaption>
+>>>>
+
+頁尾：作者資訊保留原文內容（譯成中文但保留名稱與連結），另加一行翻譯版說明。
+
+<<<< once
+        <span class="source-tag">Made by</span>
+        This English version is made by <strong>CoffeeBns</strong>: <a href="https://twitch.tv/coffeebns" target="_blank" rel="noopener">twitch.tv/coffeebns</a> and <a href="https://youtube.com/@CoffeeBns" target="_blank" rel="noopener">youtube.com/@CoffeeBns</a>.
+      </p>
+====
+        <span class="source-tag">製作</span>
+        英文版由 <strong>CoffeeBns</strong> 製作：<a href="https://twitch.tv/coffeebns" target="_blank" rel="noopener">twitch.tv/coffeebns</a> 與 <a href="https://youtube.com/@CoffeeBns" target="_blank" rel="noopener">youtube.com/@CoffeeBns</a>。
+      </p>
+      <p class="source-note">
+        <span class="source-tag">繁中版</span>
+        繁體中文翻譯版，譯自 CoffeeBns 的英文版 Tartarus Simulator。
+      </p>
+>>>>
+
+<<<< once
+        <span class="source-tag">Translation</span>
+        This began as an English translation of <a href="https://torchlightskill.com/talos/" target="_blank" rel="noopener">塔羅斯监狱 (Talos Prison)</a>, a free Chinese fan simulator by 爱玩游戏的吉吉罗. The board layout follows the original, but the rules in this version have been updated to match the video reveal, so it now differs heavily from the Chinese sim. The original author is not involved in this version.
+====
+        <span class="source-tag">來源</span>
+        英文版最初翻譯自 爱玩游戏的吉吉罗 製作的免費中文玩家模擬器 <a href="https://torchlightskill.com/talos/" target="_blank" rel="noopener">塔羅斯监狱 (Talos Prison)</a>。盤面配置沿用原版，但規則已依官方影片公開的內容更新，因此和中文原版差異很大。原作者並未參與此版本。
+>>>>
+
+<<<< once
+      <p class="fineprint">Free, fan-made and unofficial. Not affiliated with or endorsed by the makers of Torchlight: Infinite. Odds and costs are practice values and may differ from the live game.</p>
+====
+      <p class="fineprint">免費、玩家自製、非官方。與《火炬之光：無限》的開發商無關，也未經其認可。機率與花費皆為練習數值，可能與正式遊戲不同。</p>
+>>>>
+
+== 遊戲畫面 ==
+
+<<<< once
+        <button type="button" class="tb-logo" id="btn-home" title="Back to the title screen">Tartarus</button>
+====
+        <button type="button" class="tb-logo" id="btn-home" title="回到標題畫面">塔羅斯</button>
+>>>>
+
+<<<< once
+        <span class="day-label">Day</span>
+====
+        <span class="day-label">天數</span>
+>>>>
+
+<<<< once
+        <span class="phase" id="phase-pill">Patrol</span>
+====
+        <span class="phase" id="phase-pill">巡視</span>
+>>>>
+
+<<<< once
+        <button type="button" class="btn btn-ghost" id="btn-advisor" aria-pressed="false" title="Show the trainer: the recommended move, a live check of every option, and a grade for each move you make">Trainer</button>
+        <button type="button" class="btn btn-ghost" id="btn-sound" aria-pressed="true">Sound</button>
+        <button type="button" class="btn btn-ghost" id="btn-full">Fullscreen</button>
+        <button type="button" class="btn" id="btn-menu">Menu</button>
+====
+        <button type="button" class="btn btn-ghost" id="btn-advisor" aria-pressed="false" title="顯示教練：建議動作、每個選項的即時檢驗，以及你每一步的評分">教練</button>
+        <button type="button" class="btn btn-ghost" id="btn-sound" aria-pressed="true">音效</button>
+        <button type="button" class="btn btn-ghost" id="btn-full">全螢幕</button>
+        <button type="button" class="btn" id="btn-menu">選單</button>
+>>>>
+
+<<<< once
+    <aside class="rail" id="log-panel" aria-label="Warden's log">
+      <h2 class="panel-title">Warden's log</h2>
+====
+    <aside class="rail" id="log-panel" aria-label="典獄長紀錄">
+      <h2 class="panel-title">典獄長紀錄</h2>
+>>>>
+
+<<<< once
+      <div class="board" id="board" role="group" aria-label="Cell block, numbered clockwise from the top-left corner">
+====
+      <div class="board" id="board" role="group" aria-label="監區，從左上角開始順時針編號">
+>>>>
+
+<<<< once
+          <span id="emblem-text">Clockwise patrol</span>
+====
+          <span id="emblem-text">順時針巡視</span>
+>>>>
+
+<<<< once
+        <p class="dest-title">Select a destination</p>
+====
+        <p class="dest-title">選擇目的地</p>
+>>>>
+
+<<<< once
+        <p class="dest-hint" id="dest-hint">Go to a locked cell to open it, or to a known inmate so it makes today's consume. Click a card to choose it, then click it again or press Enter to go. A double-click goes at once.</p>
+====
+        <p class="dest-hint" id="dest-hint">走到未開啟的牢房就能打開它，走到已知的囚犯那裡就能讓牠進行今天的吞噬。點一下卡片選取，再點一次或按 Enter 出發；連點兩下立即出發。</p>
+>>>>
+
+<<<< once
+        <h2 class="recap-title" id="recap-title">Today so far</h2>
+====
+        <h2 class="recap-title" id="recap-title">今天到目前為止</h2>
+>>>>
+
+<<<< once
+        <button type="button" class="btn" id="btn-swap">Replace</button>
+        <button type="button" class="btn" id="btn-hunt" hidden>Hunt</button>
+        <button type="button" class="btn" id="btn-undo">Undo</button>
+        <button type="button" class="btn btn-primary" id="btn-end">End day</button>
+====
+        <button type="button" class="btn" id="btn-swap">替換</button>
+        <button type="button" class="btn" id="btn-hunt" hidden>尋獵</button>
+        <button type="button" class="btn" id="btn-undo">復原</button>
+        <button type="button" class="btn btn-primary" id="btn-end">結束這天</button>
+>>>>
+
+<<<< once
+    <aside class="ledger" id="ledger" aria-label="Run details">
+====
+    <aside class="ledger" id="ledger" aria-label="本局詳情">
+>>>>
+
+<<<< once
+        <h2 class="panel-title" id="goal-title">Objective</h2>
+====
+        <h2 class="panel-title" id="goal-title">目標</h2>
+>>>>
+
+<<<< once
+        <h2 class="panel-title">Trainer</h2>
+====
+        <h2 class="panel-title">教練</h2>
+>>>>
+
+<<<< once
+id="btn-trainer-play">Play it</button>
+====
+id="btn-trainer-play">照做</button>
+>>>>
+
+<<<< once
+        <h2 class="panel-title">Rainbow vault</h2>
+====
+        <h2 class="panel-title">綺彩收容區</h2>
+>>>>
+
+<<<< once
+        <h2 class="panel-title">Tools</h2>
+====
+        <h2 class="panel-title">刑具</h2>
+>>>>
+
+<<<< once
+        <h2 class="panel-title">Food chain</h2>
+====
+        <h2 class="panel-title">食物鏈</h2>
+>>>>
+
+<<<< once
+          <desc id="chain-desc">Single-meal food chain: Mammoth eats Lion. Lion eats Wolf. Wolf eats Rat. Rat eats Mammoth.</desc>
+====
+          <desc id="chain-desc">單次吞噬食物鏈：巨象吃狂獅，狂獅吃頭狼，頭狼吃碩鼠，碩鼠吃巨象。</desc>
+>>>>
+
+食物鏈圖：圓圈裡的 M/L/W/R 字母保留（只是圖示），外側的野獸名稱翻譯。
+
+<<<< once
+<text class="chain-name" x="50" y="20">Mammoth</text>
+====
+<text class="chain-name" x="50" y="20">巨象</text>
+>>>>
+
+<<<< once
+<text class="chain-name" x="190" y="20">Lion</text>
+====
+<text class="chain-name" x="190" y="20">狂獅</text>
+>>>>
+
+<<<< once
+<text class="chain-name" x="190" y="190">Wolf</text>
+====
+<text class="chain-name" x="190" y="190">頭狼</text>
+>>>>
+
+<<<< once
+<text class="chain-name" x="50" y="190">Rat</text>
+====
+<text class="chain-name" x="50" y="190">碩鼠</text>
+>>>>
+
+<<<< once
+        <p class="panel-note" id="chain-note">Mammoths eat Lions and Wolves, Lions eat Wolves and Rats, Wolves eat Rats, and Rats eat Mammoths. Arrows point from eater to meal. Both must share a rarity. A consume raises the eater one tier, then re-rolls its beast.</p>
+        <ol class="ladder" aria-label="Rarity ladder">
+          <li class="t0">Normal</li><li class="t1">Magic</li><li class="t2">Rare</li><li class="t3">Legendary</li><li class="t4">Supreme</li><li class="t5">Rainbow</li>
+====
+        <p class="panel-note" id="chain-note">巨象吃狂獅和頭狼，狂獅吃頭狼和碩鼠，頭狼吃碩鼠，碩鼠吃巨象。箭頭從吞噬者指向獵物，雙方必須稀有度相同。吞噬會讓吞噬者升一階，然後重骰牠的野獸種類。</p>
+        <ol class="ladder" aria-label="稀有度階梯">
+          <li class="t0">普通</li><li class="t1">魔法</li><li class="t2">稀有</li><li class="t3">傳奇</li><li class="t4">至臻</li><li class="t5">綺彩</li>
+>>>>
+
+== 共用：關閉按鈕 ==
+
+<<<< 10
+aria-label="Close">×</button>
+====
+aria-label="關閉">×</button>
+>>>>
+
+<<<< 3
+data-close>Close</button>
+====
+data-close>關閉</button>
+>>>>
+
+<<<< 3
+data-close>Done</button>
+====
+data-close>完成</button>
+>>>>
+
+== 新的一局 ==
+
+<<<< once
+      <div><p class="eyebrow">New run</p><h2 id="new-title">Open the block</h2></div>
+====
+      <div><p class="eyebrow">新的一局</p><h2 id="new-title">開啟監區</h2></div>
+>>>>
+
+<<<< once
+        <legend>Starting scene</legend>
+====
+        <legend>起始場景</legend>
+>>>>
+
+<<<< once
+        <label class="field-label" for="new-seed">Seed</label>
+====
+        <label class="field-label" for="new-seed">種子</label>
+>>>>
+
+<<<< once
+id="btn-reseed">New seed</button>
+====
+id="btn-reseed">新種子</button>
+>>>>
+
+<<<< once
+        <p class="field-note">The same seed, settings and moves replay the same results. Share a seed to compare runs.</p>
+====
+        <p class="field-note">相同的種子、設定和操作會重現相同的結果。分享種子就能和別人比較同一局。</p>
+>>>>
+
+<<<< once
+      <p class="field-note warn" id="new-replace" hidden>Starting a new run replaces the current one. Export it from Run &amp; saves first if you want to keep it.</p>
+====
+      <p class="field-note warn" id="new-replace" hidden>開始新的一局會取代目前這局。想保留的話，請先到「本局與存檔」匯出。</p>
+>>>>
+
+<<<< once
+      <button type="button" class="btn" data-close>Cancel</button>
+      <button type="submit" class="btn btn-primary" id="btn-start">Start run</button>
+====
+      <button type="button" class="btn" data-close>取消</button>
+      <button type="submit" class="btn btn-primary" id="btn-start">開始這局</button>
+>>>>
+
+== 選單 ==
+
+<<<< once
+      <div><p class="eyebrow">Warden's office</p><h2 id="menu-title">Menu</h2></div>
+====
+      <div><p class="eyebrow">審訊室</p><h2 id="menu-title">選單</h2></div>
+>>>>
+
+<<<< once
+<strong>Board analyzer</strong><span>Enter your live board and get the best move</span></a>
+====
+<strong>盤面分析器</strong><span>輸入實戰盤面，取得最佳動作</span></a>
+>>>>
+
+<<<< once
+<strong>Handbook</strong><span>Patrols, events, the food chain, markers and tools</span></button>
+====
+<strong>手冊</strong><span>巡視、獄中事變、食物鏈、標記與刑具</span></button>
+>>>>
+
+<<<< once
+<strong>Strategy guide</strong><span>A rough strategy from over 25 million simulated runs</span></a>
+====
+<strong>策略指南</strong><span>從超過2,500萬局模擬整理出的大致策略</span></a>
+>>>>
+
+<<<< once
+<strong>Run &amp; saves</strong><span>Inmates, undo, export and import</span></button>
+====
+<strong>本局與存檔</strong><span>囚犯、復原、匯出與匯入</span></button>
+>>>>
+
+<<<< once
+<strong>Preferences</strong><span>Trainer, quick decisions, motion and sound</span></button>
+====
+<strong>偏好設定</strong><span>教練、快速決定、動畫與音效</span></button>
+>>>>
+
+<<<< once
+<strong>Lab</strong><span>Scene editor and practice values</span></button>
+====
+<strong>實驗室</strong><span>場景編輯器與練習數值</span></button>
+>>>>
+
+<<<< once
+<strong>New run</strong><span>Pick a starting scene and a seed</span></button>
+====
+<strong>新的一局</strong><span>選擇起始場景和種子</span></button>
+>>>>
+
+<<<< once
+<strong>About</strong><span>Credits and disclaimer</span></button>
+====
+<strong>關於</strong><span>製作名單與免責聲明</span></button>
+>>>>
+
+<<<< once
+      <button type="button" class="btn" id="btn-menu-title">Title screen</button>
+      <button type="button" class="btn btn-primary" data-close>Back to the block</button>
+====
+      <button type="button" class="btn" id="btn-menu-title">標題畫面</button>
+      <button type="button" class="btn btn-primary" data-close>回到監區</button>
+>>>>
+
+== 手冊 ==
+
+<<<< once
+      <div><p class="eyebrow">Warden's handbook</p><h2 id="hb-title">How the block works</h2></div>
+====
+      <div><p class="eyebrow">典獄長手冊</p><h2 id="hb-title">監區怎麼運作</h2></div>
+>>>>
+
+<<<< once
+      <h3>The ring</h3>
+      <p>Sixteen cells form a ring, numbered clockwise from 01 in the top-left corner: 01 to 06 across the top, 07 to 09 down the right, 10 to 14 back along the bottom and 15 to 16 up the left. Cell 01 is the warden's office. Every run starts there, and nothing is ever held in it, so the other 15 cells hold the prisoners. The lantern marks where the warden stands.</p>
+====
+      <h3>環形監區</h3>
+      <p>十六個格子圍成一圈，從左上角的01號開始順時針編號：上排01到06，右側往下07到09，下排往回10到14，左側往上15到16。01號是審訊室，每一局都從這裡出發，而且這裡永遠不關任何東西，所以囚犯都關在其他15間牢房裡。提燈標示典獄長目前所在的位置。</p>
+>>>>
+
+<<<< once
+      <h3>A day on the block</h3>
+====
+      <h3>監區的一天</h3>
+>>>>
+
+<<<< once
+        <li><strong>Patrol.</strong> Each morning offers three destination cells from the next six clockwise from the warden. They glow on the ring and appear as cards under it. A destination can be a locked cell, which opens when the warden arrives, a cell whose inmate you already know, or the warden's office. You can't see inside a locked cell until it opens. You must patrol before anything else.</li>
+====
+        <li><strong>巡視。</strong>每天早上，會從典獄長順時針方向往前的六格中提供三個目的地。它們會在環形監區上發光，並以卡片顯示在下方。目的地可能是未開啟的牢房（典獄長抵達時就會打開）、已知囚犯的牢房，或審訊室。未開啟的牢房在打開前看不到裡面。每天一定要先巡視，才能做其他事。</li>
+>>>>
+
+<<<< once
+        <li><strong>The office.</strong> When the warden walks to the office, choose one: <strong>Instigate</strong> puts a new special event on a random cell, behind a locked door or beside an inmate (2 when the board has none), and <strong>Bestow</strong> raises 1 random inmate on the block a tier.</li>
+====
+        <li><strong>審訊室。</strong>典獄長走到審訊室時，二選一：<strong>煽動</strong>會在隨機一間牢房放上一個新的獄中事變，可能在未開啟的門後，也可能在囚犯旁邊（盤面上沒有任何事變時放2個）；<strong>賞賜</strong>會讓監區上隨機1隻囚犯升一階。</li>
+>>>>
+
+<<<< once
+        <li><strong>Consume.</strong> Once a day, after the patrol, and only the inmate in the warden's cell can start it. Double-click a highlighted target to consume it, or click it once to preview the bite and again to confirm. The eater then goes on eating while it has a valid target: after each bite you pick its next meal, even when there's only one, or stop the chain, as the game's Cancel button does. The eater keeps what it gained. The log and the recap under the ring show every bite as icons.</li>
+====
+        <li><strong>吞噬。</strong>每天一次，在巡視之後進行，而且只有典獄長所在牢房的囚犯能發動。連點兩下標亮的目標即可吞噬，或點一下預覽這一口、再點一次確認。之後只要還有合法目標，吞噬者就會繼續吃：每吃完一口，你要選下一個獵物（即使只剩一個也要選），或像遊戲裡的「取消」按鈕一樣停止連鎖。吞噬者會保留已獲得的升階。紀錄和環形監區下方的回顧會用圖示列出每一口。</li>
+>>>>
+
+<<<< once
+        <li><strong>Replace.</strong> Once a day, replace the inmate in the warden's cell with a brand-new random one. It can come out stronger or weaker. No other cell's inmate can be replaced. A day has a Replace or a consume, not both: either one uses up the other.</li>
+        <li><strong>End the day.</strong> The next morning, prey marks grow, ripe nests hatch, and new destinations are drawn. A recap of the day you just finished appears under the destination cards.</li>
+      </ol>
+      <p>When an inmate is consumed or sent off, its cell seals again. The next time that door opens, someone new is inside.</p>
+====
+        <li><strong>替換。</strong>每天一次，把典獄長所在牢房的囚犯換成一隻全新的隨機囚犯，可能變強也可能變弱。其他牢房的囚犯無法替換。每天只能替換或吞噬其中一項：做了一項，另一項就不能做。</li>
+        <li><strong>結束這天。</strong>隔天早上，獵物標記會成長、到期的鼠巢會孵化，並抽出新的目的地。剛結束那天的回顧會顯示在目的地卡片下方。</li>
+      </ol>
+      <p>囚犯被吞噬或送走後，牢房會重新上鎖。下次那扇門打開時，裡面會是新的囚犯。</p>
+>>>>
+
+<<<< once
+      <h3>The food chain</h3>
+      <p>Both sides must share a rarity: Mammoth eats Lion, Lion eats Wolf, Wolf eats Rat, and Rat eats Mammoth, and Mammoths also eat Wolves and Lions also eat Rats, as players' games show. No beast eats its own kind unless you hold the Skewered Rat Heads, which lets Rats eat Rats.</p>
+====
+      <h3>食物鏈</h3>
+      <p>雙方必須稀有度相同：巨象吃狂獅、狂獅吃頭狼、頭狼吃碩鼠、碩鼠吃巨象；此外，根據玩家實戰畫面，巨象也吃頭狼，狂獅也吃碩鼠。野獸不會吃同類，除非你持有鼠頭串，能讓碩鼠吃碩鼠。</p>
+>>>>
+
+<<<< once
+      <h3>Rarity</h3>
+      <p>Normal, Magic, Rare, Legendary, Supreme, Rainbow. A consume raises the eater one tier, then re-rolls its beast, so check its new matchups before the next meal. An inmate that reaches Rainbow leaves its cell for the vault and opens the Warden's Treasure. You can keep raising more Rainbows for the rest of the run.</p>
+====
+      <h3>稀有度</h3>
+      <p>普通、魔法、稀有、傳奇、至臻、綺彩。吞噬會讓吞噬者升一階，然後重骰牠的野獸種類，所以吃下一口前要先確認牠新的克制關係。升到綺彩的囚犯會離開牢房進入收容區，並開啟典獄長的珍藏。這一局剩下的時間裡，你可以繼續培養更多綺彩。</p>
+>>>>
+
+<<<< once
+      <h3>Special events</h3>
+      <p>Some sealed doors carry an event badge. When your patrol opens one, the event appears and you choose to accept or skip it. Doors opened any other way use up their event without triggering it.</p>
+====
+      <h3>獄中事變</h3>
+      <p>有些上鎖的門帶有事變徽章。巡視打開這種門時，事變會出現，你可以選擇接受或略過。用其他方式打開的門，事變會直接消失、不會觸發。</p>
+>>>>
+
+<<<< once
+        <dt class="m-event">Chain reaction</dt>
+        <dd>Your next patrol walks clockwise from the warden to the chosen destination and opens every sealed door on the way.</dd>
+        <dt class="m-event">Execution</dt>
+        <dd>The inmate in the opened cell removes every inmate on the block that it can eat and that has a lower rarity. It gains one tier for each.</dd>
+        <dt class="m-event">Behind Closed Doors</dt>
+        <dd>The inmate in the opened cell becomes a Supreme of the scarcest beast on the block (none counts; a tie is settled at random). It triggers no other effects.</dd>
+        <dt class="m-event">Ravenous Appetite</dt>
+        <dd>A random inmate of the lowest rarity on the block gets 5 tries at +1 tier, each with a 50% chance.</dd>
+        <dt class="m-event">High-Risk Convict</dt>
+        <dd>A random locked cell opens with a Legendary or better inmate inside. It triggers no other effects.</dd>
+        <dt class="m-event">Crow Whispers</dt>
+        <dd>The next 4 locked cells clockwise from the warden show the rarity of the inmate inside. Their beasts stay hidden until the doors open.</dd>
+        <dt class="m-event">Taste of Freedom</dt>
+        <dd>3 random locked cells open. They trigger no other effects.</dd>
+        <dt class="m-event">Extra Portion</dt>
+        <dd>Up to 3 random inmates rise a tier (all of them, with fewer on the block).</dd>
+        <dt class="m-event">Usurpation I</dt>
+        <dd>1 random inmate rises a tier. Usurpation I then leaves the special events and Usurpation II joins them, and one appears behind a random locked door at once.</dd>
+        <dt class="m-event">Usurpation II</dt>
+        <dd>2 random inmates rise a tier (its card hasn't been seen yet).</dd>
+        <dt class="m-event">"Treasure" Hunt</dt>
+        <dd>Every locked cell holding a Normal or Magic inmate shows its rarity (a "?" portrait), so the locked doors left dark hold Rare or better. Its card has only Confirm.</dd>
+      </dl>
+      <p>Special events (the game calls them Prison Incidents) turn up behind random locked doors, each kind in the pool equally likely, and their badge shows at once. Most runs start with one, and new ones keep appearing: some mornings, after a patrol, and after a Consume or Replace. An event can also wait in an open cell beside its inmate; walking in sets it off.</p>
+====
+        <dt class="m-event">連鎖反應</dt>
+        <dd>下一次巡視會從典獄長的位置順時針走到選定的目的地，並打開沿途所有上鎖的門。</dd>
+        <dt class="m-event">處刑效率</dt>
+        <dd>被打開牢房裡的囚犯，會移除監區上所有牠能吃、且稀有度比牠低的囚犯，每移除一隻升一階。</dd>
+        <dt class="m-event">暗箱操作</dt>
+        <dd>被打開牢房裡的囚犯，會變成監區上數量最少的野獸（數量為0也算；同數時隨機決定）的至臻囚犯。不會觸發其他效果。</dd>
+        <dt class="m-event">飢腸轆轆</dt>
+        <dd>監區上稀有度最低的隨機一隻囚犯獲得5次升階機會，每次有50%機率+1階。</dd>
+        <dt class="m-event">高危罪犯</dt>
+        <dd>隨機打開一間未開啟的牢房，裡面是傳奇以上的囚犯。不會觸發其他效果。</dd>
+        <dt class="m-event">鴉之低語</dt>
+        <dd>從典獄長順時針往前的4間未開啟牢房，會顯示裡面囚犯的稀有度。野獸種類要等門打開才會揭曉。</dd>
+        <dt class="m-event">自由的滋味</dt>
+        <dd>隨機打開3間未開啟的牢房。不會觸發其他效果。</dd>
+        <dt class="m-event">有福同享</dt>
+        <dd>最多3隻隨機囚犯升一階（監區上不足3隻時，全部升階）。</dd>
+        <dt class="m-event">僭越 I</dt>
+        <dd>隨機1隻囚犯升一階。之後僭越 I 會從獄中事變池中移除，改為加入僭越 II，並立刻在隨機一扇未開啟的門後出現一個。</dd>
+        <dt class="m-event">僭越 II</dt>
+        <dd>隨機2隻囚犯升一階（目前還沒看過它的卡片）。</dd>
+        <dt class="m-event">尋「寶」</dt>
+        <dd>所有關著普通或魔法囚犯的未開啟牢房都會顯示稀有度（「?」頭像），因此沒亮起的上鎖門後都是稀有以上。它的卡片只有「確認」。</dd>
+      </dl>
+      <p>獄中事變會出現在隨機的未開啟門後，事變池中每一種出現機率相同，徽章會立即顯示。大部分的局一開始就有一個，之後也會不斷出現：某些早上、巡視之後，以及吞噬或替換之後。事變也可能出現在已開啟的牢房裡、待在囚犯旁邊，走進去就會觸發。</p>
+>>>>
+
+<<<< once
+      <h3>Markers</h3>
+      <dl class="defs">
+        <dt class="m-ivory">Tusk</dt>
+        <dd>Belongs to a cell. Replace that cell's inmate while the warden stands there, and four random inmates on the block each gain a tier. The mark stays until the cell empties.</dd>
+        <dt class="m-prey">Prey</dt>
+        <dd>A Lion marks a same-rarity inmate it can eat. On each of the next three mornings both gain a tier. The mark ends if either leaves the block or changes beast.</dd>
+        <dt class="m-scratch">Scratch</dt>
+        <dd>A scratched door shows the rarity inside. A Wolf of that rarity can consume the occupant through the door, whatever its beast, and gains +3.</dd>
+        <dt class="m-nest">Rat nest</dt>
+        <dd>A sealed nest hatches a Rare Rat on the morning two days after it appears. Opening the door before then destroys it.</dd>
+      </dl>
+====
+      <h3>標記</h3>
+      <dl class="defs">
+        <dt class="m-ivory">象牙</dt>
+        <dd>屬於某間牢房。典獄長站在那裡時替換該牢房的囚犯，監區上隨機四隻囚犯各升一階。標記會一直留著，直到牢房清空。</dd>
+        <dt class="m-prey">獵物標記</dt>
+        <dd>狂獅標記一隻牠能吃的同稀有度囚犯。接下來三個早上，兩者每天各升一階。任一方離開監區或野獸種類改變時，標記就會結束。</dd>
+        <dt class="m-scratch">劃痕</dt>
+        <dd>有劃痕的門會顯示裡面的稀有度。同稀有度的頭狼可以隔著門吞噬裡面的囚犯，不論牠是什麼野獸，並+3階。</dd>
+        <dt class="m-nest">鼠巢</dt>
+        <dd>上鎖的鼠巢會在出現兩天後的早上孵出一隻稀有碩鼠。在那之前打開這扇門會摧毀鼠巢。</dd>
+      </dl>
+>>>>
+
+<<<< once
+      <h3>Objectives, tools and the Warden's Treasure</h3>
+      <p>Every drill starts with a pick of three random tools, as the live game does: take one, and it lasts for the whole run. As in the live game's offers, the eight named for a beast (Berserk Lion, Mammoth, Alpha Wolf, Colossal Rat) come up only about an eighth as often as the others. Each run also draws a random objective, shown with the run's goal: <strong>King of the Caged</strong> (at least 1 inmate's rarity reaches Supreme) or <strong>Prison Walk</strong> (move 18 tiles: every cell the warden walks counts). Meeting it earns a tool: pick one of three, and it lasts for the rest of the run. So a Supreme earns a tool only in runs whose objective is King of the Caged. The live game has more objectives, and what they pay isn't known yet, so every objective here pays a tool.</p>
+      <p>Each Rainbow that reaches the vault opens the Warden's Treasure: pick one gift, which takes effect at once. In the Lab you can change how many tools a drill starts with, or switch rewards off for pure rules practice.</p>
+====
+      <h3>目標、刑具與典獄長的珍藏</h3>
+      <p>和正式遊戲一樣，每次練習開始時會從三個隨機刑具中選一個，效果持續整局。也和正式遊戲的選項一樣，八個帶有野獸名稱的刑具（狂獅、巨象、頭狼、碩鼠）出現機率只有其他刑具的約八分之一。每局也會隨機抽一個目標，和本局目標一起顯示：<strong>困獸稱王</strong>（至少1隻囚犯的稀有度達到至臻）或<strong>巡獄之路</strong>（移動18格：典獄長走過的每一格都算）。達成後可獲得一個刑具：三選一，效果持續到本局結束。所以只有在目標是困獸稱王的局，做出至臻才會拿到刑具。正式遊戲還有更多目標，目前還不清楚它們的獎勵，所以這裡每個目標的獎勵都是刑具。</p>
+      <p>每有一隻綺彩進入收容區，就會開啟典獄長的珍藏：選一個珍藏，立即生效。在實驗室裡可以調整練習開局的刑具數量，或關閉獎勵，專心練習規則。</p>
+>>>>
+
+<<<< once
+      <h3>The trainer</h3>
+      <p>Press <strong>Trainer</strong> at the top to show it beside the block while you play. It works in every situation: patrols, events, consumes, Replaces, tools and gifts.</p>
+      <ul>
+        <li><strong>Recommended.</strong> The trained strategy's pick appears at once, with its reason and the lesson training found for that kind of decision. The recommended cell or button is marked on the board.</li>
+        <li><strong>Live check.</strong> Every option you have right now is played out hundreds of times from the current position. Everything you can't see is re-rolled each time, so it never peeks behind a door, and the trained strategy makes every later choice. Options are ranked by Rainbows vaulted by the end of the run. Each option is compared with the best on the same dice, and once the check finds a clearly better move, that becomes the recommendation. Consume options also show their exact chain odds.</li>
+        <li><strong>Grades.</strong> Each move you make is graded against the live check of the position before it: the best move, close to the best (within the margin of error), or what it cost. The panel keeps a tally for the run.</li>
+      </ul>
+      <p>For the big picture before you play, read the <a href="strategy.html">strategy guide</a>. To get advice on your own board in the live game, open the <a href="analyze.html">board analyzer</a>: set every cell and your tools, and it recommends the move the same way the trainer does.</p>
+====
+      <h3>教練</h3>
+      <p>按上方的<strong>教練</strong>，遊玩時就會在監區旁顯示。它適用於所有情況：巡視、獄中事變、吞噬、替換、刑具和珍藏。</p>
+      <ul>
+        <li><strong>建議動作。</strong>訓練出的策略會立即給出選擇，附上理由，以及訓練中針對這類決策得出的心得。建議的牢房或按鈕會在盤面上標示出來。</li>
+        <li><strong>即時檢驗。</strong>從目前局面出發，把你現在的每個選項各模擬數百次。每次都會重骰所有你看不到的東西，所以絕不會偷看門後，之後的每個選擇則交給訓練出的策略。選項依本局結束時送進收容區的綺彩數排名。每個選項都和最佳選項用相同的骰子比較，一旦檢驗找到明顯更好的動作，就會改為建議它。吞噬選項還會顯示精確的連鎖機率。</li>
+        <li><strong>評分。</strong>你的每一步都會和該步之前局面的即時檢驗比較，評為最佳動作、接近最佳（在誤差範圍內），或標出損失多少。面板會統計本局的成績。</li>
+      </ul>
+      <p>想在開玩前先掌握大方向，請讀<a href="strategy.html">策略指南</a>。想針對正式遊戲中自己的盤面取得建議，請開啟<a href="analyze.html">盤面分析器</a>：設定每一格和你的刑具，它就會用和教練相同的方式建議動作。</p>
+>>>>
+
+<<<< once
+      <p>There's no AI involved: the strategy is a set of scoring rules whose weights were tuned over millions of simulated runs. Its main lessons: consume whenever you can (unless it would break a prey mark, which gives free tiers every morning), replace a low-tier inmate in the warden's cell (Normal and Magic; Rare too when you have tools) when no consume there is worth more, since a day has one or the other, accept Chain reactions, Behind Closed Doors, Ravenous Appetite, High-Risk Convict, Crow Whispers, Taste of Freedom and the Usurpations, accept an Execution when it gains more than it removes, and keep opening doors. A Wolf or a Rat waiting at a tier feeds two of the four beasts a chain's eater can re-roll into, a Lion or a Mammoth one, and a Mammoth, a Rat and a Lion or a Wolf together keep any chain going. Held from day 1, the best instruments were the Elephant-Foot Maul, the Blood-Stained Trap and the Iron Crown of the Prison King, and the Severed Iron Maiden with Hangman's Noose turns most Replaces into Rainbows. The Squirming Iron Box hurt the most, then the Forged Key and the Gaoler's Execution Axe, and the Iron Pestle, the Searing Branding Iron and the Short-Chained Shackles came out level with no instrument.</p>
+
+      <h3>Practice values</h3>
+      <p>The live game's exact odds, daily limits and some timing details are not public. This simulator uses stated practice values for them. You can change the drill values in the Lab. Riots, followers, loot and combat are not simulated.</p>
+====
+      <p>這裡沒有用到 AI：策略是一套評分規則，權重是經過數百萬局模擬調整出來的。主要心得：能吞噬就吞噬（除非會破壞獵物標記，因為它每天早上都會白送升階）；當典獄長牢房裡沒有更值得的吞噬時，替換那裡的低階囚犯（普通和魔法；有刑具時稀有也算），因為每天只能二選一；接受連鎖反應、暗箱操作、飢腸轆轆、高危罪犯、鴉之低語、自由的滋味和各階僭越；處刑效率只在獲得比移除的多時才接受；並且持續開門。某個階級上等著的一隻頭狼或碩鼠，能餵飽連鎖吞噬者可能重骰成的四種野獸中的兩種，狂獅或巨象則只能餵一種；而同時有巨象、碩鼠，再加上狂獅或頭狼，任何連鎖都能接下去。從第1天就持有的情況下，最強的刑具是象腳重錘、染紅的捕獸夾和牢中王的鐵冠，而切開的人形棺搭配絞首繩能讓大部分替換變成綺彩。蠕動鐵盒傷害最大，其次是偽造鑰匙和獄卒的行刑巨斧；鐵杵、灼痛的烙鐵和短鏈腳鐐的表現則和沒有刑具差不多。</p>
+
+      <h3>練習數值</h3>
+      <p>正式遊戲的精確機率、每日上限和部分時機細節並未公開，本模擬器對這些項目使用標明的練習數值。你可以在實驗室修改練習數值。暴動、追隨者、掉寶和戰鬥都不在模擬範圍內。</p>
+>>>>
+
+== 本局與存檔 ==
+
+<<<< once
+      <div><p class="eyebrow">Current run</p><h2 id="run-title">Run &amp; saves</h2></div>
+====
+      <div><p class="eyebrow">目前這局</p><h2 id="run-title">本局與存檔</h2></div>
+>>>>
+
+<<<< once
+      <h3 class="sub">Inmates on the block</h3>
+====
+      <h3 class="sub">監區上的囚犯</h3>
+>>>>
+
+<<<< once
+        <button type="button" class="btn" id="btn-run-undo">Undo last move</button>
+        <button type="button" class="btn" id="btn-run-export">Export save</button>
+        <button type="button" class="btn" id="btn-run-import">Import save</button>
+        <button type="button" class="btn btn-danger" id="btn-run-end">End run now</button>
+      </div>
+      <p class="field-note">Your run saves automatically in this browser. Importing a save replaces the current run.</p>
+====
+        <button type="button" class="btn" id="btn-run-undo">復原上一步</button>
+        <button type="button" class="btn" id="btn-run-export">匯出存檔</button>
+        <button type="button" class="btn" id="btn-run-import">匯入存檔</button>
+        <button type="button" class="btn btn-danger" id="btn-run-end">立即結束這局</button>
+      </div>
+      <p class="field-note">你的進度會自動儲存在這個瀏覽器中。匯入存檔會取代目前這局。</p>
+>>>>
+
+== 匯出／匯入 ==
+
+<<<< once
+      <div><p class="eyebrow">Save file</p><h2 id="save-title">Export save</h2></div>
+====
+      <div><p class="eyebrow">存檔</p><h2 id="save-title">匯出存檔</h2></div>
+>>>>
+
+<<<< once
+        <p class="field-note">Copy this text and keep it somewhere safe. Paste it into Import save to continue later or on another device.</p>
+====
+        <p class="field-note">複製這段文字並妥善保存。之後或在其他裝置上，把它貼到「匯入存檔」就能繼續。</p>
+>>>>
+
+<<<< once
+          <button type="button" class="btn btn-primary" id="btn-save-copy">Copy save</button>
+          <button type="button" class="btn" id="btn-save-download">Download .json</button>
+====
+          <button type="button" class="btn btn-primary" id="btn-save-copy">複製存檔</button>
+          <button type="button" class="btn" id="btn-save-download">下載 .json</button>
+>>>>
+
+<<<< once
+        <p class="field-note">Choose a save file, or paste the save text below.</p>
+====
+        <p class="field-note">選擇存檔檔案，或在下方貼上存檔文字。</p>
+>>>>
+
+<<<< once
+placeholder="Paste save text here"></textarea>
+====
+placeholder="在這裡貼上存檔文字"></textarea>
+>>>>
+
+<<<< once
+id="btn-save-load">Load save</button>
+====
+id="btn-save-load">載入存檔</button>
+>>>>
+
+== 偏好設定 ==
+
+<<<< once
+      <div><p class="eyebrow">Preferences</p><h2 id="prefs-title">Your block, your way</h2></div>
+====
+      <div><p class="eyebrow">偏好設定</p><h2 id="prefs-title">打造你的監區</h2></div>
+>>>>
+
+<<<< once
+<span><strong>Trainer</strong><small>Show the recommended move beside the block, check every option live from the current position, and grade each move you make.</small></span>
+====
+<span><strong>教練</strong><small>在監區旁顯示建議動作，從目前局面即時檢驗每個選項，並為你的每一步評分。</small></span>
+>>>>
+
+<<<< once
+<span><strong>Quick decisions</strong><small>Patrols, consumes and Replaces happen on click, without a confirm step.</small></span>
+====
+<span><strong>快速決定</strong><small>巡視、吞噬和替換點一下就執行，不需要再確認。</small></span>
+>>>>
+
+<<<< once
+<span><strong>Animations</strong><small>Doors, consumes and Rainbow flashes.</small></span>
+====
+<span><strong>動畫</strong><small>開門、吞噬和綺彩閃光效果。</small></span>
+>>>>
+
+<<<< once
+<span><strong>Immersive view</strong><small>Hide the log and side panels and keep the block centered.</small></span>
+====
+<span><strong>沉浸模式</strong><small>隱藏紀錄和側邊面板，讓監區保持置中。</small></span>
+>>>>
+
+<<<< once
+<span><strong>Sound</strong><small>Plays after your first click or key press.</small></span>
+====
+<span><strong>音效</strong><small>在你第一次點擊或按鍵後開始播放。</small></span>
+>>>>
+
+<<<< once
+        <label class="field-label" for="pref-volume">Volume</label>
+====
+        <label class="field-label" for="pref-volume">音量</label>
+>>>>
+
+<<<< once
+id="btn-sound-test">Test</button>
+====
+id="btn-sound-test">試聽</button>
+>>>>
+
+== 實驗室 ==
+
+<<<< once
+      <div><p class="eyebrow">Practice only</p><h2 id="lab-title">Lab</h2></div>
+====
+      <div><p class="eyebrow">僅供練習</p><h2 id="lab-title">實驗室</h2></div>
+>>>>
+
+<<<< once
+aria-controls="lab-scene">Scene editor</button>
+====
+aria-controls="lab-scene">場景編輯器</button>
+>>>>
+
+<<<< once
+aria-controls="lab-params">Practice values</button>
+====
+aria-controls="lab-params">練習數值</button>
+>>>>
+
+<<<< once
+            <p class="field-label">Pick a cell</p>
+====
+            <p class="field-label">選擇一格</p>
+>>>>
+
+<<<< once
+            <p class="field-label" id="lab-cell-label">Cell 02</p>
+            <p class="field-note" id="lab-office-note" hidden>The warden's office never holds an inmate, marker or event. You can still move the warden here.</p>
+====
+            <p class="field-label" id="lab-cell-label">02號牢房</p>
+            <p class="field-note" id="lab-office-note" hidden>審訊室不會有囚犯、標記或獄中事變，但你仍可以把典獄長移到這裡。</p>
+>>>>
+
+<<<< once
+            <label class="field-label" for="lab-kind">Contents</label>
+            <select id="lab-kind">
+              <option value="open">Open cell with an inmate</option>
+              <option value="hidden">Sealed door hiding a chosen inmate</option>
+              <option value="unknown">Sealed door, occupant unknown</option>
+              <option value="nest">Rat nest</option>
+              <option value="empty">Empty open cell</option>
+            </select>
+====
+            <label class="field-label" for="lab-kind">內容</label>
+            <select id="lab-kind">
+              <option value="open">已開啟、有囚犯的牢房</option>
+              <option value="hidden">上鎖的門，裡面是指定的囚犯</option>
+              <option value="unknown">上鎖的門，裡面未知</option>
+              <option value="nest">鼠巢</option>
+              <option value="empty">已開啟的空牢房</option>
+            </select>
+>>>>
+
+<<<< once
+                <label class="field-label" for="lab-beast">Beast</label>
+====
+                <label class="field-label" for="lab-beast">野獸</label>
+>>>>
+
+<<<< once
+                <label class="field-label" for="lab-tier">Rarity</label>
+====
+                <label class="field-label" for="lab-tier">稀有度</label>
+>>>>
+
+<<<< once
+              <label id="lab-ivory-wrap"><input type="checkbox" id="lab-ivory"> Tusk</label>
+              <label id="lab-scratch-wrap"><input type="checkbox" id="lab-scratch"> Scratched door</label>
+====
+              <label id="lab-ivory-wrap"><input type="checkbox" id="lab-ivory"> 象牙</label>
+              <label id="lab-scratch-wrap"><input type="checkbox" id="lab-scratch"> 有劃痕的門</label>
+>>>>
+
+<<<< once
+              <label class="field-label" for="lab-event">Special event behind the door</label>
+              <select id="lab-event">
+                <option value="none">None</option>
+                <option value="chain">Chain reaction</option>
+                <option value="execution">Execution</option>
+                <option value="trickster">Behind Closed Doors</option>
+                <option value="appetite">Ravenous Appetite</option>
+                <option value="convict">High-Risk Convict</option>
+                <option value="crow">Crow Whispers</option>
+                <option value="freedom">Taste of Freedom</option>
+                <option value="usurp1">Usurpation I</option>
+                <option value="usurp2">Usurpation II</option>
+                <option value="hunt">"Treasure" Hunt</option>
+                <option value="portion">Extra Portion</option>
+              </select>
+====
+              <label class="field-label" for="lab-event">門後的獄中事變</label>
+              <select id="lab-event">
+                <option value="none">無</option>
+                <option value="chain">連鎖反應</option>
+                <option value="execution">處刑效率</option>
+                <option value="trickster">暗箱操作</option>
+                <option value="appetite">飢腸轆轆</option>
+                <option value="convict">高危罪犯</option>
+                <option value="crow">鴉之低語</option>
+                <option value="freedom">自由的滋味</option>
+                <option value="usurp1">僭越 I</option>
+                <option value="usurp2">僭越 II</option>
+                <option value="hunt">尋「寶」</option>
+                <option value="portion">有福同享</option>
+              </select>
+>>>>
+
+<<<< once
+              <button type="button" class="btn btn-primary" id="btn-lab-apply">Apply to cell 02</button>
+              <button type="button" class="btn" id="btn-lab-warden">Move the warden here</button>
+====
+              <button type="button" class="btn btn-primary" id="btn-lab-apply">套用到02號牢房</button>
+              <button type="button" class="btn" id="btn-lab-warden">把典獄長移到這裡</button>
+>>>>
+
+<<<< once
+              <label class="field-label" for="lab-prey">Prey for this Lion</label>
+====
+              <label class="field-label" for="lab-prey">這隻狂獅的獵物</label>
+>>>>
+
+<<<< once
+id="btn-lab-prey">Mark prey</button>
+====
+id="btn-lab-prey">標記獵物</button>
+>>>>
+
+<<<< once
+            <label class="field-label" for="lab-tool">Tools</label>
+====
+            <label class="field-label" for="lab-tool">刑具</label>
+>>>>
+
+<<<< once
+id="btn-lab-tool">Add tool</button>
+====
+id="btn-lab-tool">加入刑具</button>
+>>>>
+
+<<<< once
+        <p class="field-note">Edits change the current drill right away and can be undone.</p>
+====
+        <p class="field-note">修改會立即套用到目前的練習，也可以復原。</p>
+>>>>
+
+<<<< once
+        <p class="field-note">These values apply to new drills.</p>
+====
+        <p class="field-note">這些數值會套用到新的練習。</p>
+>>>>
+
+<<<< once
+      <button type="button" class="btn" id="btn-params-reset" hidden>Reset to defaults</button>
+      <button type="button" class="btn btn-primary" id="btn-params-save" hidden>Save and start a new drill</button>
+====
+      <button type="button" class="btn" id="btn-params-reset" hidden>恢復預設值</button>
+      <button type="button" class="btn btn-primary" id="btn-params-save" hidden>儲存並開始新的練習</button>
+>>>>
+
+== 選擇（刑具／秘藏珍品）==
+
+<<<< once
+      <div><p class="eyebrow" id="choice-eyebrow">Reward</p><h2 id="choice-title">Choose one</h2></div>
+====
+      <div><p class="eyebrow" id="choice-eyebrow">獎勵</p><h2 id="choice-title">選擇一個</h2></div>
+>>>>
+
+== 結算 ==
+
+<<<< once
+      <div><p class="eyebrow" id="results-eyebrow">Handoff</p><h2 id="results-title">Handoff roster</h2></div>
+====
+      <div><p class="eyebrow" id="results-eyebrow">交接</p><h2 id="results-title">交接名冊</h2></div>
+>>>>
+
+<<<< once
+      <h3 class="sub">Roster by rarity</h3>
+====
+      <h3 class="sub">依稀有度排列的名冊</h3>
+>>>>
+
+<<<< once
+      <button type="button" class="btn" id="btn-results-copy">Copy summary</button>
+      <button type="button" class="btn" data-close>View the block</button>
+      <button type="button" class="btn btn-primary" id="btn-results-new">New run</button>
+====
+      <button type="button" class="btn" id="btn-results-copy">複製摘要</button>
+      <button type="button" class="btn" data-close>查看監區</button>
+      <button type="button" class="btn btn-primary" id="btn-results-new">新的一局</button>
+>>>>
+
+== 關於 ==
+
+<<<< once
+      <div><p class="eyebrow">About</p><h2 id="about-title">Tartarus Simulator</h2></div>
+====
+      <div><p class="eyebrow">關於</p><h2 id="about-title">塔羅斯模擬器</h2></div>
+>>>>
+
+<<<< once
+      <p>A free English practice tool for the Tartarus prison season of <em>Torchlight: Infinite</em>. Use it to learn the patrol ring, the food chain, rarity climbs, events and markers before you play the season.</p>
+      <p>This began as an English translation of the Chinese fan simulator <a href="https://torchlightskill.com/talos/" target="_blank" rel="noopener">塔羅斯监狱 (Talos Prison)</a> by 爱玩游戏的吉吉罗, and its board layout follows the original. The rules in this version have since been updated to match the video reveal, so it now differs heavily from the Chinese sim. Rules changed after the reveal include the warden's office in cell 01, patrol choices from the six cells ahead, no scouting, and one consume a day from the warden's cell, with chains that can't be stopped.</p>
+      <p>This English version was rebuilt independently with its own code and artwork, and the original author is not involved. No code, images or audio from that tool were copied.</p>
+      <p>This English version is made by CoffeeBns: <a href="https://twitch.tv/coffeebns" target="_blank" rel="noopener">twitch.tv/coffeebns</a> and <a href="https://youtube.com/@CoffeeBns" target="_blank" rel="noopener">youtube.com/@CoffeeBns</a>.</p>
+      <p>Original author: 爱玩游戏的吉吉罗 on <a href="https://v.douyin.com/okD24Xnc6wo/" target="_blank" rel="noopener">Douyin</a>, also known as 二零后游戏荒 on <a href="https://space.bilibili.com/39881994" target="_blank" rel="noopener">Bilibili</a>.</p>
+      <p>Fan-made and unofficial. It is not affiliated with or endorsed by the developers or publishers of <em>Torchlight: Infinite</em>, and game names belong to their owners. Odds and limits are practice values, so live results will differ.</p>
+====
+      <p>《火炬之光：無限》困獸賽季（塔羅斯監獄）的免費練習工具。開打賽季前，可以用它熟悉環形巡視、食物鏈、稀有度升階、獄中事變和標記。</p>
+      <p>英文版最初是翻譯自 爱玩游戏的吉吉罗 的中文玩家模擬器 <a href="https://torchlightskill.com/talos/" target="_blank" rel="noopener">塔羅斯监狱 (Talos Prison)</a>，盤面配置也沿用原版。之後規則已依官方影片公開的內容更新，因此和中文原版差異很大。公開後修改的規則包括：審訊室位於01號、巡視目的地從前方六格中選、不能偵察，以及每天一次由典獄長所在牢房發動的吞噬，連鎖無法中途停止。</p>
+      <p>英文版是以自己的程式碼和美術獨立重製，原作者並未參與。沒有複製原工具的任何程式碼、圖片或音訊。</p>
+      <p>英文版由 CoffeeBns 製作：<a href="https://twitch.tv/coffeebns" target="_blank" rel="noopener">twitch.tv/coffeebns</a> 與 <a href="https://youtube.com/@CoffeeBns" target="_blank" rel="noopener">youtube.com/@CoffeeBns</a>。</p>
+      <p>本頁為繁體中文翻譯版，譯自 CoffeeBns 的英文版。</p>
+      <p>原作者：<a href="https://v.douyin.com/okD24Xnc6wo/" target="_blank" rel="noopener">抖音</a>上的 爱玩游戏的吉吉罗，在<a href="https://space.bilibili.com/39881994" target="_blank" rel="noopener">嗶哩嗶哩</a>上又名 二零后游戏荒。</p>
+      <p>玩家自製、非官方。與《火炬之光：無限》的開發商或發行商無關，也未經其認可；遊戲名稱屬於各自的權利人。機率與上限皆為練習數值，實際遊戲結果會有所不同。</p>
+>>>>

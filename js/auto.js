@@ -88,7 +88,7 @@
       const p = m.pixels;
       bitmap = await createImageBitmap(p ? new ImageData(new Uint8ClampedArray(p.buffer), p.width, p.height) : m.blob);
     } catch (e) {
-      answer({ read: { ok: false, reason: 'the picture couldn’t be opened' } });
+      answer({ read: { ok: false, reason: '無法開啟這張圖片' } });
       return;
     }
     if (m.kind === 'objective') {
@@ -96,7 +96,7 @@
       const read = await A.readObjective(bitmap);
       answer({ read });
       // On a client not in English, its screenshot can be sent.
-      if (!read.ok && A.langMissed) A.langMissed('objective or start-of-run card', bitmap, read.reason);
+      if (!read.ok && A.langMissed) A.langMissed('目標或開局卡', bitmap, read.reason);
       if (read.ok && mine === newest) answer({ state: 'used', asked: A.useObjective(read) });
       return;
     }
@@ -110,7 +110,7 @@
       const read = await A.readPick(bitmap);
       if (read.ok) {
         answer({ read });
-        if (read.unsure && A.langMissed) A.langMissed('instrument offer', bitmap, `${read.unsure} of the cards not read`);
+        if (read.unsure && A.langMissed) A.langMissed('刑具選項', bitmap, `有 ${read.unsure} 張卡片沒讀到`);
         if (mine !== newest) return;
         const asked = A.usePick(read, fresh);
         answer({ state: 'used', asked });
@@ -119,7 +119,7 @@
       // No offer in the picture: the log's line came, but the screen was
       // already the board (report 327: the patrol's doors, read right,
       // while the advice stayed on an offer's pick). It's read as a board.
-      offerMissed = read.reason || 'not read';
+      offerMissed = read.reason || '沒讀到';
     }
     // A picture the log didn't name (Take a picture now) may be the
     // instrument offer: at least two of its cards read surely, which no
@@ -140,7 +140,7 @@
     }
     const read = await A.readFrame(bitmap);
     // Neither an offer nor a board: an offer in another language, maybe.
-    if (!read.ok && offerMissed && A.langMissed) A.langMissed('instrument offer', bitmap, offerMissed);
+    if (!read.ok && offerMissed && A.langMissed) A.langMissed('刑具選項', bitmap, offerMissed);
     // A picture with no board in it: maybe the Warden's Treasure, read by
     // its printed text. A board's picture can catch it too (report 55).
     if (!read.ok && !read.skipped && A.readTreasure) {
@@ -154,7 +154,7 @@
     answer({ read });
     // The board behind a Warden's Treasure that couldn't be read: say so,
     // rather than ask for View Prison Status again.
-    if (!read.ok && m.treasureView && A.toast) A.toast('The board behind the Warden’s Treasure couldn’t be read from that picture. View it again a little longer, or press Advise with the board as it is.', 'bad');
+    if (!read.ok && m.treasureView && A.toast) A.toast('無法從那張圖片讀出典獄長的珍藏背後的盤面。請再查看久一點，或按「以目前盤面給建議」。', 'bad');
     // The newest picture wins: an older one still being read is left.
     if (!read.ok || mine !== newest) return;
     A.useReading();
@@ -189,8 +189,10 @@
   const now = document.getElementById('az-follow-now');
   let status = null;
   let heard = 0;
-  const NO_EVENTS = 'No game events in the log yet. In the game, press Esc and click Enable Log (under Account Related), then log out and back in.';
+  const NO_EVENTS = '紀錄檔裡還沒有遊戲事件。請在遊戲中按 Esc，點「帳號相關」底下的 Enable Log（啟用日誌），然後登出再登入。';
   const time = (t) => new Date(t).toLocaleTimeString();
+  const KIND_NAMES = { board: '盤面', instruments: '刑具選項', brushstroke: '筆觸', objective: '目標', treasure: '典獄長的珍藏', open: '開門', startover: '重新開始', chest: '寶箱', finish: '結束', manual: '手動' };
+  const kindName = (k) => KIND_NAMES[k] || k;
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   function renderFollow() {
     if (!bar) return;
@@ -199,13 +201,13 @@
     const before = !C.agreed() && !!C.agreedBefore && C.agreedBefore();
     bar.hidden = !C.agreed() && !before;
     if (bar.hidden) return;
-    const link = '<a href="follow.html#follow" target="tartarus-follow">the Auto Screenshot Mode page</a>';
+    const link = '<a href="follow.html#follow" target="tartarus-follow">自動截圖模式頁面</a>';
     if (before) {
       bar.className = 'az-follow is-warn';
       bar.title = '';
-      barText.innerHTML = `Auto Screenshot Mode was updated, and it’s off until you agree again. Open <a href="follow.html#agree" target="tartarus-follow">the Auto Screenshot Mode page</a>, read what changed and agree, then share the game window again. Until then, no pictures come here and Take a picture now is off.`;
+      barText.innerHTML = `自動截圖模式已更新，在你重新同意之前會保持關閉。請開啟<a href="follow.html#agree" target="tartarus-follow">自動截圖模式頁面</a>，看過變更內容並同意，然後重新分享遊戲視窗。在那之前不會有圖片傳來，「立即截圖」也無法使用。`;
       now.disabled = true;
-      now.title = 'Agree again on the Auto Screenshot Mode page first.';
+      now.title = '請先到自動截圖模式頁面重新同意。';
       return;
     }
     let ok = false;
@@ -213,11 +215,11 @@
     let quiet = false;
     let text;
     if (!running()) {
-      text = `Auto Screenshot Mode isn’t running. Open ${link} to connect your game log and share the game window.`;
+      text = `自動截圖模式沒有在執行。請開啟${link}，連接遊戲紀錄檔並分享遊戲視窗。`;
     } else {
-      const file = esc(status.file || 'the game log');
-      const log = { on: `following ${file}`, starting: 'opening the game log', gone: `${file} isn’t there`, error: 'the game log can’t be read' }[status.log] || 'the game log isn’t connected';
-      const win = status.window === 'on' ? 'sharing the game window' : 'the game window isn’t shared';
+      const file = esc(status.file || '遊戲紀錄檔');
+      const log = { on: `正在追蹤 ${file}`, starting: '正在開啟遊戲紀錄檔', gone: `找不到 ${file}`, error: '無法讀取遊戲紀錄檔' }[status.log] || '遊戲紀錄檔未連接';
+      const win = status.window === 'on' ? '正在分享遊戲視窗' : '遊戲視窗未分享';
       // The game's Enable Log is off: no triggers can come.
       const off = status.log === 'on' && status.detail === 'off';
       // Following, but no trigger has matched yet: the bar is yellow, and
@@ -228,18 +230,18 @@
       ok = status.log === 'on' && status.window === 'on' && !quiet;
       warn = status.log === 'on' && status.window === 'on' && quiet;
       const l = status.last;
-      const last = l ? ` Last picture ${time(l.at)}${l.kind ? ` (${esc(l.kind)})` : ''}${l.ok ? '' : `: none taken, ${esc((l.why || 'the window wasn’t shared').replace(/\.$/, ''))}`}.` : ' No pictures yet.';
-      const trig = status.triggers ? ` ${status.triggers} triggers.` : '';
-      const detail = off ? ' The game isn’t writing the lines it needs: turn on <a href="follow.html#follow-enable-log" target="tartarus-follow">the game’s log</a> (press Esc, then Enable Log), then log out and back in.'
-        : waiting ? ' No game events yet: pictures come by themselves once the log shows a move.' : '';
-      text = `Auto Screenshot Mode: ${log}, ${win}.${trig}${last}${detail}${ok || warn ? '' : ` Fix it on ${link}.`}`;
+      const last = l ? `上一張圖片 ${time(l.at)}${l.kind ? `（${esc(kindName(l.kind))}）` : ''}${l.ok ? '' : `：沒有截到，${esc((l.why || '視窗沒有分享').replace(/[.。]$/, ''))}`}。` : '還沒有圖片。';
+      const trig = status.triggers ? `${status.triggers} 個觸發條件。` : '';
+      const detail = off ? '遊戲沒有寫出需要的紀錄：請開啟<a href="follow.html#follow-enable-log" target="tartarus-follow">遊戲的日誌</a>（按 Esc，再按 Enable Log），然後登出再登入。'
+        : waiting ? '還沒有遊戲事件：紀錄檔一出現動作，圖片就會自動傳來。' : '';
+      text = `自動截圖模式：${log}，${win}。${trig}${last}${detail}${ok || warn ? '' : `請到${link}修正。`}`;
     }
     bar.className = `az-follow ${ok ? 'is-ok' : warn ? 'is-warn' : 'is-off'}`;
     bar.title = quiet ? NO_EVENTS : '';
     barText.innerHTML = text;
     // A picture can be taken from here while the game window is shared.
     now.disabled = !(running() && status.window === 'on');
-    now.title = now.disabled ? 'Share the game window on the Auto Screenshot Mode page first.' : 'Take a picture of the game now, and read it here.';
+    now.title = now.disabled ? '請先在自動截圖模式頁面分享遊戲視窗。' : '立即擷取遊戲畫面，並在這裡辨識。';
   }
   const running = () => !!status && !status.closed && Date.now() - heard <= 25000;
 

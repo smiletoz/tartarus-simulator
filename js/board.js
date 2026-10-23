@@ -66,7 +66,7 @@
     '<path class="o-wood" d="M8 32h5v16H8zM51 32h5v16h-5z"/>' +
     '<rect class="o-wood-lo" x="29" y="32" width="18" height="8" rx="1"/>' +
     '<rect class="o-knob" x="36" y="35.2" width="4" height="1.6" rx="0.8"/>' +
-    '</svg><span class="office-name">Office</span></span>';
+    '</svg><span class="office-name">審訊室</span></span>';
 
   // The Torture Instruments, drawn after their art in the live game (the
   // reward cards and the instrument panel). Keyed by the simulator's tool id.
@@ -379,7 +379,7 @@
   function cellParts(cell, st) {
     const warden = st.position === cell.n;
     if (cell.n === T.OFFICE) {
-      const label = `Cell ${L(cell.n)}: the warden's office. No inmate is ever held here${warden ? '. The warden is here' : ''}`;
+      const label = `${L(cell.n)} 號牢房：審訊室。這裡永遠不會關押囚犯${warden ? '。典獄長在這裡' : ''}`;
       return { cls: ['cell', 'is-office'], body: OFFICE_ART, hint: '', badges: '', label, warden };
     }
     const inmate = cell.inmate;
@@ -392,62 +392,62 @@
     let body = '';
     let hint = '';
     const badges = [];
-    let label = `Cell ${L(cell.n)}: `;
+    let label = `${L(cell.n)} 號牢房：`;
     if (cell.sealed) {
       if (cell.nest) {
         const left = Math.max(0, cell.nest.due - st.day);
-        hint = `<span class="nest-count">${left}</span><span class="nest-label"><span class="nest-word">Nest · </span>day ${cell.nest.due}</span>`;
-        label += `sealed rat nest, hatches on day ${cell.nest.due}`;
+        hint = `<span class="nest-count">${left}</span><span class="nest-label"><span class="nest-word">鼠巢 · </span>第 ${cell.nest.due} 天</span>`;
+        label += `未開啟的鼠巢，第 ${cell.nest.due} 天孵化`;
       } else if (known) {
         const text = cell.known === 2 ? T.describe(known) : T.tierName(known.tier);
         hint = `<span class="hint">${text}</span>`;
-        label += `sealed, ${text} inside`;
+        label += `未開啟，裡面是${text}`;
       } else if (cell.atLeast) {
         // A door the "Treasure" Hunt left dark.
         const text = `${T.tierName(cell.atLeast)}+`;
         hint = `<span class="hint">${text}</span>`;
-        label += `sealed, ${T.tierName(cell.atLeast)} or better inside`;
+        label += `未開啟，裡面是${T.tierName(cell.atLeast)}或更高`;
       } else {
-        label += 'sealed';
+        label += '未開啟';
       }
       if (cell.event && cell.seen !== false) {
-        badges.push('<span class="badge badge-event">Event</span>');
-        label += ', special event behind the door';
+        badges.push('<span class="badge badge-event">事變</span>');
+        label += '，門後有獄中事變';
       }
     } else if (visible) {
       body = `<span class="token">${PORTRAITS[inmate.beast]}<span class="token-beast">${T.beastName(inmate.beast)}</span><span class="token-tier">${T.tierName(inmate.tier)}</span></span>`;
       label += T.describe(inmate);
       if (cell.ivory) {
-        badges.push('<span class="badge badge-ivory">Tusk</span>');
-        label += ', Tusk cell';
+        badges.push('<span class="badge badge-ivory">象牙</span>');
+        label += '，象牙牢房';
       }
       // An event can wait in an open cell; walking in sets it off.
       if (cell.event) {
-        badges.push('<span class="badge badge-event">Event</span>');
-        label += ', a special event waits in the cell';
+        badges.push('<span class="badge badge-event">事變</span>');
+        label += '，牢房裡有獄中事變等著';
       }
       const link = T.linkOf(st, inmate.id);
       if (link) {
         const hunter = link.lion === inmate.id;
         const other = T.cellOf(st, hunter ? link.prey : link.lion);
         const where = other ? L(other.n) : '--';
-        badges.push(`<span class="badge badge-prey">${hunter ? 'Hunt' : 'Prey'} ${where}·${link.rounds}</span>`);
-        label += hunter ? `, hunting cell ${where}` : `, prey of cell ${where}`;
+        badges.push(`<span class="badge badge-prey">${hunter ? '尋獵' : '獵物'} ${where}·${link.rounds}</span>`);
+        label += hunter ? `，正在尋獵 ${where} 號牢房` : `，是 ${where} 號牢房的獵物`;
       } else if (inmate.marked) {
         // A Prey mark read from a picture, its Lion not known.
-        badges.push('<span class="badge badge-prey">Prey</span>');
-        label += ', wears a Prey mark';
+        badges.push('<span class="badge badge-prey">獵物</span>');
+        label += '，身上有獵物標記';
       }
     } else {
-      body = '<span class="floor">Empty</span>';
-      label += 'empty';
+      body = '<span class="floor">空</span>';
+      label += '空牢房';
     }
     if (cell.scratch) {
-      badges.push('<span class="badge badge-scratch">Scratch</span>');
-      label += ', scratched door';
+      badges.push('<span class="badge badge-scratch">劃痕</span>');
+      label += '，門上有劃痕';
     }
     if (visible && badges.length) cls.push('has-badges');
-    if (warden) label += '. The warden is here';
+    if (warden) label += '。典獄長在這裡';
     return { cls, body, hint, badges: badges.join(''), label, warden };
   }
 

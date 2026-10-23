@@ -198,7 +198,7 @@
       if (m.type === 'started') setState({ log: 'on', file: m.name, error: '', note: '' });
       else if (m.type === 'rotated') {
         recent = [];
-        setState({ log: 'on', error: '', note: 'The game started a new log.', detail: '' });
+        setState({ log: 'on', error: '', note: '遊戲開始寫新的紀錄檔了。', detail: '' });
       } else if (m.type === 'gone') setState({ log: 'gone', error: '' });
       else if (m.type === 'error') setState({ log: 'error', error: m.message });
       else if (m.type === 'lines') {
@@ -384,7 +384,7 @@
   }
 
   function mustAgree() {
-    if (!agreed()) throw new Error('Read and agree on the Auto Screenshot Mode page first.');
+    if (!agreed()) throw new Error('請先在自動截圖模式頁面閱讀並同意。');
   }
 
   // A picture may be taken only when all of these hold, checked right
@@ -398,11 +398,11 @@
 
   // Why a picture can't be taken right now, for the page to say.
   function whyNot() {
-    if (!agreed()) return 'Auto Screenshot Mode is off.';
+    if (!agreed()) return '自動截圖模式已關閉。';
     if (lastWhy) return lastWhy;
-    if (state.log === 'gone') return 'the game log isn’t there right now.';
-    if (state.log !== 'on') return 'connect the game log first.';
-    return 'share the game window first.';
+    if (state.log === 'gone') return '目前找不到遊戲紀錄檔。';
+    if (state.log !== 'on') return '請先連接遊戲紀錄檔。';
+    return '請先分享遊戲視窗。';
   }
 
   // Turning Auto Screenshot Mode off on follow.html, in any tab, stops everything
@@ -412,7 +412,7 @@
     if (tail || track) {
       stopLog();
       stopWindow();
-      setState({ note: 'Auto Screenshot Mode was turned off.' });
+      setState({ note: '自動截圖模式已關閉。' });
     }
     return true;
   }
@@ -426,8 +426,8 @@
   // #region pick-log
   async function connectLog() {
     mustAgree();
-    if (typeof window.showOpenFilePicker !== 'function') throw new Error('This browser can’t follow a file on your PC. Use Chrome or Edge.');
-    const [handle] = await window.showOpenFilePicker({ id: 'torchlight-log', multiple: false, types: [{ description: 'Torchlight: Infinite log', accept: { 'text/plain': ['.log'] } }] });
+    if (typeof window.showOpenFilePicker !== 'function') throw new Error('這個瀏覽器無法追蹤你電腦上的檔案。請使用 Chrome 或 Edge。');
+    const [handle] = await window.showOpenFilePicker({ id: 'torchlight-log', multiple: false, types: [{ description: '火炬之光：無限 紀錄檔', accept: { 'text/plain': ['.log'] } }] });
     useHandle(handle);
     remember(handle);
   }
@@ -441,17 +441,17 @@
     mustAgree();
     const items = [...((dataTransfer && dataTransfer.items) || [])].filter((i) => i.kind === 'file');
     const one = items.length === 1 && typeof items[0].getAsFileSystemHandle === 'function' ? items[0].getAsFileSystemHandle() : null;
-    if (items.length !== 1) throw new Error('Drop one file: UE_game.log.');
-    if (!one) throw new Error('This browser can’t follow a dropped file. Use Chrome or Edge.');
+    if (items.length !== 1) throw new Error('請只拖入一個檔案：UE_game.log。');
+    if (!one) throw new Error('這個瀏覽器無法追蹤拖入的檔案。請使用 Chrome 或 Edge。');
     let handle;
     try {
       handle = await one;
     } catch (e) {
       // A folder in a place the browser keeps from websites, for one.
-      throw new Error('The browser didn’t hand that over. Drag UE_game.log itself, from inside its folder.');
+      throw new Error('瀏覽器沒有交出這個檔案。請打開所在資料夾，直接拖曳 UE_game.log 本身。');
     }
-    if (!handle || handle.kind !== 'file') throw new Error('That’s a folder. Open it and drag UE_game.log from inside it.');
-    if (!/\.log$/i.test(handle.name)) throw new Error(`That’s ${handle.name}. Drag UE_game.log, the game’s log.`);
+    if (!handle || handle.kind !== 'file') throw new Error('這是資料夾。請打開它，從裡面拖曳 UE_game.log。');
+    if (!/\.log$/i.test(handle.name)) throw new Error(`這是 ${handle.name}。請拖曳遊戲的紀錄檔 UE_game.log。`);
     useHandle(handle);
     remember(handle);
   }
@@ -500,7 +500,7 @@
   // game is on, which the app picks.
   async function connectWindow(opts) {
     mustAgree();
-    if (!navigator.mediaDevices || typeof navigator.mediaDevices.getDisplayMedia !== 'function') throw new Error('This browser can’t share a window.');
+    if (!navigator.mediaDevices || typeof navigator.mediaDevices.getDisplayMedia !== 'function') throw new Error('這個瀏覽器無法分享視窗。');
     const screen = !!(opts && opts.screen && crop);
     // The browser's picker lists the open windows; the player picks the
     // game. Whole screens and this tab aren't offered, and the share can't
@@ -527,7 +527,7 @@
     // desktop app's screen, asked for as such, with its crop set.
     if (kind !== 'window' && !(kind === 'monitor' && screen && crop)) {
       stream.getTracks().forEach((x) => x.stop());
-      throw new Error('Share the Torchlight: Infinite window itself, not a whole screen or a browser tab.');
+      throw new Error('請分享《火炬之光：無限》的遊戲視窗本身，不要分享整個螢幕或瀏覽器分頁。');
     }
     track = t;
     surface = kind;
@@ -535,7 +535,7 @@
       track = null;
       surface = '';
       imageCapture = null;
-      setState({ window: 'off', windowSize: '', shared: '', note: 'Window sharing stopped.' });
+      setState({ window: 'off', windowSize: '', shared: '', note: '視窗分享已停止。' });
     });
     // Chrome and Edge take a still frame only when a picture is due, and
     // nothing plays the window as video in between. Other browsers need a
@@ -588,7 +588,7 @@
         area = null;
       }
       if (!area || !area.front || !(area.width > 0) || !(area.height > 0)) {
-        lastWhy = area && !area.front ? 'the game isn’t the window in front.' : 'the game window wasn’t found on the shared screen.';
+        lastWhy = area && !area.front ? '遊戲不是最前面的視窗。' : '在分享的螢幕上找不到遊戲視窗。';
         return null;
       }
     }
@@ -612,7 +612,7 @@
       const w = Math.min(frame.width - x, Math.round((area.x * sx < 0 ? area.width + area.x : area.width) * sx));
       const h = Math.min(frame.height - y, Math.round((area.y * sy < 0 ? area.height + area.y : area.height) * sy));
       if (w < 64 || h < 64) {
-        lastWhy = 'the game window wasn’t found on the shared screen.';
+        lastWhy = '在分享的螢幕上找不到遊戲視窗。';
         return null;
       }
       return await createImageBitmap(frame, x, y, w, h);

@@ -7,7 +7,10 @@
  *
  * The advice is TartarusAnalyzer.recommendation() (null until the check is
  * done, and for a changed board). The rest it reads from the page by these
- * ids and words, so keep them in step with analyze.html and js/analyze.js:
+ * ids and words, so keep them in step with analyze.html and js/analyze.js
+ * (繁中版: each phrase is matched in English or in the translated page's
+ * Chinese: 計算中, 這裡沒有需要決定的事, 已模擬 X / Y 局, 預期：,
+ * N 間牢房標記「檢查」, 誤差範圍內):
  * az-results (class is-stale), az-res-move ("Working it out…" while the
  * check runs, "Nothing to decide…"), az-res-status ("X of Y games played"
  * while it runs), az-res-body (paragraphs "Expected: …" and "After this
@@ -148,7 +151,7 @@
       best: li.classList.contains('is-best'),
     }));
     const shotText = text($('az-res-shot-text'));
-    const flagged = Number((/(\d+) cells? marked Check/.exec(shotText) || [])[1] || 0);
+    const flagged = Number((/(\d+) cells? marked Check/.exec(shotText) || /(\d+)\s*間牢房標記「檢查」/.exec(shotText) || [])[1] || 0);
     const step = $('az-step') && $('az-step').querySelector('button[aria-pressed="true"]');
     const riot = $('az-riot');
     if (reading && Date.now() - reading.at > 30000) reading = null;
@@ -159,9 +162,9 @@
     const A = window.TartarusAnalyzer;
     const rec = A && typeof A.recommendation === 'function' ? A.recommendation() : null;
     const move = text($('az-res-move'));
-    const working = shown(res) && /Working it out/.test(move);
+    const working = shown(res) && /Working it out|計算中/.test(move);
     const status = text($('az-res-status'));
-    const played = /([\d,]+) of ([\d,]+) games played/.exec(status);
+    const played = /([\d,]+) of ([\d,]+) games played/.exec(status) || /已模擬\s*([\d,]+)\s*\/\s*([\d,]+)\s*局/.exec(status);
     const num = (s) => Number(String(s).replace(/,/g, ''));
     return {
       has: shown(res),
@@ -169,13 +172,13 @@
       why: rec ? rec.why || '' : '',
       working,
       progress: working && played ? Math.round((100 * num(played[1])) / Math.max(1, num(played[2]))) : null,
-      nothing: shown(res) && !working && !rec && /^Nothing to decide/.test(move),
+      nothing: shown(res) && !working && !rec && /^(?:Nothing to decide|這裡沒有需要決定的事)/.test(move),
       stale: !!res && res.classList.contains('is-stale'),
-      expect: rec ? paras.find((p) => /^Expected:/.test(p)) || '' : '',
+      expect: rec ? paras.find((p) => /^(?:Expected:|預期：)/.test(p)) || '' : '',
       chain: rec ? paras.find((p) => /^After this first bite/.test(p)) || '' : '',
       status: rec ? status : '',
       options,
-      close: /margin of error/.test(text($('az-res-note'))),
+      close: /margin of error|誤差範圍內/.test(text($('az-res-note'))),
       shot: shown($('az-res-shot')),
       shotText,
       flagged,

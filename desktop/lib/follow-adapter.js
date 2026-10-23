@@ -67,7 +67,7 @@
     name: 'UE_game.log',
     async getFile() {
       const st = await D.logStat();
-      if (!st) throw new DOMException('The game log isn’t there.', 'NotFoundError');
+      if (!st) throw new DOMException('目前找不到遊戲紀錄檔。', 'NotFoundError');
       return {
         name: st.name,
         size: st.size,
@@ -188,7 +188,7 @@
     e.preventDefault();
     e.stopImmediatePropagation();
     stoppedLog = false;
-    note(D.useLogFile(files[0]) ? `Using ${files[0].name}: the app reads it.` : 'The app can’t find that file on this PC. Choose it with the button instead.');
+    note(D.useLogFile(files[0]) ? `改用 ${files[0].name}：由程式直接讀取。` : '程式在這台電腦上找不到那個檔案。請改用按鈕選擇。');
   }, true);
   document.addEventListener('click', (e) => {
     if (!e.target.closest('#az-auto-log')) return;
@@ -303,8 +303,8 @@
   function sayHow() {
     if (!desktopNote) return;
     desktopNote.textContent = game.log
-      ? `Tartarus Overlay connects your game log (${game.log.path}) and shares the Torchlight: Infinite window by itself, whenever the game is running. The buttons below still work.`
-      : 'Tartarus Overlay didn’t find your game log. Choose it from the tray icon’s menu (Choose the game log…), or drag it onto the box below.';
+      ? `只要遊戲在執行，Tartarus Overlay 就會自動連接你的遊戲紀錄檔（${game.log.path}）並分享《火炬之光：無限》的遊戲視窗。下方的按鈕仍然可以使用。`
+      : 'Tartarus Overlay 找不到你的遊戲紀錄檔。請從系統匣圖示的選單選擇（選擇遊戲紀錄檔…），或把檔案拖到下方的框裡。';
   }
 
   function onGame(g) {

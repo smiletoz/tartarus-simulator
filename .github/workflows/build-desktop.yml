@@ -1,0 +1,71 @@
+# 打包繁中版 Windows 程式（Tartarus Overlay TW）並發布到這個 repo 的 Releases。
+# 用法：GitHub 上的 Actions 分頁 → Build desktop app → Run workflow。
+# 版本號自動設為 1.0.<執行次數>，已安裝的程式會在 6 小時內自動更新到新版。
+name: Build desktop app
+
+on:
+  workflow_dispatch:
+    inputs:
+      notes:
+        description: '這一版的更新說明（選填）'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-desktop
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: desktop
+        shell: bash
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      - name: 設定版本號
+        id: ver
+        run: |
+          UPSTREAM=$(node -p "require('./package.json').version")
+          VERSION="1.0.${{ github.run_number }}"
+          npm version "$VERSION" --no-git-tag-version --allow-same-version
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "upstream=$UPSTREAM" >> "$GITHUB_OUTPUT"
+
+      - name: 安裝套件
+        run: npm ci
+
+      - name: 建立 Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="v${{ steps.ver.outputs.version }}"
+          {
+            echo "繁體中文版 Tartarus Overlay，對應原作者版本 ${{ steps.ver.outputs.upstream }}。"
+            echo
+            echo "${{ github.event.inputs.notes }}"
+            echo
+            echo "下載下方的 Tartarus-Overlay-TW-Setup-${{ steps.ver.outputs.version }}.exe 安裝。安裝檔沒有數位簽章，Windows 跳出「Windows 已保護您的電腦」時，按「其他資訊 → 仍要執行」。"
+            echo
+            echo "原作者：CoffeeBns（https://github.com/blahdot3h/tartarus-simulator）"
+          } > notes.md
+          gh release create "$TAG" --target "${{ github.sha }}" --title "Tartarus Overlay TW ${{ steps.ver.outputs.version }}" --notes-file notes.md
+
+      - name: 打包並上傳
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx electron-builder --win --publish always
+
+      - name: 檢查上傳的檔案
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release view "v${{ steps.ver.outputs.version }}" --json assets -q '.assets[].name'

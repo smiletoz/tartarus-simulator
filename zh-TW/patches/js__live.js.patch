@@ -1,0 +1,7 @@
+live.js 只有下載檔案裡的說明文字是給玩家看的（about 欄位只存在下載檔，不會送給伺服器）。key 與檔名不改。
+
+<<<< once
+    const data = { about: 'Boards this browser shared with the Tartarus Simulator odds study.', client: state.client, snapshots: state.history };
+====
+    const data = { about: '此瀏覽器分享給塔羅斯模擬器機率研究的盤面。', client: state.client, snapshots: state.history };
+>>>>
