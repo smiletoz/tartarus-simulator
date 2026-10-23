@@ -1,13 +1,14 @@
 # 打包繁中版 Windows 程式（Tartarus Overlay TW）並發布到這個 repo 的 Releases。
 # 用法：GitHub 上的 Actions 分頁 → Build desktop app → Run workflow；
-# 或推送一個 build- 開頭的標籤（例如 git tag build-1 && git push origin build-1）。
+# 或修改 zh-TW/build.txt 並提交（例如在裡面寫這一版的說明），也會自動打包。
 # 版本號自動設為 1.0.<執行次數>，已安裝的程式會在 6 小時內自動更新到新版。
 name: Build desktop app
 
 on:
   push:
-    tags:
-      - 'build-*'
+    branches: [main]
+    paths:
+      - 'zh-TW/build.txt'
   workflow_dispatch:
     inputs:
       notes:
@@ -57,6 +58,7 @@ jobs:
             echo "繁體中文版 Tartarus Overlay，對應原作者版本 ${{ steps.ver.outputs.upstream }}。"
             echo
             echo "${{ github.event.inputs.notes }}"
+            if [ "${{ github.event_name }}" = "push" ] && [ -f ../zh-TW/build.txt ]; then cat ../zh-TW/build.txt; fi
             echo
             echo "下載下方的 Tartarus-Overlay-TW-Setup-${{ steps.ver.outputs.version }}.exe 安裝。安裝檔沒有數位簽章，Windows 跳出「Windows 已保護您的電腦」時，按「其他資訊 → 仍要執行」。"
             echo
