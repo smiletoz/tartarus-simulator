@@ -1,9 +1,13 @@
 # 打包繁中版 Windows 程式（Tartarus Overlay TW）並發布到這個 repo 的 Releases。
-# 用法：GitHub 上的 Actions 分頁 → Build desktop app → Run workflow。
+# 用法：GitHub 上的 Actions 分頁 → Build desktop app → Run workflow；
+# 或推送一個 build- 開頭的標籤（例如 git tag build-1 && git push origin build-1）。
 # 版本號自動設為 1.0.<執行次數>，已安裝的程式會在 6 小時內自動更新到新版。
 name: Build desktop app
 
 on:
+  push:
+    tags:
+      - 'build-*'
   workflow_dispatch:
     inputs:
       notes:
