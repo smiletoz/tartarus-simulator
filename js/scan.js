@@ -1297,6 +1297,26 @@
         // 中文客戶端：三扇門都可能是有囚犯的牢房（沒有上鎖的門可以比對亮度）。
         // 門一定在典獄長順時針往前 6 格內，而且彼此不同：用這個驗證。
         const ahead = (n) => warden && ((n - warden.cell + 16) % 16) >= 1 && ((n - warden.cell + 16) % 16) <= 6;
+        // 「去審訊室」裡的筆畫可能被讀成數字（例如 4）：只有一張卡落在可達範圍外、
+        // 審訊室又在範圍內、而且那張卡的文字比較長，就把它當成審訊室。
+        if (CJK && warden && g.cells.length === g.read.length && g.read.length >= 2 && ahead(0)) {
+          const out = g.read.map((r, i) => (ahead(r.value - 1) ? -1 : i)).filter((i) => i >= 0);
+          if (out.length === 1) {
+            const k = out[0];
+            const wOf = (c) => c.p.x1 - c.p.x0;
+            const others = row.filter((c, i) => i !== k);
+            if (wOf(row[k]) > 1.12 * Math.max(...others.map(wOf))) {
+              const office = { x0: row[k].p.x0, y0: row[k].p.y0, x1: row[k].p.x1, y1: row[k].p.y1 };
+              const keep = row.filter((c, i) => i !== k);
+              keep.office = office;
+              const g2 = readRow(keep);
+              if (g2 && g2.cells.every(ahead)) {
+                got = g2;
+                break;
+              }
+            }
+          }
+        }
         const inReach = CJK && warden && g.cells.length >= 2 && g.cells.length === g.read.length && g.cells.every(ahead);
         if (inReach || (plain.length && plain.every((n) => cellLight(img, cellReads[n]) >= 40))) {
           got = g;
