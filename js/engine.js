@@ -124,17 +124,17 @@
     { key: 'swapsPerDay', group: '節奏', label: '每天替換次數', type: 'int', min: 0, max: 16 },
     { key: 'reusableCells', group: '節奏', label: '清空的牢房會再次上鎖，可以重新開啟', type: 'bool' },
     { key: 'chainStop', group: '節奏', label: '吞噬連鎖可在任何一口之後停止（遊戲中的「取消」）；關閉則必須繼續', type: 'bool' },
-    { key: 'startInmates', group: 'Pace', label: 'Inmates already out when a run starts (the live game: 4)', type: 'int', min: 0, max: 14 },
-    { key: 'startInmatesFewer', group: 'Pace', label: 'Chance a run starts with one inmate fewer (%)', type: 'int', min: 0, max: 100 },
-    { key: 'officeDoorOdds', group: 'Pace', label: "Odds the warden's office is among the morning's doors when in reach, as % of another cell's (the live game: about 37)", type: 'int', min: 0, max: 100 },
+    { key: 'startInmates', group: '節奏', label: '開局時已在外的囚犯數（正式遊戲：4）', type: 'int', min: 0, max: 14 },
+    { key: 'startInmatesFewer', group: '節奏', label: '開局時少一隻囚犯的機率（%）', type: 'int', min: 0, max: 100 },
+    { key: 'officeDoorOdds', group: '節奏', label: '審訊室在範圍內時出現在早上目的地中的機率，相對於一般牢房的 %（正式遊戲：約 37）', type: 'int', min: 0, max: 100 },
     { key: 'tierWeights', group: '機率', label: '門後囚犯的稀有度權重', type: 'list', names: TIERS.slice(0, 5) },
     { key: 'swapWeights', group: '機率', label: '替換帶來的囚犯稀有度權重', type: 'list', names: TIERS.slice(0, 5) },
-    { key: 'swapNewBeast', group: 'Odds', label: 'A Replace brings in a different beast (the Iron Pestle still keeps it)', type: 'bool' },
-    { key: 'startWeights', group: 'Odds', label: 'Rarity weights for the inmates out when a run starts', type: 'list', names: TIERS.slice(0, 5) },
+    { key: 'swapNewBeast', group: '機率', label: '替換一定換來另一種野獸（鐵杵仍會保留原野獸）', type: 'bool' },
+    { key: 'startWeights', group: '機率', label: '開局時在外囚犯的稀有度權重', type: 'list', names: TIERS.slice(0, 5) },
     { key: 'beastWeights', group: '機率', label: '新囚犯的野獸權重', type: 'list', names: ['巨象', '狂獅', '頭狼', '碩鼠'] },
     { key: 'doubleEatTier', group: '機率', label: '從此稀有度起，巨象也吃頭狼、狂獅也吃碩鼠（0 普通、1 魔法、2 稀有、3 傳奇、4 至臻；5：永不）', type: 'int', min: 0, max: 5 },
     { key: 'eventStartChance', group: '獄中事變', label: '開局時隨機一扇上鎖牢門後有獄中事變的機率（%）', type: 'int', min: 0, max: 100 },
-    { key: 'eventFollowChance', group: 'Special events', label: 'Chance a special event the warden sets off, taken or skipped, is followed by a new one on a random cell (%)', type: 'int', min: 0, max: 100 },
+    { key: 'eventFollowChance', group: '獄中事變', label: '典獄長觸發的獄中事變（不論接受或略過）之後，在隨機牢房接著出現新事變的機率（%）', type: 'int', min: 0, max: 100 },
     { key: 'eventMorningChance', group: '獄中事變', label: '每天早上隨機一扇上鎖牢門後出現獄中事變的機率（%）', type: 'int', min: 0, max: 100 },
     { key: 'eventWalkChance', group: '獄中事變', label: '巡視行走後出現一個獄中事變的機率（%）', type: 'int', min: 0, max: 100 },
     { key: 'eventActionChance', group: '獄中事變', label: '吞噬、替換、尋獵或獄中事變之後出現一個獄中事變的機率（%）', type: 'int', min: 0, max: 100 },
@@ -683,7 +683,7 @@
     const cell = pickOne(state, free);
     cell.event = rollEvent(state);
     cell.seen = true;
-    log(state, 'event', `A special event now waits ${cell.sealed ? 'behind' : 'in'} cell ${cellLabel(cell.n)}.`, { type: 'spawn', cell: cell.n });
+    log(state, 'event', `牢房 ${cellLabel(cell.n)} ${cell.sealed ? '門後' : '裡'}出現了一個獄中事變。`, { type: 'spawn', cell: cell.n });
     return cell;
   }
 
@@ -954,7 +954,7 @@
       const count = Math.max(0, p.startInmates - (rand(stream) * 100 < p.startInmatesFewer ? 1 : 0));
       const cells = shuffle(stream, state.cells.filter((c) => c.n !== OFFICE && c.sealed && !c.event)).slice(0, count);
       for (const c of cells) place(state, c.n, BEASTS[pickIndex(stream, p.beastWeights)], pickIndex(stream, p.startWeights));
-      if (cells.length) note = `The warden starts in the office at cell 01, with ${plural(cells.length, 'inmate')} already out on the block. Pick one of today’s destinations: a locked door to open, or an inmate to visit.`;
+      if (cells.length) note = `典獄長從牢房 01 的審訊室出發，監區上已有 ${plural(cells.length, '隻囚犯')}在外。從今天的目的地中選一個：打開一扇上鎖的門，或去找一隻囚犯。`;
     }
     for (const cell of state.cells) if (!cell.sealed) cell.event = null;
     offerStartTools(state);

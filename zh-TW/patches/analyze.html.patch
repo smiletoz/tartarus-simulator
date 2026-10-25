@@ -81,12 +81,14 @@ title="Tartarus Overlay（Windows 版）：做成應用程式的自動截圖模�
           <option value="en">English</option>
           <option value="ru">Русский</option>
           <option value="zh">中文</option>
+          <option value="ja">日本語</option>
           <option value="other">Another</option>
 ====
     <p class="az-scan-lang"><label>遊戲語言：<select id="az-game-lang">
           <option value="en">英文</option>
           <option value="ru">俄文</option>
           <option value="zh">中文</option>
+          <option value="ja">日文</option>
           <option value="other">其他</option>
 >>>>
 <<<< once

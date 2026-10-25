@@ -526,9 +526,20 @@ title="綺彩${esc(T.beastName(beast))}：點一下移除"
 >>>>
 遊戲語言說明。GAME_LANGS 的 key 不變，只翻顯示名稱；zh 說明改成繁體。
 <<<< once
-  const GAME_LANGS = { en: 'English', ru: 'Russian', zh: 'Chinese' };
+  const GAME_LANGS = { en: 'English', ru: 'Russian', zh: 'Chinese', ja: 'Japanese' };
 ====
-  const GAME_LANGS = { en: '英文', ru: '俄文', zh: '中文' };
+  const GAME_LANGS = { en: '英文', ru: '俄文', zh: '中文', ja: '日文' };
+>>>>
+日文說明保留日文，只把裡面提到的按鈕／標題換成繁中介面上的名稱。
+<<<< once
+、「Which door to patrol」で確認してください。
+====
+、「選擇目的地」で確認してください。
+>>>>
+<<<< once
+表示される「Send this screenshot」ボタンで送ってください。
+====
+表示される「傳送這張截圖」ボタンで送ってください。
 >>>>
 <<<< once
 отправьте его кнопкой «Send this screenshot», чтобы

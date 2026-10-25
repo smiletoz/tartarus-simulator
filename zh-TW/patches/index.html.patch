@@ -55,11 +55,11 @@ family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+TC:wght@400;500;700;900&displ
 
 <<<< once
           <span class="route-name">Rules drill</span>
-          <span class="route-text">Start from an empty prison: day 1, all 15 cells sealed. Best for a first run.</span>
+          <span class="route-text">Start a run as the game does: day 1, 4 inmates out and the other cells sealed. Best for a first run.</span>
           <span class="route-meta">20 days · practice values</span>
 ====
           <span class="route-name">規則練習</span>
-          <span class="route-text">從空監獄開始：第1天，15間牢房全部上鎖。最適合第一次玩。</span>
+          <span class="route-text">像遊戲一樣開局：第1天，已有4隻囚犯在外，其他牢房都上鎖。最適合第一次玩。</span>
           <span class="route-meta">20天 · 練習數值</span>
 >>>>
 
@@ -437,10 +437,10 @@ id="btn-reseed">新種子</button>
 
 <<<< once
       <h3>The ring</h3>
-      <p>Sixteen cells form a ring, numbered clockwise from 01 in the top-left corner: 01 to 06 across the top, 07 to 09 down the right, 10 to 14 back along the bottom and 15 to 16 up the left. Cell 01 is the warden's office. Every run starts there, and nothing is ever held in it, so the other 15 cells hold the prisoners. The lantern marks where the warden stands.</p>
+      <p>Sixteen cells form a ring, numbered clockwise from 01 in the top-left corner: 01 to 06 across the top, 07 to 09 down the right, 10 to 14 back along the bottom and 15 to 16 up the left. Cell 01 is the warden's office. Every run starts there, and nothing is ever held in it, so the other 15 cells hold the prisoners. A run starts with 4 inmates already out on random cells (3 in about 1 run in 20), and the rest sealed. The lantern marks where the warden stands.</p>
 ====
       <h3>環形監區</h3>
-      <p>十六個格子圍成一圈，從左上角的01號開始順時針編號：上排01到06，右側往下07到09，下排往回10到14，左側往上15到16。01號是審訊室，每一局都從這裡出發，而且這裡永遠不關任何東西，所以囚犯都關在其他15間牢房裡。提燈標示典獄長目前所在的位置。</p>
+      <p>十六個格子圍成一圈，從左上角的01號開始順時針編號：上排01到06，右側往下07到09，下排往回10到14，左側往上15到16。01號是審訊室，每一局都從這裡出發，而且這裡永遠不關任何東西，所以囚犯都關在其他15間牢房裡。每局開始時，已有4隻囚犯出現在隨機的牢房裡（約每20局有1局只有3隻），其餘牢房都上鎖。提燈標示典獄長目前所在的位置。</p>
 >>>>
 
 <<<< once
@@ -450,9 +450,9 @@ id="btn-reseed">新種子</button>
 >>>>
 
 <<<< once
-        <li><strong>Patrol.</strong> Each morning offers three destination cells from the next six clockwise from the warden. They glow on the ring and appear as cards under it. A destination can be a locked cell, which opens when the warden arrives, a cell whose inmate you already know, or the warden's office. You can't see inside a locked cell until it opens. You must patrol before anything else.</li>
+        <li><strong>Patrol.</strong> Each morning offers three destination cells from the next six clockwise from the warden. They glow on the ring and appear as cards under it. A destination can be a locked cell, which opens when the warden arrives, a cell whose inmate you already know, or the warden's office, which comes up less often than a cell (about 1 morning in 4 when it's in reach). You can't see inside a locked cell until it opens. You must patrol before anything else.</li>
 ====
-        <li><strong>巡視。</strong>每天早上，會從典獄長順時針方向往前的六格中提供三個目的地。它們會在環形監區上發光，並以卡片顯示在下方。目的地可能是未開啟的牢房（典獄長抵達時就會打開）、已知囚犯的牢房，或審訊室。未開啟的牢房在打開前看不到裡面。每天一定要先巡視，才能做其他事。</li>
+        <li><strong>巡視。</strong>每天早上，會從典獄長順時針方向往前的六格中提供三個目的地。它們會在環形監區上發光，並以卡片顯示在下方。目的地可能是未開啟的牢房（典獄長抵達時就會打開）、已知囚犯的牢房，或審訊室（審訊室出現的機率比一般牢房低：在範圍內時，大約每4個早上出現1次）。未開啟的牢房在打開前看不到裡面。每天一定要先巡視，才能做其他事。</li>
 >>>>
 
 <<<< once
@@ -468,12 +468,12 @@ id="btn-reseed">新種子</button>
 >>>>
 
 <<<< once
-        <li><strong>Replace.</strong> Once a day, replace the inmate in the warden's cell with a brand-new random one. It can come out stronger or weaker. No other cell's inmate can be replaced. A day has a Replace or a consume, not both: either one uses up the other.</li>
+        <li><strong>Replace.</strong> Once a day, replace the inmate in the warden's cell with a brand-new random one, always of another beast. It can come out stronger or weaker. No other cell's inmate can be replaced. A day has a Replace or a consume, not both: either one uses up the other.</li>
         <li><strong>End the day.</strong> The next morning, prey marks grow, ripe nests hatch, and new destinations are drawn. A recap of the day you just finished appears under the destination cards.</li>
       </ol>
       <p>When an inmate is consumed or sent off, its cell seals again. The next time that door opens, someone new is inside.</p>
 ====
-        <li><strong>替換。</strong>每天一次，把典獄長所在牢房的囚犯換成一隻全新的隨機囚犯，可能變強也可能變弱。其他牢房的囚犯無法替換。每天只能替換或吞噬其中一項：做了一項，另一項就不能做。</li>
+        <li><strong>替換。</strong>每天一次，把典獄長所在牢房的囚犯換成一隻全新的隨機囚犯，而且一定是另一種野獸，可能變強也可能變弱。其他牢房的囚犯無法替換。每天只能替換或吞噬其中一項：做了一項，另一項就不能做。</li>
         <li><strong>結束這天。</strong>隔天早上，獵物標記會成長、到期的鼠巢會孵化，並抽出新的目的地。剛結束那天的回顧會顯示在目的地卡片下方。</li>
       </ol>
       <p>囚犯被吞噬或送走後，牢房會重新上鎖。下次那扇門打開時，裡面會是新的囚犯。</p>
@@ -527,7 +527,7 @@ id="btn-reseed">新種子</button>
         <dt class="m-event">"Treasure" Hunt</dt>
         <dd>Every locked cell holding a Normal or Magic inmate shows its rarity (a "?" portrait), so the locked doors left dark hold Rare or better. Its card has only Confirm.</dd>
       </dl>
-      <p>Special events (the game calls them Prison Incidents) turn up behind random locked doors, each kind in the pool equally likely, and their badge shows at once. Most runs start with one, and new ones keep appearing: some mornings, after a patrol, and after a Consume or Replace. An event can also wait in an open cell beside its inmate; walking in sets it off.</p>
+      <p>Special events (the game calls them Prison Incidents) turn up on random cells, each kind in the pool equally likely, and their badge shows at once. Most runs start with one behind a locked door. Each event the warden sets off, taken or skipped, is usually followed by a new one (88% of the time, never two): behind a locked door, or in an open cell beside its inmate, where walking in sets it off.</p>
 ====
         <dt class="m-event">連鎖反應</dt>
         <dd>下一次巡視會從典獄長的位置順時針走到選定的目的地，並打開沿途所有上鎖的門。</dd>
@@ -552,7 +552,7 @@ id="btn-reseed">新種子</button>
         <dt class="m-event">尋「寶」</dt>
         <dd>所有關著普通或魔法囚犯的未開啟牢房都會顯示稀有度（「?」頭像），因此沒亮起的上鎖門後都是稀有以上。它的卡片只有「確認」。</dd>
       </dl>
-      <p>獄中事變會出現在隨機的未開啟門後，事變池中每一種出現機率相同，徽章會立即顯示。大部分的局一開始就有一個，之後也會不斷出現：某些早上、巡視之後，以及吞噬或替換之後。事變也可能出現在已開啟的牢房裡、待在囚犯旁邊，走進去就會觸發。</p>
+      <p>獄中事變會出現在隨機的牢房，事變池中每一種出現機率相同，徽章會立即顯示。大部分的局一開始就有一個藏在未開啟的門後。典獄長每觸發一個事變（不論接受或略過），通常會接著出現一個新的（88%的機率，不會一次出現兩個）：可能在未開啟的門後，也可能在已開啟的牢房裡、待在囚犯旁邊，走進去就會觸發。</p>
 >>>>
 
 <<<< once

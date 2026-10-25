@@ -57,9 +57,9 @@ app.setAppUserModelId('io.github.smiletoz.tartarus-overlay-tw');
 托盤「遊戲語言」子選單。
 
 <<<< once
-const GAME_LANGS = [['en', 'English'], ['ru', 'Русский (Russian)'], ['zh', '中文 (Chinese)']];
+const GAME_LANGS = [['en', 'English'], ['ru', 'Русский (Russian)'], ['zh', '中文 (Chinese)'], ['ja', '日本語 (Japanese)']];
 ====
-const GAME_LANGS = [['en', '英文 (English)'], ['ru', '俄文 (Русский)'], ['zh', '中文']];
+const GAME_LANGS = [['en', '英文 (English)'], ['ru', '俄文 (Русский)'], ['zh', '中文'], ['ja', '日文 (日本語)']];
 >>>>
 
 <<<< once

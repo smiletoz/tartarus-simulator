@@ -763,14 +763,14 @@
         renderDecision();
         return;
       }
-      const kin = st.tools.includes('pestle') ? ' of the same beast (Iron Pestle)' : st.params.swapNewBeast ? ' of another beast' : '';
-      const parts = [`A brand-new random inmate${kin} replaces the ${T.describe(cell.inmate)}. It can come out stronger or weaker.`];
-      if (st.tools.includes('rope')) parts.push("Hangman's Noose: never Normal or Magic.");
-      if (st.tools.includes('axe')) parts.push(`Gaoler's Execution Axe: if it comes out above ${T.tierName(cell.inmate.tier)}, 2 random sealed cells open.`);
-      if (cell.ivory) parts.push(`Tusk cell: ${T.plural(st.params.ivoryCount, 'inmate')} then gain a tier.`);
-      if (T.canDevourNow(st)) parts.push('It uses up today’s consume: a day has a Replace or a consume, not both.');
-      setDecision(`Replace the inmate in cell ${L(p.cell)}?`, parts.join(' '), [
-        ['Replace', () => run((s) => T.swap(s, p.cell)), 'primary'],
+      const kin = st.tools.includes('pestle') ? '同種野獸的（鐵杵）' : st.params.swapNewBeast ? '另一種野獸的' : '';
+      const parts = [`一隻${kin}全新隨機囚犯會取代${T.describe(cell.inmate)}，可能變強也可能變弱。`];
+      if (st.tools.includes('rope')) parts.push('絞首繩：不會是普通或魔法。');
+      if (st.tools.includes('axe')) parts.push(`獄卒的行刑巨斧：如果新囚犯高於${T.tierName(cell.inmate.tier)}，隨機打開 2 間未開啟的牢房。`);
+      if (cell.ivory) parts.push(`象牙牢房：之後 ${T.plural(st.params.ivoryCount, '隻囚犯')}各升一階。`);
+      if (T.canDevourNow(st)) parts.push('這會用掉今天的吞噬：一天只能替換或吞噬其中一種。');
+      setDecision(`替換 ${L(p.cell)} 號牢房的囚犯？`, parts.join(''), [
+        ['替換', () => run((s) => T.swap(s, p.cell)), 'primary'],
         ['取消', back],
       ], true);
       return;

@@ -368,7 +368,8 @@ T.plural 依跨檔約定改用中文量詞片語；notes.join(', ') 改用「、
         ['返回', back],
 >>>>
 <<<< once
-      const parts = [`A brand-new random inmate replaces the ${T.describe(cell.inmate)}. It can come out stronger or weaker.`];
+      const kin = st.tools.includes('pestle') ? ' of the same beast (Iron Pestle)' : st.params.swapNewBeast ? ' of another beast' : '';
+      const parts = [`A brand-new random inmate${kin} replaces the ${T.describe(cell.inmate)}. It can come out stronger or weaker.`];
       if (st.tools.includes('rope')) parts.push("Hangman's Noose: never Normal or Magic.");
       if (st.tools.includes('axe')) parts.push(`Gaoler's Execution Axe: if it comes out above ${T.tierName(cell.inmate.tier)}, 2 random sealed cells open.`);
       if (cell.ivory) parts.push(`Tusk cell: ${T.plural(st.params.ivoryCount, 'inmate')} then gain a tier.`);
@@ -376,7 +377,8 @@ T.plural 依跨檔約定改用中文量詞片語；notes.join(', ') 改用「、
       setDecision(`Replace the inmate in cell ${L(p.cell)}?`, parts.join(' '), [
         ['Replace', () => run((s) => T.swap(s, p.cell)), 'primary'],
 ====
-      const parts = [`一隻全新的隨機囚犯會取代${T.describe(cell.inmate)}，可能變強也可能變弱。`];
+      const kin = st.tools.includes('pestle') ? '同種野獸的（鐵杵）' : st.params.swapNewBeast ? '另一種野獸的' : '';
+      const parts = [`一隻${kin}全新隨機囚犯會取代${T.describe(cell.inmate)}，可能變強也可能變弱。`];
       if (st.tools.includes('rope')) parts.push('絞首繩：不會是普通或魔法。');
       if (st.tools.includes('axe')) parts.push(`獄卒的行刑巨斧：如果新囚犯高於${T.tierName(cell.inmate.tier)}，隨機打開 2 間未開啟的牢房。`);
       if (cell.ivory) parts.push(`象牙牢房：之後 ${T.plural(st.params.ivoryCount, '隻囚犯')}各升一階。`);

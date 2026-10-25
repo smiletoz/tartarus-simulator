@@ -1711,10 +1711,10 @@
   // told so, sets those by hand, and can send a screen the reader didn't
   // recognize in one click, so it can learn that language (the user,
   // 2026-10-17). Set here, or from the game's log (Auto Screenshot Mode).
-  const GAME_LANGS = { en: 'English', ru: 'Russian', zh: 'Chinese', ja: 'Japanese' };
+  const GAME_LANGS = { en: '英文', ru: '俄文', zh: '中文', ja: '日文' };
   const LANG_KEY = 'tartarus-sim:game-lang:v1';
   const LANG_NOTES = {
-    ja: 'ゲームは日本語クライアントです。分析ツールは英語クライアントで学習しています。盤面のマス、獣、レア度はどの言語でも読み取れます。当日の扉はマス番号で読み取りますが、日本語クライアントではまだ確認できていないため、「Which door to patrol」で確認してください。置き換え・捕食のボタン、所持している刑具、彩色囚人の数、刑具の選択肢、目標、開始時のカードは英語の文字で読み取るため、手動で設定してください。認識されない画面があれば、表示される「Send this screenshot」ボタンで送ってください。日本語クライアントの読み取りを学習するのに役立ちます。',
+    ja: 'ゲームは日本語クライアントです。分析ツールは英語クライアントで学習しています。盤面のマス、獣、レア度はどの言語でも読み取れます。当日の扉はマス番号で読み取りますが、日本語クライアントではまだ確認できていないため、「選擇目的地」で確認してください。置き換え・捕食のボタン、所持している刑具、彩色囚人の数、刑具の選択肢、目標、開始時のカードは英語の文字で読み取るため、手動で設定してください。認識されない画面があれば、表示される「傳送這張截圖」ボタンで送ってください。日本語クライアントの読み取りを学習するのに役立ちます。',
     ru: 'Игра на русском языке. Анализатор обучен на английском клиенте: клетки, звери и редкость на поле, а также двери дня (по номерам клеток), читаются на любом языке. Кнопки замены и поглощения, ваши инструменты, счётчик хроматических заключённых, предложения инструментов, цели и карты начала забега читаются по английскому тексту. Укажите их вручную, а если экран не распознан, отправьте его кнопкой «傳送這張截圖», чтобы анализатор научился читать русский клиент.',
     zh: '遊戲為中文用戶端。辨識器是用英文用戶端訓練的：盤面上的牢房、野獸和稀有度，以及今天的門（依牢房編號），在任何語言下都能辨識；但「替換」和「吞噬」按鈕、你的刑具、綺彩囚犯數量、刑具選擇、目標和開局卡是依英文文字辨識的。請手動設定這些內容；若某個畫面沒被辨識出來，請按「傳送這張截圖」把截圖傳給我們，幫助辨識器學會中文用戶端。',
   };
@@ -2690,8 +2690,21 @@
   // earlier day than the board before starts afresh.
   // sims: the instruments the reader can tell on a panel (any other reads
   // as something else).
+  // A board from a new run: its day is earlier than the board before's, and
+  // it looks like a run's start, not a misread day (the user's run: one
+  // picture of day 15 read as day 19, so the next, day 15 again, cleared the
+  // run's confirmed instruments and asked for them again). Early in a run
+  // (day 1 or 2), or far fewer inmates out than before: a run starts with
+  // about 4.
+  function newRun(m, base) {
+    if (!(m.day < base.day)) return false;
+    if (m.day <= 2) return true;
+    const out = (x) => (x.cells || []).filter((c) => c && c.kind === 'inmate').length;
+    return out(m) <= Math.max(5, out(base) - 4);
+  }
+
   function runTools(read, base, m, notes, sims) {
-    const sameRun = !(m.day < base.day);
+    const sameRun = !newRun(m, base);
     const known = sameRun ? (base.tools || []).filter((id) => T.TOOLS[id]) : [];
     const offer = sameRun && base.step === 'choice' && base.choice && base.choice.kind === 'tool' ? base.choice.options.filter((id) => T.TOOLS[id]) : [];
     const out = known.map((id) => ({ id, sim: id, name: T.toolName(id), conf: 1, kept: true }));
@@ -2939,7 +2952,7 @@
     // (f5, from the collected boards). Mornings with the office within
     // reach don't count: its card can be missed.
     const takers = ['forged', 'whip', 'stake'];
-    if (m.day < base.day) m.shortDays = [];
+    if (newRun(m, base)) m.shortDays = [];
     const officeNear = [1, 2, 3, 4, 5, 6].some((k) => (m.warden + k) % T.CELL_COUNT === T.OFFICE);
     const doorsDue = T.DEFAULT_PARAMS.destinations - m.tools.filter((id) => takers.includes(id)).length;
     if (m.step === 'patrol' && !officeNear && m.dest.length && m.dest.length < doorsDue) m.shortDays = [...new Set([...(m.shortDays || []), m.day])];

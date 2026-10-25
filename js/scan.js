@@ -1297,15 +1297,20 @@
         // 中文客戶端：三扇門都可能是有囚犯的牢房（沒有上鎖的門可以比對亮度）。
         // 門一定在典獄長順時針往前 6 格內，而且彼此不同：用這個驗證。
         const ahead = (n) => warden && ((n - warden.cell + 16) % 16) >= 1 && ((n - warden.cell + 16) % 16) <= 6;
+        // 中文門卡上有「去」「號」這種近乎正方形的大字；決策卡片上緣的尖刺只有細長筆畫，不算。
+        // 另外：門卡號碼約 13 個棋盤單位高、同一排高度一致；卡片圖案或尖刺通常太小或太大、上下錯開。
+        const cjkRow = (r) => r.every((c) => c.h >= 10.5 * loc.s && c.h <= 18 * loc.s) && Math.max(...r.map((c) => c.mid)) - Math.min(...r.map((c) => c.mid)) < 0.6 * Math.min(...r.map((c) => c.h));
+        const cjkCard = (c) => c.p.glyphs.some((q) => q.w >= 0.6 * c.h);
         // 「去審訊室」裡的筆畫可能被讀成數字（例如 4）：只有一張卡落在可達範圍外、
         // 審訊室又在範圍內、而且那張卡的文字比較長，就把它當成審訊室。
-        if (CJK && warden && g.cells.length === g.read.length && g.read.length >= 2 && ahead(0)) {
+        if (CJK && warden && g.cells.length === g.read.length && g.read.length >= 2 && ahead(0) && cjkRow(row)) {
           const out = g.read.map((r, i) => (ahead(r.value - 1) ? -1 : i)).filter((i) => i >= 0);
           if (out.length === 1) {
             const k = out[0];
             const wOf = (c) => c.p.x1 - c.p.x0;
             const others = row.filter((c, i) => i !== k);
-            if (wOf(row[k]) > 1.12 * Math.max(...others.map(wOf))) {
+            // 其他門卡要是真的中文門卡（審訊室那張的字形在小解析度下可能散開，不檢查）
+            if (others.every(cjkCard) && wOf(row[k]) > 1.12 * Math.max(...others.map(wOf))) {
               const office = { x0: row[k].p.x0, y0: row[k].p.y0, x1: row[k].p.x1, y1: row[k].p.y1 };
               const keep = row.filter((c, i) => i !== k);
               keep.office = office;
@@ -1317,7 +1322,7 @@
             }
           }
         }
-        const inReach = CJK && warden && g.cells.length >= 2 && g.cells.length === g.read.length && g.cells.every(ahead);
+        const inReach = CJK && warden && g.cells.length >= 2 && g.cells.length === g.read.length && g.cells.every(ahead) && cjkRow(row) && row.every(cjkCard);
         if (inReach || (plain.length && plain.every((n) => cellLight(img, cellReads[n]) >= 40))) {
           got = g;
           break;
@@ -2007,7 +2012,7 @@
   // for each action the game allows now. Replace and End have pale labels;
   // the Consume card is red all over, its label too. Returns which cards
   // show, or null when there's no such row.
-  function readDecision(img, loc) {
+  function readDecision(img, loc, officeHere) {
     const bottom = Math.max(at(loc, 0, 3)[1], at(loc, 5, 3)[1]) + 30 * loc.s;
     if (bottom >= img.height - 20) return null;
     const x0 = Math.max(0, Math.min(at(loc, 0, 0)[0], at(loc, 0, 3)[0]) - 40 * loc.s);
@@ -2167,7 +2172,8 @@
     // The Consume card's own label is red on red, which isn't read as text:
     // its red block left of "End" counts as that label (report 310).
     // 中文客戶端：沒有讀到標題「請進行決策」就不當成決策卡片（門卡片「去8號」之類也會被讀成單字）。
-    if (CJK && !title) return null;
+    // 例外：典獄長在審訊室時，「煽動／賞賜」兩張卡的標題可能不同，有兩字卡片名稱就算。
+    if (CJK && !title && !(officeHere && end)) return null;
     const row = ends.some((e) => lefts.some((l) => Math.abs(l.mid - e.mid) < e.h / 2 && l.x1 < e.x0 && e.x0 - l.x1 < 30 * e.h) || (consume && redX < e.x0 && e.x0 - redX < 30 * e.h));
     if (!title && !(row && (consume || replace))) return null;
     if (office) return { office: true, replace: false, consume: false, end: false, title };
@@ -2234,7 +2240,7 @@
       const t = b[2] > b[1] ? 2 : 1;
       if (b[t] >= 0.025 * c.frame.samples) c.tier = t;
     }
-    const decision = doors || chain ? null : readDecision(img, loc);
+    const decision = doors || chain ? null : readDecision(img, loc, !!warden && warden.cell === 0);
     // The warden in the office: no inmate there to Replace or Consume, so a
     // row of cards is the office's Instigate and Bestow, whatever its labels
     // read as (report 67: "Instigate" came apart, and "Bestow" passed for

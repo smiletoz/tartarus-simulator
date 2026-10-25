@@ -1,4 +1,4 @@
-繁中版：中文客戶端（遊戲語言 zh）的截圖辨識——天數、刑具欄、綺彩囚犯、決策卡片、門卡（以典獄長可達範圍驗證、去審訊室）。
+繁中版：中文客戶端（遊戲語言 zh）的截圖辨識——天數、刑具欄、綺彩囚犯、決策卡片（含審訊室）、門卡（以典獄長可達範圍、字形、大小驗證，去審訊室）。
 
 <<<< once
   function readDoors(img, gray, loc, ref, foreign, cellReads) {
@@ -12,15 +12,20 @@
         // 中文客戶端：三扇門都可能是有囚犯的牢房（沒有上鎖的門可以比對亮度）。
         // 門一定在典獄長順時針往前 6 格內，而且彼此不同：用這個驗證。
         const ahead = (n) => warden && ((n - warden.cell + 16) % 16) >= 1 && ((n - warden.cell + 16) % 16) <= 6;
+        // 中文門卡上有「去」「號」這種近乎正方形的大字；決策卡片上緣的尖刺只有細長筆畫，不算。
+        // 另外：門卡號碼約 13 個棋盤單位高、同一排高度一致；卡片圖案或尖刺通常太小或太大、上下錯開。
+        const cjkRow = (r) => r.every((c) => c.h >= 10.5 * loc.s && c.h <= 18 * loc.s) && Math.max(...r.map((c) => c.mid)) - Math.min(...r.map((c) => c.mid)) < 0.6 * Math.min(...r.map((c) => c.h));
+        const cjkCard = (c) => c.p.glyphs.some((q) => q.w >= 0.6 * c.h);
         // 「去審訊室」裡的筆畫可能被讀成數字（例如 4）：只有一張卡落在可達範圍外、
         // 審訊室又在範圍內、而且那張卡的文字比較長，就把它當成審訊室。
-        if (CJK && warden && g.cells.length === g.read.length && g.read.length >= 2 && ahead(0)) {
+        if (CJK && warden && g.cells.length === g.read.length && g.read.length >= 2 && ahead(0) && cjkRow(row)) {
           const out = g.read.map((r, i) => (ahead(r.value - 1) ? -1 : i)).filter((i) => i >= 0);
           if (out.length === 1) {
             const k = out[0];
             const wOf = (c) => c.p.x1 - c.p.x0;
             const others = row.filter((c, i) => i !== k);
-            if (wOf(row[k]) > 1.12 * Math.max(...others.map(wOf))) {
+            // 其他門卡要是真的中文門卡（審訊室那張的字形在小解析度下可能散開，不檢查）
+            if (others.every(cjkCard) && wOf(row[k]) > 1.12 * Math.max(...others.map(wOf))) {
               const office = { x0: row[k].p.x0, y0: row[k].p.y0, x1: row[k].p.x1, y1: row[k].p.y1 };
               const keep = row.filter((c, i) => i !== k);
               keep.office = office;
@@ -32,7 +37,7 @@
             }
           }
         }
-        const inReach = CJK && warden && g.cells.length >= 2 && g.cells.length === g.read.length && g.cells.every(ahead);
+        const inReach = CJK && warden && g.cells.length >= 2 && g.cells.length === g.read.length && g.cells.every(ahead) && cjkRow(row) && row.every(cjkCard);
         if (inReach || (plain.length && plain.every((n) => cellLight(img, cellReads[n]) >= 40))) {
 >>>>
 
@@ -145,6 +150,12 @@
 >>>>
 
 <<<< once
+  function readDecision(img, loc) {
+====
+  function readDecision(img, loc, officeHere) {
+>>>>
+
+<<<< once
       if (l.red < 0.01) replace = true;
     }
 ====
@@ -184,7 +195,8 @@
 ====
     // its red block left of "End" counts as that label (report 310).
     // 中文客戶端：沒有讀到標題「請進行決策」就不當成決策卡片（門卡片「去8號」之類也會被讀成單字）。
-    if (CJK && !title) return null;
+    // 例外：典獄長在審訊室時，「煽動／賞賜」兩張卡的標題可能不同，有兩字卡片名稱就算。
+    if (CJK && !title && !(officeHere && end)) return null;
 >>>>
 
 <<<< once
@@ -200,4 +212,10 @@
     const doors = readDoors(img, sharp, loc, ref, !!(opts && opts.lang && opts.lang !== 'en'), cells);
 ====
     const doors = readDoors(img, sharp, loc, ref, !!(opts && opts.lang && opts.lang !== 'en'), cells, warden);
+>>>>
+
+<<<< once
+    const decision = doors || chain ? null : readDecision(img, loc);
+====
+    const decision = doors || chain ? null : readDecision(img, loc, !!warden && warden.cell === 0);
 >>>>
