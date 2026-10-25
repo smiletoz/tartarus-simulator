@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;500;600;700&family=Big+Shoulders+Stencil+Display:wght@600;800&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+TC:wght@400;500;700;900&display=swap">
-<link rel="stylesheet" href="css/style.css?v=20261022d">
+<link rel="stylesheet" href="css/style.css?v=20261022h">
 <style>
   /* A long read in the simulator's look, like the strategy guide. */
   .guide {
@@ -357,24 +357,24 @@
   <p class="lede">自動截圖模式讓盤面分析器自己跟上你的遊戲進度。你在這個頁面連接遊戲的紀錄檔，並分享遊戲視窗。每當紀錄檔顯示有動作，這個頁面就會擷取一張遊戲畫面，交給在另一個分頁開著的盤面分析器，由它讀出盤面並更新建議。一切都在你的瀏覽器裡、你的電腦上進行。下面會清楚說明它讀取什麼、看到什麼，並附上負責每個部分的程式碼。這些程式碼直接從你的瀏覽器正在執行的同一批檔案載入，所以不可能和這裡的說明不一致。</p>
 
   <section class="guide-section" id="follow" aria-labelledby="follow-title">
-    <h2 id="follow-title">你的遊戲 <span class="az-auto-beta">測試版</span></h2>
+    <h2 id="follow-title">Your game <span class="az-auto-beta">Beta</span></h2>
     <div class="log-setup" id="follow-enable-log">
-      <h3>第一步：開啟遊戲的日誌</h3>
-      <p>自動截圖模式是在遊戲紀錄檔顯示有動作時截圖，而遊戲要等日誌開啟後才會寫出這些紀錄：</p>
+      <h3>First, turn on the game's log</h3>
+      <p>Auto Screenshot Mode takes a picture when the game's log shows a move, and the game writes those lines only once its log is turned on:</p>
       <ol>
-        <li>在遊戲中按 <b>Esc</b>，找到<b>「帳號相關」</b>（Account Related）。</li>
-        <li>點 <b>Enable Log</b>（啟用日誌）。</li>
-        <li>登出再登入。遊戲要等你重新登入後才會開始寫紀錄檔。</li>
+        <li>In the game, press <b>Esc</b> and find <b>Account Related</b>.</li>
+        <li>Click <b>Enable Log</b>.</li>
+        <li>Log out and back in. The game starts writing its log only after you log in again.</li>
       </ol>
       <figure>
-        <img src="img/enable-log.webp?v=20261022d" width="803" height="395" alt="遊戲的 Esc 選單，在「帳號相關」（Account Related）底下：帳號中心、兌換碼、玩家服務，以及 Enable Log（啟用日誌）按鈕。">
-        <figcaption>在遊戲中按 Esc：Enable Log（啟用日誌）在「帳號相關」（Account Related）底下。（圖為英文客戶端）</figcaption>
+        <img src="img/enable-log.webp?v=20261022h" width="803" height="395" alt="The game's Esc menu, under Account Related: Account Center, Redeem Code, Player Service, and the Enable Log button.">
+        <figcaption>Press Esc in the game: Enable Log is under Account Related.</figcaption>
       </figure>
-      <p class="note">如果只有按下「立即截圖」時才有圖片，表示遊戲的日誌還沒開：照上面的步驟開啟，然後登出再登入。</p>
+      <p class="note">If pictures come only when you press Take a picture now, the game's log is still off: turn it on here, then log out and back in.</p>
     </div>
     <div class="az-auto-gate" id="az-auto-gate">
-      <p>請先讀完這個頁面，再到最下方開啟自動截圖模式。在那之前，這裡的任何東西都無法開啟你的紀錄檔，也看不到任何視窗。</p>
-      <a class="btn btn-report" href="#agree">開啟</a>
+      <p>Read this page first, then turn Auto Screenshot Mode on at the bottom. Until you do, nothing here can open your log or see any window.</p>
+      <a class="btn btn-report" href="#agree">Turn it on</a>
     </div>
     <div id="az-auto-body" hidden>
       <p class="note">需要電腦上的 Chrome 或 Edge，遊戲用無邊框或視窗模式。遊玩時請保持這個分頁開著：它負責追蹤紀錄檔和截圖，分析器分頁則顯示盤面和建議。</p>
@@ -555,8 +555,8 @@
   </section>
 </main>
 
-<script src="js/capture.js?v=20261022d"></script>
-<script src="js/follow.js?v=20261022d"></script>
+<script src="js/capture.js?v=20261022h"></script>
+<script src="js/follow.js?v=20261022h"></script>
 <script>
 (function () {
   'use strict';
